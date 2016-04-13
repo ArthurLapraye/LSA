@@ -6,6 +6,9 @@ import openpyxl as xl
 from gensim import corpora, models, similarities
 from pprint import pprint
 
+import logging
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
 import re
 
 wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
@@ -26,12 +29,12 @@ wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-stoplist=set(["","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son"])
+stoplist=set(["je","","ce","cet","cette","n","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son","plus","qu","l","il","y"])
 print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
 
 corpus=dict()
 
-tok=re.compile(u"[ ,;:']+")
+tok=re.compile(u"[ ,;:.'^?!/)(-]+")
 
 
 for row in wb['A1']:
@@ -68,7 +71,12 @@ trigram=models.Phrases(btexts)
 
 #raw_input()
 
-texts = map(lambda x : trigram[x],btexts)
+ttexts = map(lambda x : trigram[x],btexts)
+
+qgrams=models.Phrases(ttexts)
+
+texts=map(lambda x : qgrams[x],ttexts)
+
 
 if True:
 
@@ -80,9 +88,9 @@ if True:
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
 
-	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10)
+	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=100 )
 	corpus_lsi = lsi[corpus_tfidf]
-	pprint(lsi.show_topics(10))
+	pprint(lsi.show_topics(50))
 
 	#for doc in corpus_lsi:
 	#	print doc
@@ -97,5 +105,23 @@ if True:
 	#text.pack()
 	#root.mainloop()
 	
-	for i,toto in enumerate(corpus):
-		print corpus[identifiant[i]],toto
+	# for i,toto in enumerate(bow):
+		# print corpus[identifiant[i]].encode("utf-8"),toto,[ dictionary[x] for x,y in toto]
+	
+	#for x in sorted(dictionary,key= lambda x : len(dictionary[x]), reverse=False) :
+	#	print x, dictionary[x].encode("utf-8")
+	
+	# t=dict()
+	
+	# for i in identifiant:
+		# for topic,confid in sorted(lsi[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
+			# t[topic]=t.get(topic,[]) + [(corpus[identifiant[i]].encode("utf-8"),confid)]
+	
+	# for topic in t:
+		# for pair in t[topic]:
+			# print topic,pair
+			
+		# raw_input()
+
+
+
