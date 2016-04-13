@@ -11,7 +11,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 import re
 
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
+wb = xl.load_workbook("../QO14 - Copie.xlsx", guess_types=True)
 
 
 #root = t.Tk()
@@ -29,18 +29,18 @@ wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-stoplist=set(["je","","ce","cet","cette","n","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son","plus","qu","l","il","y"])
+stoplist=set(["je","","ce","cet","cette","n","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son","plus","qu","l","il","j","y"])
 print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
 
 corpus=dict()
 
-tok=re.compile(u"[ ,;:.'^?!/)(-]+")
+tok=re.compile(u"[ ,;:.'^?!/)(-]+",flags=re.UNICODE)
 
 
 for row in wb['A1']:
 	#text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	if row[2].value:
-		corpus[row[1].value]=unicode(row[2].value)
+		corpus[row[1].value]=unicode(row[3].value)
 	
 # texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
@@ -88,9 +88,9 @@ if True:
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
 
-	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=100 )
+	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
 	corpus_lsi = lsi[corpus_tfidf]
-	pprint(lsi.show_topics(50))
+	pprint(lsi.show_topics(10))
 
 	#for doc in corpus_lsi:
 	#	print doc
