@@ -24,7 +24,11 @@ wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-stoplist=["de","la","le","les","un","des","du","à"]
+stoplist=set(["de","la","le","les","un","des","du","à","cela","ça","est","alors","au","aussi","autre","avant","avec","avoir","bon","car","ce","cela","ces","ceux","chaque","ci","comme",
+"comment","dans","des","du","dedans","dehors","depuis","donc","dos","début","elle","elles","en","encore","essai","est","et","eu","fait","faites","fois","font","hors","ici","il","ils",
+"je","la","le","les","leur","là","ma","maintenant","mais","mes","mine","moins","mon","mot","même","ni","nommés","notre","nous","ou","où","par","parce","pas","peut",
+"peu","plupart","pour","pourquoi","quand","que","quel","quelle","quelles","quels","qui","sa","sans","ses","seulement","si","sien","son","sont","soyez","sur","ta","tandis",
+"tellement","tels","tes","ton","tous","tout","trop","très","tu","vont","votre","vous","vu","ça","étaient","état","étions","été","être"])
 
 corpus=dict()
 
@@ -33,31 +37,41 @@ corpus=dict()
 for row in wb['A1']:
 	#text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	if row[2].value:
-		corpus[row[1].value]=row[2].value
+		corpus[row[1].value]=unicode(row[2].value)
 	
-texts=[ [word for word in unicode(corpus[x]).lower().split() if word not in stoplist] for x in corpus ]	
+texts=[ [word for word in corpus[x].lower().split("' .;:\t") ] for x in corpus ]	
 
-dictionary = corpora.Dictionary(texts)
-#print(dictionary)
-corpus = [dictionary.doc2bow(text) for text in texts]
-#print(corpus)
+print texts 
 
-tfidf = models.TfidfModel(corpus)
-corpus_tfidf = tfidf[corpus]
+bigram = models.Phrases(texts)
 
-lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=30)
-corpus_lsi = lsi[corpus_tfidf]
-pprint(lsi.show_topics(10))
+raw_input()
 
-#for doc in corpus_lsi:
-#	print doc
+print bigram
 
-index = similarities.MatrixSimilarity(lsi[corpus])
+if False:
 
-print corpus_lsi[0]
+	dictionary = corpora.Dictionary(texts)
+	#print(dictionary)
+	corpus = [dictionary.doc2bow(text) for text in texts]
+	#print(corpus)
 
-#text.pack( side = t.LEFT, fill = t.BOTH, expand=1 )
-#scroll2.config( command = text.xview )
-#scrollbar.config( command = text.yview )
-#text.pack()
-#root.mainloop()
+	tfidf = models.TfidfModel(corpus)
+	corpus_tfidf = tfidf[corpus]
+
+	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=20)
+	corpus_lsi = lsi[corpus_tfidf]
+	pprint(lsi.show_topics(20))
+
+	#for doc in corpus_lsi:
+	#	print doc
+
+	index = similarities.MatrixSimilarity(lsi[corpus])
+
+	#print corpus_lsi[0]
+
+	#text.pack( side = t.LEFT, fill = t.BOTH, expand=1 )
+	#scroll2.config( command = text.xview )
+	#scrollbar.config( command = text.yview )
+	#text.pack()
+	#root.mainloop()
