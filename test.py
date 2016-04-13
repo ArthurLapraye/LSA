@@ -6,6 +6,8 @@ import openpyxl as xl
 from gensim import corpora, models, similarities
 from pprint import pprint
 
+import re
+
 wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 
 
@@ -24,14 +26,12 @@ wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-stoplist=set(["de","la","le","les","un","des","du","à","cela","ça","est","alors","au","aussi","autre","avant","avec","avoir","bon","car","ce","cela","ces","ceux","chaque","ci","comme",
-"comment","dans","des","du","dedans","dehors","depuis","donc","dos","début","elle","elles","en","encore","essai","est","et","eu","fait","faites","fois","font","hors","ici","il","ils",
-"je","la","le","les","leur","là","ma","maintenant","mais","mes","mine","moins","mon","mot","même","ni","nommés","notre","nous","ou","où","par","parce","pas","peut",
-"peu","plupart","pour","pourquoi","quand","que","quel","quelle","quelles","quels","qui","sa","sans","ses","seulement","si","sien","son","sont","soyez","sur","ta","tandis",
-"tellement","tels","tes","ton","tous","tout","trop","très","tu","vont","votre","vous","vu","ça","étaient","état","étions","été","être"])
+stoplist=set(["","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son"])
+print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
 
 corpus=dict()
 
+tok=re.compile(u"[ ,;:']+")
 
 
 for row in wb['A1']:
@@ -39,34 +39,55 @@ for row in wb['A1']:
 	if row[2].value:
 		corpus[row[1].value]=unicode(row[2].value)
 	
-texts=[ [word for word in corpus[x].lower().split("' .;:\t") ] for x in corpus ]	
+# texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
-print texts 
+identifiant=dict()
+
+texts=list()
+
+i=0
+
+for x in corpus:
+	identifiant[i]=x
+	elem=[]
+	for word in tok.split(corpus[x].lower()):
+		#print word.encode("utf-8")
+		if word not in stoplist:
+			elem.append(word)
+	
+	texts.append(elem)
+	i += 1
+
+#print texts 
 
 bigram = models.Phrases(texts)
 
-raw_input()
+btexts=map(lambda x : bigram[x],texts)
 
-print bigram
+trigram=models.Phrases(btexts)
 
-if False:
+#raw_input()
+
+texts = map(lambda x : trigram[x],btexts)
+
+if True:
 
 	dictionary = corpora.Dictionary(texts)
 	#print(dictionary)
-	corpus = [dictionary.doc2bow(text) for text in texts]
+	bow = [dictionary.doc2bow(text) for text in texts]
 	#print(corpus)
 
-	tfidf = models.TfidfModel(corpus)
-	corpus_tfidf = tfidf[corpus]
+	tfidf = models.TfidfModel(bow)
+	corpus_tfidf = tfidf[bow]
 
-	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=20)
+	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10)
 	corpus_lsi = lsi[corpus_tfidf]
-	pprint(lsi.show_topics(20))
+	pprint(lsi.show_topics(10))
 
 	#for doc in corpus_lsi:
 	#	print doc
 
-	index = similarities.MatrixSimilarity(lsi[corpus])
+	index = similarities.MatrixSimilarity(lsi[bow])
 
 	#print corpus_lsi[0]
 
@@ -75,3 +96,6 @@ if False:
 	#scrollbar.config( command = text.yview )
 	#text.pack()
 	#root.mainloop()
+	
+	for i,toto in enumerate(corpus):
+		print corpus[identifiant[i]],toto
