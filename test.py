@@ -3,16 +3,25 @@
 
 import openpyxl as xl
 # import Tkinter as t
-from gensim import corpora, models, similarities
+from gensim import corpora, models, similarities,matutils
 from pprint import pprint
+from collections import defaultdict
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
 
 import logging
+
+import unidecode
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 import re
 
-wb = xl.load_workbook("../QO14 - Copie.xlsx", guess_types=True)
+wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 
+
+np.random.seed(42)
 
 #root = t.Tk()
 #text = t.Text(root)
@@ -29,8 +38,9 @@ wb = xl.load_workbook("../QO14 - Copie.xlsx", guess_types=True)
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-stoplist=set(["je","","ce","cet","cette","n","et","de","du","le","la","les","un","une","d'","des","que","c'est","est","faire","pour","cela","ça","ca","a","à","en","ont","sa","son","plus","qu","l","il","j","y"])
-print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
+stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
+u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment"])
+#print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
 
 corpus=dict()
 
@@ -40,7 +50,7 @@ tok=re.compile(u"[ ,;:.'^?!/)(-]+",flags=re.UNICODE)
 for row in wb['A1']:
 	#text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	if row[2].value:
-		corpus[row[1].value]=unicode(row[3].value)
+		corpus[row[1].value]=unicode(row[2].value)
 	
 # texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
@@ -50,54 +60,70 @@ texts=list()
 
 i=0
 
+
 for x in corpus:
 	identifiant[i]=x
 	elem=[]
+	# prev="DEB"
 	for word in tok.split(corpus[x].lower()):
 		#print word.encode("utf-8")
 		if word not in stoplist:
 			elem.append(word)
+			# prev=word
+		
+	# elem.append(word)	
 	
 	texts.append(elem)
 	i += 1
 
 #print texts 
 
-bigram = models.Phrases(texts)
+def collocs(texts):
+	prev=texts
+	bigram = models.Phrases(texts)
+	texts=map(lambda x : bigram[x],texts)
+	
+	# if not texts:
+		# raise NoTextError
 
-btexts=map(lambda x : bigram[x],texts)
+	if prev == texts:
+		return texts
+	else:
+		return collocs(texts)
 
-trigram=models.Phrases(btexts)
+texts=collocs(texts)
 
-#raw_input()
-
-ttexts = map(lambda x : trigram[x],btexts)
-
-qgrams=models.Phrases(ttexts)
-
-texts=map(lambda x : qgrams[x],ttexts)
-
+# print texts
 
 if True:
-
 	dictionary = corpora.Dictionary(texts)
-	#print(dictionary)
 	bow = [dictionary.doc2bow(text) for text in texts]
-	#print(corpus)
 
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
-
-	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
-	corpus_lsi = lsi[corpus_tfidf]
-	pprint(lsi.show_topics(10))
+	
+	# print corpus_tfidf
+	
+	# zek=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=5) #update_every=5, chunksize=200, passes=5)
+	# pprint(zek.show_topics(5))
+	# groups=defaultdict(list)
+	
+	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
+	# corpus_lsi = lsi[corpus_tfidf]
+	# pprint(lsi.show_topics(10))
 
 	#for doc in corpus_lsi:
 	#	print doc
 
-	index = similarities.MatrixSimilarity(lsi[bow])
+	# print "toto"
+	# index = similarities.MatrixSimilarity(lsi[bow])
+	
+	# for elt in enumerate(index):
+		# print corpus[identifiant[i]],elt
+	
+	
 
-	#print corpus_lsi[0]
+	#print corpus_lsi
 
 	#text.pack( side = t.LEFT, fill = t.BOTH, expand=1 )
 	#scroll2.config( command = text.xview )
@@ -123,5 +149,51 @@ if True:
 			
 		# raw_input()
 
+	# for similarities in index[:3]:
+		# print similarities
+
+#dictionary = corpora.Dictionary(line.lower().split() for line in open('corpus.txt','rb'))
+	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
+	#dictionary.filter_tokens(once_ids)
+	#dictionary.filter_extremes(no_above=5,keep_n=100000)
+	#dictionary.compactify()
+	
+	# From http://blog.cigrainger.com/2014/07/lda-number.html
+
+	# class MyCorpus(object):
+		# def __iter__(self):
+			# for line in open('corpus.txt','r'):
+				# yield dictionary.doc2bow(line.lower().split())
+
+	# my_corpus = MyCorpus()
+
+	# l = np.array([sum(cnt for _, cnt in doc) for doc in bow])
+	
+	# def sym_kl(p,q):
+		# return np.sum([stats.entropy(p,q),stats.entropy(q,p)])
+ 
+	# def arun(corpus,dictionary,min_topics=1,max_topics=10,step=1):
+		# kl = []
+		# for i in range(min_topics,max_topics,step):
+			# lda = models.ldamodel.LdaModel(corpus=corpus,id2word=dictionary,num_topics=i)
+			# m1 = lda.expElogbeta
+			# U,cm1,V = np.linalg.svd(m1)
+			Document-topic matrix
+			# lda_topics = lda[bow]
+			# m2 = matutils.corpus2dense(lda_topics, lda.num_topics).transpose()
+			# cm2 = l.dot(m2)
+			# cm2 = cm2 + 0.0001
+			# cm2norm = np.linalg.norm(l)
+			# cm2 = cm2/cm2norm
+			# kl.append(sym_kl(cm1,cm2))
+		# return kl
+		
+	# kl = arun(bow,dictionary,max_topics=100)
+
+	Plot kl divergence against number of topics
+	# plt.plot(kl)
+	# plt.ylabel('Symmetric KL Divergence')
+	# plt.xlabel('Number of Topics')
+	# plt.savefig('kldiv.png', bbox_inches='tight')
 
 
