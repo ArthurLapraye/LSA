@@ -178,7 +178,7 @@ if True:
 			# lda = models.ldamodel.LdaModel(corpus=corpus,id2word=dictionary,num_topics=i)
 			# m1 = lda.expElogbeta
 			# U,cm1,V = np.linalg.svd(m1)
-			Document-topic matrix
+			# Document-topic matrix
 			# lda_topics = lda[bow]
 			# m2 = matutils.corpus2dense(lda_topics, lda.num_topics).transpose()
 			# cm2 = l.dot(m2)
@@ -190,7 +190,7 @@ if True:
 		
 	# kl = arun(bow,dictionary,max_topics=100)
 
-	Plot kl divergence against number of topics
+	# Plot kl divergence against number of topics
 	# plt.plot(kl)
 	# plt.ylabel('Symmetric KL Divergence')
 	# plt.xlabel('Number of Topics')
