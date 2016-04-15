@@ -102,11 +102,50 @@ if True:
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
 	
+	# column_labels = range(0,len(dictionary))
+	# row_labels = dictionary.keys()
+	# data = corpus_tfidf
+	
+	# for elem in enumerate(corpus_tfidf):
+		# row_labels.append(i)
+		# elem
+	
+	
+	
+	# print data
+	# fig, ax = plt.subplots()
+	# heatmap = ax.pcolor(data, cmap=plt.cm.Blues)
+
+	# put the major ticks at the middle of each cell
+	# ax.set_xticks(np.arange(data.shape[0])+0.5, minor=False)
+	# ax.set_yticks(np.arange(data.shape[1])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	# ax.invert_yaxis()
+	# ax.xaxis.tick_top()
+
+	# ax.set_xticklabels(row_labels, minor=False)
+	# ax.set_yticklabels(column_labels, minor=False)
+	# plt.show()
+	
 	# print corpus_tfidf
 	
-	# zek=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=5) #update_every=5, chunksize=200, passes=5)
-	# pprint(zek.show_topics(5))
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=100) #update_every=5, chunksize=200, passes=5)
+	# pprint(lda.show_topics(5))
 	# groups=defaultdict(list)
+	
+	data = lda[bow]
+
+
+	sims = index[data]
+	sims = sorted(enumerate(sims), key=lambda item: -item[1])
+	print sims
+		
+		
+	# data = np.transpose(matutils.corpus2dense(data, num_terms=100 ))
+	
+	# plt.matshow(data)
+	# plt.show()
 	
 	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
 	# corpus_lsi = lsi[corpus_tfidf]
@@ -153,7 +192,7 @@ if True:
 		# print similarities
 
 #dictionary = corpora.Dictionary(line.lower().split() for line in open('corpus.txt','rb'))
-	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
+	# once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
 	#dictionary.filter_tokens(once_ids)
 	#dictionary.filter_extremes(no_above=5,keep_n=100000)
 	#dictionary.compactify()
