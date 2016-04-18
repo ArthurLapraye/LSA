@@ -9,19 +9,14 @@ from collections import defaultdict
 import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-
+import sys
 import logging
-
+from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
 import unidecode
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 import re
-
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-
-
-np.random.seed(42)
 
 #root = t.Tk()
 #text = t.Text(root)
@@ -47,19 +42,38 @@ corpus=dict()
 tok=re.compile(u"[ ,;:.'^?!/)(-]+",flags=re.UNICODE)
 
 
+wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
+np.random.seed(42)
+
+
+
 for row in wb['A1']:
-	#text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
+	# text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	if row[2].value:
 		corpus[row[1].value]=unicode(row[2].value)
 	
-# texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
+texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
+# import csv
+
+# with open("../241013efs_all.csv") as openfile:
+	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
+	# t=0
+	# for x in z:
+		# if x[-54]:
+			# print x[-54]
+			# t += 1
+	
+	
+	# print t
+	
 identifiant=dict()
 
 texts=list()
 
 i=0
 
+# sys.exit(0)
 
 for x in corpus:
 	identifiant[i]=x
@@ -102,13 +116,39 @@ if True:
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
 	
+	# kmodel=km(n_clusters=10,n_init=100)
+	kmodel = SC(n_clusters=10,n_neighbors=20)
+	print len(dictionary)
+	densetf = matutils.corpus2dense(corpus_tfidf,num_terms=len(dictionary))
+	kmodel.fit(densetf)
+	
+	clusters = kmodel.labels_.tolist()
+
+	for i,elem in enumerate(clusters):
+		print elem,unicode(corpus[identifiant[i]]).encode("utf-8")
+	
+	# raw_input()
+	
+	# for i,elem in enumerate(kmodel.predict(densetf)):
+		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
+	
+	
+	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
+	# corpus_lsi = lsi[corpus_tfidf]
+	
+	# kmodel=km(n_clusters=5)
+	# print len(dictionary)
+	# kmodel.fit(corpus_lsi)
+	
+	# for i,elem in enumerate(kmodel.predict(corpus_lsi)):
+		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
+	
+	
 	# column_labels = range(0,len(dictionary))
 	# row_labels = dictionary.keys()
 	# data = corpus_tfidf
 	
-	# for elem in enumerate(corpus_tfidf):
-		# row_labels.append(i)
-		# elem
+	
 	
 	
 	
@@ -130,16 +170,16 @@ if True:
 	
 	# print corpus_tfidf
 	
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=100) #update_every=5, chunksize=200, passes=5)
+	# lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=100) #update_every=5, chunksize=200, passes=5)
 	# pprint(lda.show_topics(5))
 	# groups=defaultdict(list)
 	
-	data = lda[bow]
+	# data = lda[bow]
 
 
-	sims = index[data]
-	sims = sorted(enumerate(sims), key=lambda item: -item[1])
-	print sims
+	# sims = index[data]
+	# sims = sorted(enumerate(sims), key=lambda item: -item[1])
+	# print sims
 		
 		
 	# data = np.transpose(matutils.corpus2dense(data, num_terms=100 ))
@@ -147,8 +187,7 @@ if True:
 	# plt.matshow(data)
 	# plt.show()
 	
-	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
-	# corpus_lsi = lsi[corpus_tfidf]
+	
 	# pprint(lsi.show_topics(10))
 
 	#for doc in corpus_lsi:
