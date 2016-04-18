@@ -14,6 +14,13 @@ import logging
 from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
 import unidecode
 
+import os  # for os.path.basename
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+from sklearn.manifold import MDS
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 import re
@@ -133,8 +140,8 @@ if True:
 		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
 	
 	
-	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
-	# corpus_lsi = lsi[corpus_tfidf]
+	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
+	corpus_lsi = lsi[corpus_tfidf]
 	
 	# kmodel=km(n_clusters=5)
 	# print len(dictionary)
@@ -148,8 +155,19 @@ if True:
 	# row_labels = dictionary.keys()
 	# data = corpus_tfidf
 	
-	
-	
+	#From 
+
+	MDS()
+
+	# convert two components as we're plotting points in a two-dimensional plane
+	# "precomputed" because we provide a distance matrix
+	# we will also specify `random_state` so the plot is reproducible.
+	mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+
+	pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
+
+	xs, ys = pos[:, 0], pos[:, 1]
+		
 	
 	
 	# print data
