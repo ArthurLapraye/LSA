@@ -134,7 +134,28 @@ if True:
 	tfidf = models.TfidfModel(bow)
 	corpus_tfidf = tfidf[bow]
 	
-	# kmodel=km(n_clusters=10,n_init=100)
+
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=5000, passes=50)
+	pprint(lda.show_topics(30))
+	groups=defaultdict(list)
+	
+	data = lda[bow]
+
+	
+	t=dict()
+	
+	for i in corpus:
+		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
+			t[topic]=t.get(topic,[]) + [(corpus[i],confid)]
+	
+	for topic in t:
+		lda.print_topic(topic)
+		for pair in t[topic]:
+			print topic,pair
+			
+		raw_input()
+
+			# kmodel=km(n_clusters=10,n_init=100)
 	# kmodel = SC(n_clusters=10,n_neighbors=20)
 	# print len(dictionary)
 	# densetf = matutils.corpus2dense(corpus_tfidf,num_terms=len(dictionary))
@@ -201,26 +222,6 @@ if True:
 	
 	# print corpus_tfidf
 	
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=0, passes=50)
-	pprint(lda.show_topics(30))
-	groups=defaultdict(list)
-	
-	data = lda[bow]
-
-	
-	t=dict()
-	
-	for i in corpus:
-		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
-			t[topic]=t.get(topic,[]) + [(corpus[i],confid)]
-	
-	for topic in t:
-		lda.print_topic(topic)
-		for pair in t[topic]:
-			print topic,pair
-			
-		raw_input()
-
 
 	# sims = index[data]
 	# sims = sorted(enumerate(sims), key=lambda item: -item[1])
