@@ -11,6 +11,8 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import sys
 import logging
+import csv
+
 from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
 import unidecode
 
@@ -54,49 +56,53 @@ np.random.seed(42)
 
 
 
-for row in wb['A1']:
+# for row in wb['A1']:
 	# text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
-	if row[2].value:
-		corpus[row[1].value]=unicode(row[2].value)
+	# if row[2].value:
+		# corpus[row[1].value]=unicode(row[2].value)
 	
-texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
+# texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
-# import csv
 
-# with open("../241013efs_all.csv") as openfile:
-	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	# t=0
-	# for x in z:
-		# if x[-54]:
-			# print x[-54]
-			# t += 1
+with open("../241013efs_all.csv") as openfile:
+	z=csv.reader(openfile,delimiter=";", quotechar="\"")
+	t=0
+	for i,x in enumerate(z):
+		if x[-54]:
+			#print i,x[58]
+			corpus[i]=x
+			t += 1
+			# sys.exit(0)
 	
 	
-	# print t
+	print t
+
 	
-identifiant=dict()
-
-texts=list()
-
-i=0
-
-# sys.exit(0)
-
-for x in corpus:
-	identifiant[i]=x
-	elem=[]
-	# prev="DEB"
-	for word in tok.split(corpus[x].lower()):
-		#print word.encode("utf-8")
-		if word not in stoplist:
-			elem.append(word)
-			# prev=word
+def tokenize(corpus):
 		
-	# elem.append(word)	
-	
-	texts.append(elem)
-	i += 1
+	i=0
+	texts=list()
+	identifiant=dict()
 
+	for x in corpus:
+		identifiant[i]=x
+		elem=[]
+		prev="DEB"
+		for word in tok.split(corpus[x].lower()):
+			#print word.encode("utf-8")
+			if word not in stoplist:
+				elem.append(word)
+				elem.append(prev+"_-_"+word)
+				prev=word
+			
+		elem.append(prev+"_-_END")	
+		
+		texts.append(elem)
+		i += 1
+	
+	return texts
+
+	
 #print texts 
 
 def collocs(texts):
@@ -112,11 +118,11 @@ def collocs(texts):
 	else:
 		return collocs(texts)
 
-texts=collocs(texts)
+#texts=collocs(texts)
 
-# print texts
+print texts
 
-if True:
+if False:
 	dictionary = corpora.Dictionary(texts)
 	bow = [dictionary.doc2bow(text) for text in texts]
 
@@ -124,15 +130,15 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 	# kmodel=km(n_clusters=10,n_init=100)
-	kmodel = SC(n_clusters=10,n_neighbors=20)
-	print len(dictionary)
-	densetf = matutils.corpus2dense(corpus_tfidf,num_terms=len(dictionary))
-	kmodel.fit(densetf)
+	# kmodel = SC(n_clusters=10,n_neighbors=20)
+	# print len(dictionary)
+	# densetf = matutils.corpus2dense(corpus_tfidf,num_terms=len(dictionary))
+	# kmodel.fit(densetf)
 	
-	clusters = kmodel.labels_.tolist()
+	# clusters = kmodel.labels_.tolist()
 
-	for i,elem in enumerate(clusters):
-		print elem,unicode(corpus[identifiant[i]]).encode("utf-8")
+	#for i,elem in enumerate(clusters):
+		# print elem,unicode(corpus[identifiant[i]]).encode("utf-8")
 	
 	# raw_input()
 	
@@ -157,16 +163,18 @@ if True:
 	
 	#From 
 
-	MDS()
-
+	
 	# convert two components as we're plotting points in a two-dimensional plane
 	# "precomputed" because we provide a distance matrix
 	# we will also specify `random_state` so the plot is reproducible.
-	mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+	
+	# MDS()
 
-	pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
+	# mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
 
-	xs, ys = pos[:, 0], pos[:, 1]
+	# pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
+
+	# xs, ys = pos[:, 0], pos[:, 1]
 		
 	
 	
@@ -188,11 +196,25 @@ if True:
 	
 	# print corpus_tfidf
 	
-	# lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=100) #update_every=5, chunksize=200, passes=5)
-	# pprint(lda.show_topics(5))
-	# groups=defaultdict(list)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=500,update_every=5, chunksize=1000, passes=100)
+	pprint(lda.show_topics(50))
+	groups=defaultdict(list)
 	
-	# data = lda[bow]
+	data = lda[bow]
+
+	
+	t=dict()
+	
+	for i in identifiant:
+		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
+			t[topic]=t.get(topic,[]) + [(corpus[identifiant[i]].encode("utf-8"),confid)]
+	
+	for topic in t:
+		lda.print_topic(topic)
+		for pair in t[topic]:
+			print topic,pair
+			
+		raw_input()
 
 
 	# sims = index[data]
@@ -232,19 +254,6 @@ if True:
 	
 	#for x in sorted(dictionary,key= lambda x : len(dictionary[x]), reverse=False) :
 	#	print x, dictionary[x].encode("utf-8")
-	
-	# t=dict()
-	
-	# for i in identifiant:
-		# for topic,confid in sorted(lsi[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
-			# t[topic]=t.get(topic,[]) + [(corpus[identifiant[i]].encode("utf-8"),confid)]
-	
-	# for topic in t:
-		# for pair in t[topic]:
-			# print topic,pair
-			
-		# raw_input()
-
 	# for similarities in index[:3]:
 		# print similarities
 
