@@ -124,7 +124,7 @@ def collocs(texts):
 
 texts= tokenize(corpus) #collocs(tokenize(corpus))
 
-print texts
+# print texts
 # print len([x for x in texts if len(x) > 0])
 
 if True:
@@ -151,8 +151,8 @@ if True:
 		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
 	
 	
-	lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
-	corpus_lsi = lsi[corpus_tfidf]
+	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
+	# corpus_lsi = lsi[corpus_tfidf]
 	
 	# kmodel=km(n_clusters=5)
 	# print len(dictionary)
@@ -201,7 +201,7 @@ if True:
 	
 	# print corpus_tfidf
 	
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=30,update_every=0, chunksize=10000, passes=20)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=10000, passes=50)
 	pprint(lda.show_topics(30))
 	groups=defaultdict(list)
 	
@@ -212,7 +212,7 @@ if True:
 	
 	for i in corpus:
 		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
-			t[topic]=t.get(topic,[]) + [(corpus[i].encode("utf-8"),confid)]
+			t[topic]=t.get(topic,[]) + [(corpus[i],confid)]
 	
 	for topic in t:
 		lda.print_topic(topic)
