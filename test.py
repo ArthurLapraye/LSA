@@ -43,12 +43,12 @@ import re
 #
 
 stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
-u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment"])
+u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
 #print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
 
 corpus=dict()
 
-tok=re.compile(u"[ ,;:.'^?!/)(-]+",flags=re.UNICODE)
+tok=re.compile(u"[ ,;:.'^?!/)(-><]+",flags=re.UNICODE)
 
 
 wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
@@ -68,17 +68,17 @@ with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
 	t=0
 	for i,x in enumerate(z):
-		if x[-54]:
+		# if x[-54]:
 			#print i,x[58]
-			corpus[i]=x
-			t += 1
+		corpus[i]=x[58]
+		t += 1
 			# sys.exit(0)
 	
 	
 	print t
 
 	
-def tokenize(corpus):
+def tokenize(corpus,bigrams=False):
 		
 	i=0
 	texts=list()
@@ -92,10 +92,13 @@ def tokenize(corpus):
 			#print word.encode("utf-8")
 			if word not in stoplist:
 				elem.append(word)
-				elem.append(prev+"_-_"+word)
-				prev=word
-			
-		elem.append(prev+"_-_END")	
+				
+				if bigrams:
+					elem.append(prev+"_-_"+word)
+					prev=word
+		
+		if bigrams:
+			elem.append(prev+"_-_END")	
 		
 		texts.append(elem)
 		i += 1
@@ -103,8 +106,6 @@ def tokenize(corpus):
 	return texts
 
 	
-#print texts 
-
 def collocs(texts):
 	prev=texts
 	bigram = models.Phrases(texts)
@@ -120,9 +121,13 @@ def collocs(texts):
 
 #texts=collocs(texts)
 
-print texts
 
-if False:
+texts=collocs(tokenize(corpus))
+
+print texts
+# print len([x for x in texts if len(x) > 0])
+
+if True:
 	dictionary = corpora.Dictionary(texts)
 	bow = [dictionary.doc2bow(text) for text in texts]
 
@@ -196,8 +201,8 @@ if False:
 	
 	# print corpus_tfidf
 	
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=500,update_every=5, chunksize=1000, passes=100)
-	pprint(lda.show_topics(50))
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=30,update_every=0, chunksize=10000, passes=20)
+	pprint(lda.show_topics(30))
 	groups=defaultdict(list)
 	
 	data = lda[bow]
@@ -205,9 +210,9 @@ if False:
 	
 	t=dict()
 	
-	for i in identifiant:
+	for i in corpus:
 		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
-			t[topic]=t.get(topic,[]) + [(corpus[identifiant[i]].encode("utf-8"),confid)]
+			t[topic]=t.get(topic,[]) + [(corpus[i].encode("utf-8"),confid)]
 	
 	for topic in t:
 		lda.print_topic(topic)
