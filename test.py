@@ -201,7 +201,7 @@ if True:
 	
 	# print corpus_tfidf
 	
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=10000, passes=50)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=0, passes=50)
 	pprint(lda.show_topics(30))
 	groups=defaultdict(list)
 	
