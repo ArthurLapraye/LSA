@@ -122,7 +122,7 @@ def collocs(texts):
 #texts=collocs(texts)
 
 
-texts=collocs(tokenize(corpus))
+texts= tokenize(corpus) #collocs(tokenize(corpus))
 
 print texts
 # print len([x for x in texts if len(x) > 0])
