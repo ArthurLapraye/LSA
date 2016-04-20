@@ -152,15 +152,15 @@ if True:
 	t=dict()
 	
 	for i in corpus:
-		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True)[:3]:
-			t[topic]=t.get(topic,[]) + [(corpus[i],confid)]
+		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True):
+			t[topic]=t.get(topic,[]) + [(i,confid)]
 	
 	for topic in t:
 		print topic
 		lda.print_topic(topic)
-		for pair in t[topic]:
-			if pair[1] > 0.5:
-				print topic,unicode(pair)
+		for i,confid in t[topic]:
+			if confid > 0.5:
+				print topic,i,corpus[i],confid,bow[i]
 			
 		raw_input("\n>")
 
@@ -316,4 +316,6 @@ if True:
 	# plt.xlabel('Number of Topics')
 	# plt.savefig('kldiv.png', bbox_inches='tight')
 
+"""Idées : correcteur d'orthographe online basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur. 
 
+"""
