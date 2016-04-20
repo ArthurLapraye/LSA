@@ -45,11 +45,12 @@ import re
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 COLLS=eval(sys.argv[3])
+SEUILPROBA =0.5
 
 stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
 u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print NUMTOPICS,NUMPASS,COLLS
+print "Topics",NUMTOPICS,"Passes",NUMPASS,"collocations ?",COLLS,"Seuil :",SEUILPROBA
 print
 
 # stoplist=[]
@@ -163,7 +164,7 @@ if True:
 	for topic in t:
 		print "\n------------------------------",topic,"-----------------------------------"
 		lda.print_topic(topic)
-		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > 0.5), key=lambda x : x[1], reverse=True) :	
+		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) :	
 			print topic,i,confid,corpus[i]
 			
 		# raw_input("\n>")
@@ -321,7 +322,13 @@ if True:
 	# plt.savefig('kldiv.png', bbox_inches='tight')
 
 """Idées : 
-Correcteur d'orthographe online basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur. 
+Correcteur d'orthographe online (?) basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur.
+=> Peut-etre rajouter les mots proches présents dans le corpus (e,g sauvé sera rajouter à ce qui contient sauver etc... sans doute une mauvaise idée mais à tester)
+ 
 Changer le système de seuil si c'est des probas pour permettre l'attribution automatique de plusieurs codes
+
+Système de re-classification : dégager les sujets dans un 1er temps puis les utiliser pour reclasser le reste. 
+
+Créer un système pour permettre d'identifier les synonymes du corpus
 
 """
