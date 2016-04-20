@@ -132,7 +132,7 @@ def collocs(texts):
 if COLLS:
 	texts = collocs(tokenize(corpus))
 else:
-	texts= tokenize(corpus) #
+	texts= tokenize(corpus,bigrams=False) #
 
 # print texts
 # print len([x for x in texts if len(x) > 0])
@@ -153,16 +153,18 @@ if True:
 
 	
 	t=dict()
+	c=dict()
 	
 	for i in corpus:
 		for topic,confid in lda[bow[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
+			c[i] = t.get(i, []) + [(topic,confid)]
 	
 	for topic in t:
-		print "\n>",topic
+		print "\n------------------------------",topic,"-----------------------------------"
 		lda.print_topic(topic)
 		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > 0.5), key=lambda x : x[1], reverse=True) :	
-			print topic,i,corpus[i],confid
+			print topic,i,confid,corpus[i]
 			
 		# raw_input("\n>")
 
@@ -318,6 +320,8 @@ if True:
 	# plt.xlabel('Number of Topics')
 	# plt.savefig('kldiv.png', bbox_inches='tight')
 
-"""Idées : correcteur d'orthographe online basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur. 
+"""Idées : 
+Correcteur d'orthographe online basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur. 
+Changer le système de seuil si c'est des probas pour permettre l'attribution automatique de plusieurs codes
 
 """
