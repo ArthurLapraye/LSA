@@ -43,11 +43,13 @@ import re
 #
 
 NUMPASS=int(sys.argv[1])
-COLLS=bool(sys.argv[2])
+COLLS=eval(sys.argv[2])
 
 stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
 u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
 #print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
+
+# stoplist=[]
 
 corpus=dict()
 
