@@ -42,12 +42,15 @@ import re
 #https://radimrehurek.com/gensim/tut2.html
 #
 
-NUMPASS=int(sys.argv[1])
-COLLS=eval(sys.argv[2])
+NUMTOPICS=int(sys.argv[1])
+NUMPASS=int(sys.argv[2])
+COLLS=eval(sys.argv[3])
 
 stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
 u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
-#print "\""+ "\",\"".join(sorted(list(stoplist))) + "\""
+# print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
+print NUMTOPICS,NUMPASS,COLLS
+print
 
 # stoplist=[]
 
@@ -142,7 +145,7 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=300,update_every=0, chunksize=5000, passes=NUMPASS)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=5000, passes=NUMPASS)
 	pprint(lda.show_topics(30))
 	groups=defaultdict(list)
 	
@@ -152,17 +155,16 @@ if True:
 	t=dict()
 	
 	for i in corpus:
-		for topic,confid in sorted(lda[bow[i]],key=lambda x : x[1], reverse=True):
+		for topic,confid in lda[bow[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
 	
 	for topic in t:
-		print topic
+		print "\n>",topic
 		lda.print_topic(topic)
-		for i,confid in t[topic]:
-			if confid > 0.5:
-				print topic,i,corpus[i],confid,bow[i]
+		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > 0.5), key=lambda x : x[1], reverse=True) :	
+			print topic,i,corpus[i],confid
 			
-		raw_input("\n>")
+		# raw_input("\n>")
 
 			# kmodel=km(n_clusters=10,n_init=100)
 	# kmodel = SC(n_clusters=10,n_neighbors=20)
