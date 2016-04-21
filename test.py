@@ -47,17 +47,17 @@ NUMPASS=int(sys.argv[2])
 COLLS=eval(sys.argv[3])
 SEUILPROBA =0.5
 
-stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
-u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
+stoplist=set([u"d",u"c",u"l",u"ou",u"suis",u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
+u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec',u"fait",u"été"])
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print "Topics",NUMTOPICS,"Passes",NUMPASS,"collocations ?",COLLS,"Seuil :",SEUILPROBA
+print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Collocations :",COLLS,"Seuil :",SEUILPROBA
 print
 
 # stoplist=[]
 
 corpus=dict()
 
-tok=re.compile(u"[ ,;:.'^?!/)(-><]+",flags=re.UNICODE)
+tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 
 
 wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
@@ -99,7 +99,7 @@ def tokenize(corpus,bigrams=False):
 		prev="DEB"
 		for word in tok.split(corpus[x].lower()):
 			#print word.encode("utf-8")
-			if word not in stoplist:
+			if word not in stoplist and word != "à":
 				elem.append(word)
 				
 				if bigrams:
@@ -147,7 +147,7 @@ if True:
 	
 
 	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=5000, passes=NUMPASS)
-	pprint(lda.show_topics(30))
+	#lda.show_topics(30))
 	groups=defaultdict(list)
 	
 	data = lda[bow]
@@ -163,9 +163,11 @@ if True:
 	
 	for topic in t:
 		print "\n------------------------------",topic,"-----------------------------------"
-		lda.print_topic(topic)
-		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) :	
-			print topic,i,confid,corpus[i]
+		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
+		# print unicode(lda.print_topic(topic))
+		print "Code\tRang\tN°\tProba\tVerbatim"
+		for j,(i,confid) in enumerate(sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) ):	
+			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i]
 			
 		# raw_input("\n>")
 
@@ -331,4 +333,5 @@ Système de re-classification : dégager les sujets dans un 1er temps puis les u
 
 Créer un système pour permettre d'identifier les synonymes du corpus
 
+Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
