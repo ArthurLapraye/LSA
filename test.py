@@ -69,11 +69,13 @@ tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 corpus=dict()
 with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	for i,x in enumerate(z):
+	i=0
+	for x in z:
 		# if x[-54]:
 			#print i,x[58]
 		if x[58]:
 			corpus[i]=x[58]
+			i += 1
 		
 			# sys.exit(0)
 
@@ -101,11 +103,11 @@ def tokenize(corpus):
 	
 texts= tokenize(corpus) #
 
-print texts
+# print texts
 print len(texts)
 print len([x for x in texts if len(x) > 0])
 
-if False:
+if True:
 	dictionary = corpora.Dictionary(texts)
 	bow = [dictionary.doc2bow(text) for text in texts]
 
@@ -113,7 +115,7 @@ if False:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=5000, passes=NUMPASS)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS)
 	#lda.show_topics(30))
 	groups=defaultdict(list)
 	
