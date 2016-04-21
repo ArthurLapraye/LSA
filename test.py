@@ -1,5 +1,6 @@
 #!/usr/bin/python -i
 #-*- encoding: utf-8 -*-
+#copyright Arthur Lapraye -- 2016
 
 import openpyxl as xl
 # import Tkinter as t
