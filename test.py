@@ -1,31 +1,33 @@
 #!/usr/bin/python -i
 #-*- encoding: utf-8 -*-
+#Copyright Arthur Lapraye 2016
+#TODO : coller une licence compatible avec tout ça (à faire à la fin)
 
-import openpyxl as xl
+import openpyxl as xl #Licence MIT / Expat
 # import Tkinter as t
-from gensim import corpora, models, similarities,matutils
-from pprint import pprint
-from collections import defaultdict
-import numpy as np
-import scipy.stats as stats
-import matplotlib.pyplot as plt
+
+import numpy as np #Licence BSD
+import scipy.stats as stats #Licence BSD
+import matplotlib.pyplot as plt #Licence matplotlib basée sur la PSF http://matplotlib.org/users/license.html
+import matplotlib as mpl 
+from gensim import corpora, models, similarities,matutils #Licence LGPL (check version)
+from sklearn.manifold import MDS  #BSD license
+from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
+
+#Librairie standard
+#Licence PSF - (Python Software Foundation )
 import sys
 import logging
 import csv
-
-from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
+import re
 import unidecode
-
 import os  # for os.path.basename
+from pprint import pprint
+from collections import defaultdict #Idem
 
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 
-from sklearn.manifold import MDS
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-import re
 
 #root = t.Tk()
 #text = t.Text(root)
@@ -34,13 +36,7 @@ import re
 #scroll2 = t.Scrollbar(root,orient=t.HORIZONTAL)
 #scroll2.pack( side = t.BOTTOM, fill=t.X )
 
-
 #text = t.Listbox(root, yscrollcommand = scrollbar.set, xscrollcommand=scroll2.set )
-
-
-#Largely adapted from Gensim documentation
-#https://radimrehurek.com/gensim/tut2.html
-#
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
