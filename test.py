@@ -54,49 +54,41 @@ u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",
 print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
 print
 
-tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 
+corpus=dict()
+i=0
 
 # wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 # for row in wb['A1']:
-	# text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	# if row[2].value:
-		# corpus[row[1].value]=unicode(row[2].value)
-	
-# texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
+		# uuid=row[1].value
+		# corpus[i]=unicode(row[2].value)
+		# i += 1
 
 
-corpus=dict()
 with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	i=0
 	for x in z:
-		# if x[-54]:
-			#print i,x[58]
 		if x[58]:
 			corpus[i]=x[58]
 			i += 1
 		
-			# sys.exit(0)
+			sys.exit(0)
 
-
+			
 def tokenize(corpus):
 		
-	i=0
+	tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
 
 	for x in corpus:
-		identifiant[i]=x
 		elem=[]
-		prev="DEB"
 		for word in tok.split(corpus[x].lower()):
-			#print word.encode("utf-8")
-			if word not in stoplist and word != "à":
+			if word not in stoplist:
 				elem.append(word)
 		
 		texts.append(elem)
-		i += 1
 	
 	return texts
 
@@ -136,7 +128,7 @@ if True:
 		# print unicode(lda.print_topic(topic))
 		print "Code\tRang\tN°\tProba\tVerbatim"
 		for j,(i,confid) in enumerate(sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) ):	
-			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i]
+			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8")
 			
 		# raw_input("\n>")
 
@@ -304,3 +296,4 @@ Créer un système pour permettre d'identifier les synonymes du corpus
 
 Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
+#TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments
