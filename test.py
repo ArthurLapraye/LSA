@@ -69,16 +69,16 @@ tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 corpus=dict()
 with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	t=0
 	for i,x in enumerate(z):
 		# if x[-54]:
 			#print i,x[58]
-		corpus[i]=x[58]
-		t += 1
+		if x[58]:
+			corpus[i]=x[58]
+		
 			# sys.exit(0)
 
 
-def tokenize(corpus,bigrams=False):
+def tokenize(corpus):
 		
 	i=0
 	texts=list()
@@ -92,13 +92,6 @@ def tokenize(corpus,bigrams=False):
 			#print word.encode("utf-8")
 			if word not in stoplist and word != "à":
 				elem.append(word)
-				
-				if bigrams:
-					elem.append(prev+"_-_"+word)
-					prev=word
-		
-		if bigrams:
-			elem.append(prev+"_-_END")	
 		
 		texts.append(elem)
 		i += 1
@@ -106,12 +99,13 @@ def tokenize(corpus,bigrams=False):
 	return texts
 
 	
-texts= tokenize(corpus,bigrams=False) #
+texts= tokenize(corpus) #
 
-# print texts
-# print len([x for x in texts if len(x) > 0])
+print texts
+print len(texts)
+print len([x for x in texts if len(x) > 0])
 
-if True:
+if False:
 	dictionary = corpora.Dictionary(texts)
 	bow = [dictionary.doc2bow(text) for text in texts]
 
