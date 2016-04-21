@@ -1,32 +1,33 @@
 #!/usr/bin/python -i
 #-*- encoding: utf-8 -*-
-#copyright Arthur Lapraye -- 2016
+#Copyright Arthur Lapraye 2016
+#TODO : coller une licence compatible avec tout ça (à faire à la fin)
 
-import openpyxl as xl
+import openpyxl as xl #Licence MIT / Expat
 # import Tkinter as t
-from gensim import corpora, models, similarities,matutils
-from pprint import pprint
-from collections import defaultdict
-import numpy as np
-import scipy.stats as stats
-import matplotlib.pyplot as plt
+
+import numpy as np #Licence BSD
+import scipy.stats as stats #Licence BSD
+import matplotlib.pyplot as plt #Licence matplotlib basée sur la PSF http://matplotlib.org/users/license.html
+import matplotlib as mpl 
+from gensim import corpora, models, similarities,matutils #Licence LGPL (check version)
+from sklearn.manifold import MDS  #BSD license
+from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
+
+#Librairie standard
+#Licence PSF - (Python Software Foundation )
 import sys
 import logging
 import csv
-
-from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
+import re
 import unidecode
-
 import os  # for os.path.basename
+from pprint import pprint
+from collections import defaultdict #Idem
 
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 
-from sklearn.manifold import MDS
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-import re
 
 #root = t.Tk()
 #text = t.Text(root)
@@ -35,109 +36,68 @@ import re
 #scroll2 = t.Scrollbar(root,orient=t.HORIZONTAL)
 #scroll2.pack( side = t.BOTTOM, fill=t.X )
 
-
 #text = t.Listbox(root, yscrollcommand = scrollbar.set, xscrollcommand=scroll2.set )
 
 
-#Largely adapted from Gensim documentation
-#https://radimrehurek.com/gensim/tut2.html
-#
+#Variables globales
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-COLLS=eval(sys.argv[3])
 SEUILPROBA =0.5
 
-stoplist=set([u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
-u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec', 'tous'])
-# print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print "Topics",NUMTOPICS,"Passes",NUMPASS,"collocations ?",COLLS,"Seuil :",SEUILPROBA
-print
 
-# stoplist=[]
-
-corpus=dict()
-
-tok=re.compile(u"[ ,;:.'^?!/)(-><]+",flags=re.UNICODE)
-
-
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 np.random.seed(42)
 
+stoplist=set([u"d",u"c",u"l",u"ou",u"suis",u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
+u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec',u"fait",u"été"])
+# print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
+print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
+print
 
 
+corpus=dict()
+i=0
+
+# wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 # for row in wb['A1']:
-	# text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	# if row[2].value:
-		# corpus[row[1].value]=unicode(row[2].value)
-	
-# texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
+		# uuid=row[1].value
+		# corpus[i]=unicode(row[2].value)
+		# i += 1
 
 
 with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	t=0
-	for i,x in enumerate(z):
-		# if x[-54]:
-			#print i,x[58]
-		corpus[i]=x[58]
-		t += 1
-			# sys.exit(0)
-	
-	
-	print t
-
-	
-def tokenize(corpus,bigrams=False):
+	for x in z:
+		if x[58]:
+			corpus[i]=x[58]
+			i += 1
 		
-	i=0
+			sys.exit(0)
+
+			
+def tokenize(corpus):
+		
+	tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
 
 	for x in corpus:
-		identifiant[i]=x
 		elem=[]
-		prev="DEB"
 		for word in tok.split(corpus[x].lower()):
-			#print word.encode("utf-8")
 			if word not in stoplist:
 				elem.append(word)
-				
-				if bigrams:
-					elem.append(prev+"_-_"+word)
-					prev=word
-		
-		if bigrams:
-			elem.append(prev+"_-_END")	
 		
 		texts.append(elem)
-		i += 1
 	
 	return texts
 
 	
-def collocs(texts):
-	prev=texts
-	bigram = models.Phrases(texts)
-	texts=map(lambda x : bigram[x],texts)
-	
-	# if not texts:
-		# raise NoTextError
-
-	if prev == texts:
-		return texts
-	else:
-		return collocs(texts)
-
-#texts=collocs(texts)
-
-if COLLS:
-	texts = collocs(tokenize(corpus))
-else:
-	texts= tokenize(corpus,bigrams=False) #
+texts= tokenize(corpus) #
 
 # print texts
-# print len([x for x in texts if len(x) > 0])
+print len(texts)
+print len([x for x in texts if len(x) > 0])
 
 if True:
 	dictionary = corpora.Dictionary(texts)
@@ -147,8 +107,8 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=5000, passes=NUMPASS)
-	pprint(lda.show_topics(30))
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS)
+	#lda.show_topics(30))
 	groups=defaultdict(list)
 	
 	data = lda[bow]
@@ -164,9 +124,11 @@ if True:
 	
 	for topic in t:
 		print "\n------------------------------",topic,"-----------------------------------"
-		lda.print_topic(topic)
-		for i,confid in sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) :	
-			print topic,i,confid,corpus[i]
+		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
+		# print unicode(lda.print_topic(topic))
+		print "Code\tRang\tN°\tProba\tVerbatim"
+		for j,(i,confid) in enumerate(sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) ):	
+			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8")
 			
 		# raw_input("\n>")
 
@@ -332,4 +294,7 @@ Système de re-classification : dégager les sujets dans un 1er temps puis les u
 
 Créer un système pour permettre d'identifier les synonymes du corpus
 
+Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
+#TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments
+#TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ?
