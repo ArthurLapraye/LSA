@@ -38,9 +38,11 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 #text = t.Listbox(root, yscrollcommand = scrollbar.set, xscrollcommand=scroll2.set )
 
+
+#Variables globales
+
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-COLLS=eval(sys.argv[3])
 SEUILPROBA =0.5
 
 
@@ -49,7 +51,7 @@ np.random.seed(42)
 stoplist=set([u"d",u"c",u"l",u"ou",u"suis",u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
 u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec',u"fait",u"été"])
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Collocations :",COLLS,"Seuil :",SEUILPROBA
+print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
 print
 
 tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
@@ -104,25 +106,7 @@ def tokenize(corpus,bigrams=False):
 	return texts
 
 	
-def collocs(texts):
-	prev=texts
-	bigram = models.Phrases(texts)
-	texts=map(lambda x : bigram[x],texts)
-	
-	# if not texts:
-		# raise NoTextError
-
-	if prev == texts:
-		return texts
-	else:
-		return collocs(texts)
-
-#texts=collocs(texts)
-
-if COLLS:
-	texts = collocs(tokenize(corpus))
-else:
-	texts= tokenize(corpus,bigrams=False) #
+texts= tokenize(corpus,bigrams=False) #
 
 # print texts
 # print len([x for x in texts if len(x) > 0])
