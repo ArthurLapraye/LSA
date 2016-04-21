@@ -297,3 +297,4 @@ Créer un système pour permettre d'identifier les synonymes du corpus
 Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
 #TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments
+#TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ?
