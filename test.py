@@ -47,24 +47,19 @@ NUMPASS=int(sys.argv[2])
 COLLS=eval(sys.argv[3])
 SEUILPROBA =0.5
 
+
+np.random.seed(42)
+
 stoplist=set([u"d",u"c",u"l",u"ou",u"suis",u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
 u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec',u"fait",u"été"])
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
 print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Collocations :",COLLS,"Seuil :",SEUILPROBA
 print
 
-# stoplist=[]
-
-corpus=dict()
-
 tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 
 
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-np.random.seed(42)
-
-
-
+# wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
 # for row in wb['A1']:
 	# text.insert(t.END, u" | ".join([ unicode(cell.value)  for cell in row])+"\n")
 	# if row[2].value:
@@ -73,6 +68,7 @@ np.random.seed(42)
 # texts=[ [word for word in corpus[x].lower().split()  ] for x in corpus ]	
 
 
+corpus=dict()
 with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
 	t=0
@@ -82,11 +78,8 @@ with open("../241013efs_all.csv") as openfile:
 		corpus[i]=x[58]
 		t += 1
 			# sys.exit(0)
-	
-	
-	print t
 
-	
+
 def tokenize(corpus,bigrams=False):
 		
 	i=0
