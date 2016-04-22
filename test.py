@@ -114,24 +114,29 @@ if True:
 	
 	t=dict()
 	c=dict()
-	
+	reliquat=0
 	for i in corpus:
 		for topic,confid in lda[bow[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
-			c[i] = t.get(i, []) + [(topic,confid)]
+			c[i] = c.get(i, []) + [(topic,confid)]
 	
+	seen=set()
 	for topic in t:
 		print "\n------------------------------",topic,"-----------------------------------"
 		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
-		# print unicode(lda.print_topic(topic))
 		print "Code\tRang\tN°\tProba\tVerbatim"
 		stop=True
-		for j,(i,confid) in enumerate(sorted(t[topic],key=lambda x,y : y, reverse=True)):	
-			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8")
-			if confid < 0.5 and stop:
-				print "-"*50
-				stop = not stop
+		for j,(i,confid) in enumerate(sorted(t[topic],key=lambda (x,y) : y, reverse=True)):
 			
+			if confid > 0.1 and stop:
+				print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i] #,sorted(c[i],key=lambda (x,y) : y, reverse=True)
+				seen.add(i)
+			elif i not in seen:
+				reliquat += 1
+				seen.add(i)
+	
+	print "Reliquat",reliquat
+	
 		# raw_input("\n>")
 
 			# kmodel=km(n_clusters=10,n_init=100)
