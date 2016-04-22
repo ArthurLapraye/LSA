@@ -43,13 +43,81 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-SEUILPROBA =0.5
+SEUILPROBA =0.3
 
 
 np.random.seed(42)
 
-stoplist=set([u"d",u"c",u"l",u"ou",u"suis",u"je",u"",u"ce",u"cet",u"cette",u"n",u"et",u"de",u"du",u"le",u"la",u"les",u"un",u"une",u"d'",u"des",u"que",u"c'est",u"est",u"faire",
-u"pour",u"cela",u"ça",u"ca",u"a",u"à",u"aux",u"été",u"on","si",u"en",u"ont",u"sa",u"son",u"plus",u"qu",u"l","il",u"j",u"y",u"se",u"qui",u"comme",u"comment",'avec',u"fait",u"été"])
+stoplist=set([u"",
+u"a",
+"as",
+u"ai", 
+u"au", 
+u"aux", 
+u"avec", 
+u"c", 
+u"c'est",
+u"ça", 
+u"ca", 
+u"ces",
+u"ce", 
+u"cela", 
+u"cet",
+u"cette",
+u"comme",
+u"comment",
+u"d",
+u"d'",
+u"de",
+u"des",
+u"du",
+u"en",
+u"est",
+u"et",
+u"faire",
+u"fait",
+u"il",
+u"j",
+u"je",
+u"l",
+u"la",
+u"le",
+u"les",
+u"lf",
+u"mon",
+u"me",
+u"ma",
+u"moi",
+u"n",
+u"on",
+u"ont",
+u"ou",
+u"plus",
+u"pour",
+u"par",
+u"qu",
+u"que",
+u"qui",
+u"quot",
+u"sur",
+u"s",
+u"sa",
+u"se",u"sep",
+u"si",
+u"son",
+u"suis",
+u"un",
+u"une",
+u"y",
+u"à",
+u"ça", 
+u"été",
+u"être"])
+
+
+
+
+
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
 print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
 print
@@ -70,9 +138,12 @@ with open("../241013efs_all.csv") as openfile:
 	z=csv.reader(openfile,delimiter=";", quotechar="\"")
 	for x in z:
 		if x[58]:
-			corpus[i]=x[58]
+			corpus[i]=x[58].decode("utf-8")
 			i += 1
 
+			
+synonyme=dict()
+synonyme[u"régulièrement"]="souvent"
 			
 def tokenize(corpus):
 		
@@ -83,7 +154,12 @@ def tokenize(corpus):
 	for x in corpus:
 		elem=[]
 		for word in tok.split(corpus[x].lower()):
-			if word not in stoplist:
+			if word in stoplist:
+				#print word.encode("utf-8")
+				pass
+			else:
+				if word in synonyme:
+					word=synonyme[word]
 				elem.append(word)
 		
 		texts.append(elem)
@@ -91,11 +167,51 @@ def tokenize(corpus):
 	return texts
 
 	
+# def distdl(a,b):
+	# d=defaultdict(float)
+	# cost=0
+	
+	# for i in xrange(-1,len(a)):
+		# d[i, 0] = i
+	# for j in xrange(-1,len(b)):
+		# d[(0, j)] = j
+	
+	# for i in range(0,len(a)):
+		# for j in range(0,len(b)):
+			# if a[i] == b[j]:
+				# cost = 0
+			# else:
+				# cost = 1
+			# d[i, j]= min(d[i-1, j] + 1,d[i, j-1] + 1,d[i-1, j-1] + cost)
+			
+			# if i > 1 and j > 1 and a[i] == b[j-1] and a[i-1] == b[j]:
+				# d[i, j] = min(d[i, j],d[i-2, j-2] + cost)
+			
+	# return d[len(a)-1, len(b)-1]
+	
 texts= tokenize(corpus) #
 
 # print texts
-print len(texts)
-print len([x for x in texts if len(x) > 0])
+# print len(texts)
+# print len([x for x in texts if len(x) > 0])
+
+lexicon=defaultdict(float)
+for t in texts:
+	for w in t:
+		lexicon[w] += 1
+
+# for elem in sorted(stoplist):
+	# print elem.encode("utf-8")
+
+# for w in sorted(lexicon,key=lambda x : lexicon[x], reverse=True):
+	# print w,lexicon[w]
+	
+# dist=dict()
+	
+# for keys in lexicon:
+	# for clefs in lexicon:
+		# if clefs != keys:
+			# dist[clefs,keys]=distdl(clefs,keys)
 
 if True:
 	dictionary = corpora.Dictionary(texts)
@@ -121,15 +237,15 @@ if True:
 			c[i] = c.get(i, []) + [(topic,confid)]
 	
 	seen=set()
-	for topic in t:
+	for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] if y > SEUILPROBA]), reverse=True):
 		print "\n------------------------------",topic,"-----------------------------------"
 		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
 		print "Code\tRang\tN°\tProba\tVerbatim"
 		stop=True
 		for j,(i,confid) in enumerate(sorted(t[topic],key=lambda (x,y) : y, reverse=True)):
 			
-			if confid > 0.1 and stop:
-				print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i] #,sorted(c[i],key=lambda (x,y) : y, reverse=True)
+			if confid > SEUILPROBA and stop:
+				print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8") #,sorted(c[i],key=lambda (x,y) : y, reverse=True)
 				seen.add(i)
 			elif i not in seen:
 				reliquat += 1
