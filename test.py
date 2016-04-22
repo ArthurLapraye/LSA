@@ -72,8 +72,6 @@ with open("../241013efs_all.csv") as openfile:
 		if x[58]:
 			corpus[i]=x[58]
 			i += 1
-		
-			sys.exit(0)
 
 			
 def tokenize(corpus):
@@ -127,8 +125,12 @@ if True:
 		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
 		# print unicode(lda.print_topic(topic))
 		print "Code\tRang\tN°\tProba\tVerbatim"
-		for j,(i,confid) in enumerate(sorted( ((i,confid) for (i,confid) in t[topic] if confid > SEUILPROBA), key=lambda x : x[1], reverse=True) ):	
+		stop=True
+		for j,(i,confid) in enumerate(sorted(t[topic],key=lambda x,y : y, reverse=True)):	
 			print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8")
+			if confid < 0.5 and stop:
+				print "-"*50
+				stop = not stop
 			
 		# raw_input("\n>")
 
