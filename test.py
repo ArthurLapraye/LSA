@@ -66,6 +66,7 @@ u"cet",
 u"cette",
 u"comme",
 u"comment",
+"cln","clr","cla","cld",
 u"d",
 u"d'",
 u"de",
@@ -80,6 +81,7 @@ u"il",
 u"j",
 u"je",
 u"l",
+"lui",
 u"la",
 u"le",
 u"les",
@@ -117,6 +119,16 @@ u"être"])
 
 
 
+lemmatiseur=defaultdict(set)		
+
+with open("../lefff-3.4.mlex/lefff-3.4.mlex") as lexique:
+	lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
+	for x in lefff:
+		# print x
+		if x[0] not in stoplist:
+			lemmatiseur[x[0]].add(x[2])
+			
+
 
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
 print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
@@ -126,24 +138,23 @@ print
 corpus=dict()
 i=0
 
-# wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-# for row in wb['A1']:
-	# if row[2].value:
-		# uuid=row[1].value
-		# corpus[i]=unicode(row[2].value)
-		# i += 1
+wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
+for row in wb['A1']:
+	if row[2].value:
+		uuid=row[1].value
+		corpus[i]=unicode(row[2].value)
+		i += 1
 
 
-with open("../241013efs_all.csv") as openfile:
-	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	for x in z:
-		if x[58]:
-			corpus[i]=x[58].decode("utf-8")
-			i += 1
+		
+# with open("../241013efs_all.csv") as openfile:
+	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
+	# for x in z:
+		# if x[58]:
+			# corpus[i]=x[58].decode("utf-8")
+			# i += 1
 
 			
-synonyme=dict()
-synonyme[u"régulièrement"]="souvent"
 			
 def tokenize(corpus):
 		
@@ -158,9 +169,14 @@ def tokenize(corpus):
 				#print word.encode("utf-8")
 				pass
 			else:
-				if word in synonyme:
-					word=synonyme[word]
-				elem.append(word)
+				if word in lemmatiseur:
+					if lemmatiseur[word] not in stoplist:
+						elem += lemmatiseur[word]
+						if len(lemmatiseur[word]) > 1:
+							print >> sys.stderr, "Warning : more than 1 lemma",word
+						# warn += 1
+				else:
+					elem.append(word)
 		
 		texts.append(elem)
 	
