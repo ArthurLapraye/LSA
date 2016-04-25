@@ -43,7 +43,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-SEUILPROBA =0.3
+SEUILPROBA =0.5
 
 
 np.random.seed(42)
@@ -55,6 +55,7 @@ u"ai",
 u"au", 
 u"aux", 
 u"avec", 
+u"avoir",
 u"c", 
 u"c'est",
 u"ça", 
@@ -66,7 +67,7 @@ u"cet",
 u"cette",
 u"comme",
 u"comment",
-"cln","clr","cla","cld",
+u"cln",u"clr",u"cla",u"cld", #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
 u"d",
 u"d'",
 u"de",
@@ -79,13 +80,14 @@ u"faire",
 u"fait",
 u"il",
 u"j",
-u"je",
+u"je",u"j",
 u"l",
 "lui",
 u"la",
 u"le",
 u"les",
 u"lf",
+u"m",
 u"mon",
 u"me",
 u"ma",
@@ -114,7 +116,8 @@ u"y",
 u"à",
 u"ça", 
 u"été",
-u"être"])
+u"être"
+u"vous"])
 
 
 
@@ -138,21 +141,21 @@ print
 corpus=dict()
 i=0
 
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-for row in wb['A1']:
-	if row[2].value:
-		uuid=row[1].value
-		corpus[i]=unicode(row[2].value)
-		i += 1
+# wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
+# for row in wb['A1']:
+	# if row[2].value:
+		# uuid=row[1].value
+		# corpus[i]=unicode(row[2].value)
+		# i += 1
 
 
 		
-# with open("../241013efs_all.csv") as openfile:
-	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	# for x in z:
-		# if x[58]:
-			# corpus[i]=x[58].decode("utf-8")
-			# i += 1
+with open("../241013efs_all.csv") as openfile:
+	z=csv.reader(openfile,delimiter=";", quotechar="\"")
+	for x in z:
+		if x[58]:
+			corpus[i]=x[58].decode("utf-8")
+			i += 1
 
 			
 			
@@ -169,7 +172,7 @@ def tokenize(corpus):
 				#print word.encode("utf-8")
 				pass
 			else:
-				if word in lemmatiseur:
+				if word.encode("utf-8") in lemmatiseur:
 					if lemmatiseur[word] not in stoplist:
 						elem += lemmatiseur[word]
 						if len(lemmatiseur[word]) > 1:
