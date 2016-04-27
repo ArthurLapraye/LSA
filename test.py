@@ -46,7 +46,7 @@ NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.5
 
 np.random.seed(42)
-
+ #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
 stoplist=set([u"",
 u"a",
 "as",
@@ -66,9 +66,10 @@ u"cet",
 u"cette",
 u"comme",
 u"comment",
-u"cln",u"clr",u"cla",u"cld", #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
+u"cln",u"clr",u"cla",u"cld",
 u"d",
 u"d'",
+u"dans",
 u"de",
 u"des",
 u"du",
@@ -92,16 +93,20 @@ u"me",
 u"ma",
 u"moi",
 u"n",
+u"ne",
 u"on",
 u"ont",
 u"ou",
+u"parce",
 u"plus",
+u"pas",
 u"pour",
 u"par",
 u"qu",
 u"que",
 u"qui",
 u"quot",
+u"r",
 u"sur",
 u"s",
 u"sa",
@@ -159,7 +164,8 @@ def tokenize(corpus):
 	tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
-
+	hapax=set()
+	
 	for x in corpus:
 		elem=[]
 		for word in tok.split(corpus[x].lower()):
@@ -177,6 +183,8 @@ def tokenize(corpus):
 					elem.append(word)
 		
 		texts.append(elem)
+	
+	
 	
 	return texts
 
@@ -235,7 +243,7 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS, alpha='asymmetric', eta='auto', minimum_probability=SEUILPROBA)
 	# lda.show_topics(30))
 	# groups=defaultdict(list)
 	
@@ -253,7 +261,7 @@ if True:
 			c[i] = c.get(i, []) + [(topic,confid)]
 	
 	seen=set()
-	for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] if y > SEUILPROBA]), reverse=True):
+	for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True):
 		print "\n------------------------------",topic,"-----------------------------------"
 		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
 		print "Code\tRang\tN°\tProba\tVerbatim"
