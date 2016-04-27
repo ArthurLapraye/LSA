@@ -45,7 +45,6 @@ NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.5
 
-
 np.random.seed(42)
 
 stoplist=set([u"",
@@ -119,15 +118,11 @@ u"été",
 u"être"
 u"vous"])
 
-
-
-
 lemmatiseur=defaultdict(set)		
 
 with open("../lefff-3.4.mlex/lefff-3.4.mlex") as lexique:
 	lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
 	for x in lefff:
-		# print x
 		if x[0] not in stoplist:
 			lemmatiseur[x[0]].add(x[2])
 			
@@ -241,17 +236,19 @@ if True:
 	
 
 	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS)
-	#lda.show_topics(30))
-	groups=defaultdict(list)
+	# lda.show_topics(30))
+	# groups=defaultdict(list)
 	
-	data = lda[bow]
+	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=	NUMTOPICS )
+	# corpus_lsi = lsi[corpus_tfidf]	
+	
 
 	
 	t=dict()
 	c=dict()
 	reliquat=0
 	for i in corpus:
-		for topic,confid in lda[bow[i]]:
+		for topic,confid in lda[corpus_tfidf[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
 			c[i] = c.get(i, []) + [(topic,confid)]
 	
@@ -272,8 +269,8 @@ if True:
 	
 	print "Reliquat",reliquat
 	
-		# raw_input("\n>")
-
+	
+	# data = lda[bow]
 			# kmodel=km(n_clusters=10,n_init=100)
 	# kmodel = SC(n_clusters=10,n_neighbors=20)
 	# print len(dictionary)
@@ -290,9 +287,7 @@ if True:
 	# for i,elem in enumerate(kmodel.predict(densetf)):
 		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
 	
-	
-	# lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=10 )
-	# corpus_lsi = lsi[corpus_tfidf]
+
 	
 	# kmodel=km(n_clusters=5)
 	# print len(dictionary)
