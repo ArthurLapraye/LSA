@@ -20,7 +20,7 @@ import sys
 import logging
 import csv
 import re
-import unidecode
+from unidecode import unidecode
 import os  # for os.path.basename
 from pprint import pprint
 from collections import defaultdict #Idem
@@ -43,7 +43,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-SEUILPROBA =0.5
+SEUILPROBA =0.2
 
 np.random.seed(42)
  #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
@@ -63,6 +63,7 @@ u"ces",
 u"ce", 
 u"cela", 
 u"cet",
+u"ci",
 u"cette",
 u"comme",
 u"comment",
@@ -84,6 +85,7 @@ u"je",u"j",
 u"l",
 "lui",
 u"la",
+u"là",
 u"le",
 u"les",
 u"lf",
@@ -91,12 +93,14 @@ u"m",
 u"mon",
 u"me",
 u"ma",
+u"mais",
 u"moi",
 u"n",
 u"ne",
 u"on",
 u"ont",
 u"ou",
+u"où",
 u"parce",
 u"plus",
 u"pas",
@@ -123,13 +127,20 @@ u"été",
 u"être"
 u"vous"])
 
-lemmatiseur=defaultdict(set)		
+lemmatiseur=defaultdict(set)
+l2=defaultdict(set)
 
 with open("../lefff-3.4.mlex/lefff-3.4.mlex") as lexique:
 	lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
 	for x in lefff:
 		if x[0] not in stoplist:
-			lemmatiseur[x[0]].add(x[2])
+			lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
+	
+for u in lemmatiseur:
+	if unidecode(u) not in lemmatiseur:
+		l2[unidecode(u)].update(lemmatiseur[u])
+		
+lemmatiseur.update(l2)
 			
 
 
@@ -160,12 +171,12 @@ with open("../241013efs_all.csv") as openfile:
 			
 			
 def tokenize(corpus):
-		
+	
+	total,lemma=0.0,0.0
 	tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
-	hapax=set()
-	
+		
 	for x in corpus:
 		elem=[]
 		for word in tok.split(corpus[x].lower()):
@@ -173,19 +184,20 @@ def tokenize(corpus):
 				#print word.encode("utf-8")
 				pass
 			else:
-				if word.encode("utf-8") in lemmatiseur:
+				total += 1.0
+				if word in lemmatiseur:
 					if lemmatiseur[word] not in stoplist:
 						elem += lemmatiseur[word]
 						if len(lemmatiseur[word]) > 1:
-							print >> sys.stderr, "Warning : more than 1 lemma",word
-						# warn += 1
+							print >> sys.stderr, "Warning : more than 1 lemma",word.encode("utf-8")
+						lemma += 1
 				else:
 					elem.append(word)
 		
 		texts.append(elem)
 	
-	
-	
+	print "Tokens :",total
+	print "Lemmatisés",lemma
 	return texts
 
 	
@@ -217,10 +229,10 @@ texts= tokenize(corpus) #
 # print len(texts)
 # print len([x for x in texts if len(x) > 0])
 
-lexicon=defaultdict(float)
-for t in texts:
-	for w in t:
-		lexicon[w] += 1
+# lexicon=defaultdict(float)
+# for t in texts:
+	# for w in t:
+		# lexicon[w] += 1
 
 # for elem in sorted(stoplist):
 	# print elem.encode("utf-8")
@@ -243,7 +255,7 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=3000, passes=NUMPASS, alpha='asymmetric', eta='auto', minimum_probability=SEUILPROBA)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
 	# lda.show_topics(30))
 	# groups=defaultdict(list)
 	
@@ -275,7 +287,8 @@ if True:
 				reliquat += 1
 				seen.add(i)
 	
-	print "Reliquat",reliquat
+	print "Reliquat",len(corpus)-len(c)
+	print "Classés: ",len(c)
 	
 	
 	# data = lda[bow]
