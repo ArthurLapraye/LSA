@@ -43,7 +43,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-SEUILPROBA =0.2
+SEUILPROBA =0.15
 
 np.random.seed(42)
  #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
@@ -265,27 +265,37 @@ if True:
 
 	
 	t=dict()
-	c=dict()
-	reliquat=0
+	c=defaultdict(list)
+	# reliquat=0
 	for i in corpus:
 		for topic,confid in lda[corpus_tfidf[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
-			c[i] = c.get(i, []) + [(topic,confid)]
+			c[i].append( (topic,confid) )
+
 	
-	seen=set()
-	for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True):
-		print "\n------------------------------",topic,"-----------------------------------"
-		print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
-		print "Code\tRang\tN°\tProba\tVerbatim"
-		stop=True
-		for j,(i,confid) in enumerate(sorted(t[topic],key=lambda (x,y) : y, reverse=True)):
+	# seen=set()
+	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)[:10]):
+		print str(n)+"\t"+str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C17:H1048576;"+str(topic)+")"+"\t"
+		# print "\n+",n,"------------------------------",topic,"-----------------------------------"
+		# print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
+		# print "Code\tRang\tN°\tProba\tVerbatim"
+		# stop=True
+		# for j,(i,confid) in enumerate(sorted(t[topic],key=lambda (x,y) : y, reverse=True)):
 			
-			if confid > SEUILPROBA and stop:
-				print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8") #,sorted(c[i],key=lambda (x,y) : y, reverse=True)
-				seen.add(i)
-			elif i not in seen:
-				reliquat += 1
-				seen.add(i)
+			# if confid > SEUILPROBA and stop:
+				# print str(topic)+"\t"+str(j)+"\t"+str(i)+"\t"+str(confid)+"\t"+corpus[i].encode("utf-8") #,sorted(c[i],key=lambda (x,y) : y, reverse=True)
+				# seen.add(i)
+			# elif i not in seen:
+				# reliquat += 1
+				# seen.add(i)
+	print
+	print "numero\tverbatim\tcode\tcode\tcode\tcode\tcode\tcode"
+	for element in corpus:
+		print str(element)+"\t"+corpus[element].encode("utf-8")+"\t"+"\t".join([str(x) for x,y in c[element]])
+	
+	
+	
+	
 	
 	print "Reliquat",len(corpus)-len(c)
 	print "Classés: ",len(c)
