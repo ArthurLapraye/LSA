@@ -25,107 +25,92 @@ import os  # for os.path.basename
 from pprint import pprint
 from collections import defaultdict #Idem
 
-
+#Variables globales
+stoplist=set([u"","","",
+u"a","a",
+u"as","as",
+u"ai","ai", 
+u"au","au", 
+u"aux","aux", 
+u"avec","avec", 
+u"avoir","avoir",
+u"c","c", 
+u"c'est","c'est",
+u"ça","ça", 
+u"ca","ca", 
+u"ces","ces",
+u"ce","ce", 
+u"cela","cela", 
+u"cet","cet",
+u"ci","ci",
+u"cette","cette",
+u"comme","comme",
+u"comment","comment",
+u"cln","cln",u"clr","clr",u"cla","cla",u"cld","cld",
+u"d","d","d",
+u"d'","d'",
+u"dans","dans",
+u"de","de",
+u"des","des",
+u"du","du",
+u"en","en",
+u"est","est",
+u"et","et",
+u"faire","faire",
+u"fait","fait",
+u"il","il",
+u"j","j",
+u"je","je",u"j","j",
+u"l","l",
+"lui",
+u"la","la",
+u"là","là",
+u"le","le",
+u"les","les",
+u"lf","lf",
+u"m","m",
+u"mon","mon",
+u"me","me",
+u"ma","ma",
+u"mais","mais",
+u"moi","moi",
+u"n","n",
+u"ne","ne",
+u"on","on",
+u"ont","ont",
+u"ou","ou",
+u"où","où",
+u"parce","parce",
+u"plus","plus",
+u"pas","pas",
+u"pour","pour",
+u"par","par",
+u"qu","qu",
+u"que","que",
+u"qui","qui",
+u"quot","quot",
+u"r","r",
+u"sur","sur",
+u"s","s",
+u"sa","sa",
+u"se","se",u"sep","sep",
+u"si","si",
+u"son","son",
+u"suis","suis",
+u"un","un",
+u"une","une",
+u"y","y",
+u"à","à",
+u"ça","ça", 
+u"été","été",
+u"être",
+u"vous"])
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
-#root = t.Tk()
-#text = t.Text(root)
-#scrollbar = t.Scrollbar(root)
-#scrollbar.pack( side = t.RIGHT, fill=t.Y )
-#scroll2 = t.Scrollbar(root,orient=t.HORIZONTAL)
-#scroll2.pack( side = t.BOTTOM, fill=t.X )
-
-#text = t.Listbox(root, yscrollcommand = scrollbar.set, xscrollcommand=scroll2.set )
-
-
-#Variables globales
-
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.15
-
 np.random.seed(42)
- #Idiosyncrasie du LEFFF, à corriger pour éviter collision avec acronymes
-stoplist=set([u"",
-u"a",
-"as",
-u"ai", 
-u"au", 
-u"aux", 
-u"avec", 
-u"avoir",
-u"c", 
-u"c'est",
-u"ça", 
-u"ca", 
-u"ces",
-u"ce", 
-u"cela", 
-u"cet",
-u"ci",
-u"cette",
-u"comme",
-u"comment",
-u"cln",u"clr",u"cla",u"cld",
-u"d",
-u"d'",
-u"dans",
-u"de",
-u"des",
-u"du",
-u"en",
-u"est",
-u"et",
-u"faire",
-u"fait",
-u"il",
-u"j",
-u"je",u"j",
-u"l",
-"lui",
-u"la",
-u"là",
-u"le",
-u"les",
-u"lf",
-u"m",
-u"mon",
-u"me",
-u"ma",
-u"mais",
-u"moi",
-u"n",
-u"ne",
-u"on",
-u"ont",
-u"ou",
-u"où",
-u"parce",
-u"plus",
-u"pas",
-u"pour",
-u"par",
-u"qu",
-u"que",
-u"qui",
-u"quot",
-u"r",
-u"sur",
-u"s",
-u"sa",
-u"se",u"sep",
-u"si",
-u"son",
-u"suis",
-u"un",
-u"une",
-u"y",
-u"à",
-u"ça", 
-u"été",
-u"être"
-u"vous"])
 
 lemmatiseur=defaultdict(set)
 l2=defaultdict(set)
@@ -133,7 +118,7 @@ l2=defaultdict(set)
 with open("../lefff-3.4.mlex/lefff-3.4.mlex") as lexique:
 	lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
 	for x in lefff:
-		if x[0] not in stoplist:
+		if x[0] not in stoplist and x[2] not in stoplist:
 			lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
 	
 for u in lemmatiseur:
@@ -145,7 +130,7 @@ lemmatiseur.update(l2)
 
 
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"Nombre de groupes :",NUMTOPICS,"Passes :",NUMPASS,"Seuil :",SEUILPROBA
+print u"\tNombre de groupes :",NUMTOPICS,"\n\tPasses :",NUMPASS,"\n\tSeuil :",SEUILPROBA
 print
 
 
@@ -168,12 +153,12 @@ with open("../241013efs_all.csv") as openfile:
 			corpus[i]=x[58].decode("utf-8")
 			i += 1
 
-			
+
 			
 def tokenize(corpus):
 	
 	total,lemma=0.0,0.0
-	tok=re.compile(u"[ &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
+	tok=re.compile(u"[\" &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
 		
@@ -187,7 +172,10 @@ def tokenize(corpus):
 				total += 1.0
 				if word in lemmatiseur:
 					if lemmatiseur[word] not in stoplist:
-						
+						if lemmatiseur[word] == u"clr":
+							print lemmatiseur[word]
+							print corpus[x]
+							sys.exit(20)
 						elem += lemmatiseur[word]
 						lemma += 1
 				else:
@@ -195,8 +183,8 @@ def tokenize(corpus):
 		
 		texts.append(elem)
 	
-	print "Tokens :",total
-	print "Lemmatisés",lemma
+	print >> sys.stderr, "Tokens\t"+str(total)
+	print >> sys.stderr, "Lemmatisés\t"+str(lemma=
 	return texts
 
 	
@@ -271,12 +259,13 @@ if True:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
 			c[i].append( (topic,confid) )
 	
-	print "Reliquat",len(corpus)-len(c)
-	print "Classés: ",len(c)
+	print "Reliquat\t"+str(len(corpus)-len(c))
+	print "Classés:\t"+str(len(c))
+	print
+	print "Code\tMots clefs\t"
 	
-	
-	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)[:10]):
-		print str(n)+"\t"+str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C17:H1048576;"+str(topic)+")"+"\t"
+	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)[:20]):
+		print str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C33:H1048576;"+str(topic)+")"+"\t"+"=C"+str(2+9+n)+"/$C$7\t"
 		# print "\n+",n,"------------------------------",topic,"-----------------------------------"
 		# print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
 		# print "Code\tRang\tN°\tProba\tVerbatim"
