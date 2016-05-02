@@ -187,9 +187,8 @@ def tokenize(corpus):
 				total += 1.0
 				if word in lemmatiseur:
 					if lemmatiseur[word] not in stoplist:
+						
 						elem += lemmatiseur[word]
-						if len(lemmatiseur[word]) > 1:
-							print >> sys.stderr, "Warning : more than 1 lemma",word.encode("utf-8")
 						lemma += 1
 				else:
 					elem.append(word)
@@ -271,9 +270,11 @@ if True:
 		for topic,confid in lda[corpus_tfidf[i]]:
 			t[topic]=t.get(topic,[]) + [(i,confid)]
 			c[i].append( (topic,confid) )
-
 	
-	# seen=set()
+	print "Reliquat",len(corpus)-len(c)
+	print "Classés: ",len(c)
+	
+	
 	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)[:10]):
 		print str(n)+"\t"+str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C17:H1048576;"+str(topic)+")"+"\t"
 		# print "\n+",n,"------------------------------",topic,"-----------------------------------"
@@ -293,12 +294,6 @@ if True:
 	for element in corpus:
 		print str(element)+"\t"+corpus[element].encode("utf-8")+"\t"+"\t".join([str(x) for x,y in c[element]])
 	
-	
-	
-	
-	
-	print "Reliquat",len(corpus)-len(c)
-	print "Classés: ",len(c)
 	
 	
 	# data = lda[bow]
