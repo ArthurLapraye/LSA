@@ -241,7 +241,7 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='symmetric', eta='auto', minimum_probability=SEUILPROBA)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
 	# lda.show_topics(30))
 	# groups=defaultdict(list)
 	
