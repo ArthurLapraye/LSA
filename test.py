@@ -25,6 +25,8 @@ import os  # for os.path.basename
 from pprint import pprint
 from collections import defaultdict #Idem
 
+from collocs import collocs,col1
+
 #Variables globales
 stoplist=set([u"","","",
 u"a","a",
@@ -97,6 +99,7 @@ u"se","se",u"sep","sep",
 u"si","si",
 u"son","son",
 u"suis","suis",
+u"très","très",
 u"un","un",
 u"une","une",
 u"y","y",
@@ -109,7 +112,7 @@ u"vous"])
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
-SEUILPROBA =0.15
+SEUILPROBA =0.3
 np.random.seed(42)
 
 lemmatiseur=defaultdict(set)
@@ -126,11 +129,9 @@ for u in lemmatiseur:
 		l2[unidecode(u)].update(lemmatiseur[u])
 		
 lemmatiseur.update(l2)
-			
-
 
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"\tNombre de groupes :",NUMTOPICS,"\n\tPasses :",NUMPASS,"\n\tSeuil :",SEUILPROBA
+print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA
 print
 
 
@@ -158,7 +159,7 @@ with open("../241013efs_all.csv") as openfile:
 def tokenize(corpus):
 	
 	total,lemma=0.0,0.0
-	tok=re.compile(u"[\" &*,;:.'^?!\/)(-><]+",flags=re.UNICODE)
+	tok=re.compile(u"[0-9#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 	texts=list()
 	identifiant=dict()
 		
@@ -183,8 +184,6 @@ def tokenize(corpus):
 		
 		texts.append(elem)
 	
-	print >> sys.stderr, "Tokens\t"+str(total)
-	print >> sys.stderr, "Lemmatisés\t"+str(lemma=
 	return texts
 
 	
@@ -210,7 +209,7 @@ def tokenize(corpus):
 			
 	# return d[len(a)-1, len(b)-1]
 	
-texts= tokenize(corpus) #
+texts= tokenize(corpus)
 
 # print texts
 # print len(texts)
@@ -242,7 +241,7 @@ if True:
 	corpus_tfidf = tfidf[bow]
 	
 
-	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='symmetric', eta='auto', minimum_probability=SEUILPROBA)
 	# lda.show_topics(30))
 	# groups=defaultdict(list)
 	
@@ -264,8 +263,8 @@ if True:
 	print
 	print "Code\tMots clefs\t"
 	
-	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)[:20]):
-		print str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C33:H1048576;"+str(topic)+")"+"\t"+"=C"+str(2+9+n)+"/$C$7\t"
+	for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)):
+		print str(topic)+"\t"+",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])+"\t"+"=NB.SI(C"+str(11+NUMTOPICS)+":H1048576;"+str(topic)+")"+"\t"+"=C"+str(9+n)+"/($B$6+$B$5)\t"
 		# print "\n+",n,"------------------------------",topic,"-----------------------------------"
 		# print "\tMots les plus probables : ",",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ]),"\n"
 		# print "Code\tRang\tN°\tProba\tVerbatim"
