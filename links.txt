@@ -1,3 +1,41 @@
 links 
 
+	
+Corps du message
+http://statwww.epfl.ch/davison/teaching/ProbStatSC/20032004/Chapitre8.pdf => cours de stats
+https://www.atala.org/IMG/pdf/4-Lavalley-TAL51-3.pdf => extraction de collocations
+http://www.aclweb.org/anthology/F13-5008 État de l’art des méthodes d’extraction automatique de termes-clés
+http://ama.liglab.fr/~amini/Publis/AppNonSupSeg_coria04.pdf Appr pour segmentation automatique de textes
+Actes en ligne – Ateliers | TALN 2014 | RECITAL 2014
+https://tel.archives-ouvertes.fr/tel-00816263/document 
+Manipulating a workbook in memory — openpyxl 2.4.0 documentation
+
+http://www.atala.org/taln_archives/TALN/TALN-2015/taln-2015-long-009.pdf
+https://deft.limsi.fr/actes/2014/pdf/deft2014_04_irit.pdf
+
+http://www.cs.cornell.edu/home/llee/omsa/omsa.pdf Pang & Lee
+https://page.mi.fu-berlin.de/rojas/neural/chapter/K5.pdf Unsupervised learning and clustering algorithms
+
+Clustering - Fuzzy C-means
+
+	
+Corps du message
+https://www.amstat.org/sections/srms/proceedings/y2014/files/311463_87563.pdf > survey answer clustering
+
+http://www.collectionscanada.gc.ca/obj/thesescanada/vol2/QSHERU/TC-QSHERU-11143_5296.pdf 
+https://www.atala.org/IMG/pdf/TAL-2009-3-01-Jamoussi.pdf
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+http://www.asso-aria.org/coria/2006/371.pdf
+http://lexicometrica.univ-paris3.fr/jadt/jadt2002/PDF-2002/lelu.pdf
+
+Similarité statistique pour le CBR textuel
+ 
+
+
+http://www.aclweb.org/anthology/F12-2038
+http://www.aclweb.org/anthology/F12-2007
+
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+
 http://contrailscience.com/map/
