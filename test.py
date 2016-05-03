@@ -27,6 +27,9 @@ from collections import defaultdict #Idem
 
 from collocs import collocs,col1
 
+#module local
+from synonyms import synonymes
+
 #Variables globales
 stoplist=set([u"","","",
 u"a","a",
@@ -130,9 +133,15 @@ for u in lemmatiseur:
 		
 lemmatiseur.update(l2)
 
+logging.info("Lemmatiseur fini de charger !")
+
+syno=synonymes()
+
+logging.info("Dictionnaire de synonymes chargés")
+
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
 print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA
-print
+
 
 
 corpus=dict()
@@ -154,37 +163,58 @@ with open("../241013efs_all.csv") as openfile:
 			corpus[i]=x[58].decode("utf-8")
 			i += 1
 
-
+logging.info("Corpus chargé")
 			
 def tokenize(corpus):
 	
 	total,lemma=0.0,0.0
 	tok=re.compile(u"[0-9#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 	texts=list()
-	identifiant=dict()
+	
+	lexicon=defaultdict(float)
 		
 	for x in corpus:
 		elem=[]
 		for word in tok.split(corpus[x].lower()):
-			if word in stoplist:
-				#print word.encode("utf-8")
-				pass
-			else:
+			if word not in stoplist:
 				total += 1.0
 				if word in lemmatiseur:
 					if lemmatiseur[word] not in stoplist:
-						if lemmatiseur[word] == u"clr":
-							print lemmatiseur[word]
-							print corpus[x]
-							sys.exit(20)
 						elem += lemmatiseur[word]
 						lemma += 1
+						for x in lemmatiseur[word]:
+							lexicon[x] += 1
 				else:
 					elem.append(word)
+					lexicon[word] += 1
 		
 		texts.append(elem)
+		#logging.info(elem)
 	
+	# texts=collocs(texts)
+	# mort=set()
+	
+	# for word in lexicon:
+	
+		# for s in syno[word]:
+			
+			# if s in lexicon:
+				# if word != s:
+					# majo,mino = (word,s) if lexicon[word] > lexicon[s] else (s,word)
+					# if mino not in mort:
+						# text2=list()
+						# for t in texts:
+							# elem=[x if x != mino else majo for x in t ]
+							# text2.append(elem)
+						
+						# texts=text2
+						
+						# print >> sys.stderr, "Remplacé",mino.encode("utf-8"),lexicon[mino],"par",majo.encode("utf-8"),lexicon[majo]
+						# mort.add(mino)
+					
+		
 	return texts
+
 
 	
 # def distdl(a,b):
@@ -208,6 +238,9 @@ def tokenize(corpus):
 				# d[i, j] = min(d[i, j],d[i-2, j-2] + cost)
 			
 	# return d[len(a)-1, len(b)-1]
+
+
+logging.info("Tokenisation")
 	
 texts= tokenize(corpus)
 
