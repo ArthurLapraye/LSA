@@ -24,7 +24,4 @@ def col1(texts):
 	texts=map(lambda x : bigram[x],texts)
 	
 	return texts
-	
 
-		
-#Arthur Lapraye - copyright 2016
