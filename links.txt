@@ -1,4 +1,4 @@
-links 
+﻿links 
 http://statwww.epfl.ch/davison/teaching/ProbStatSC/20032004/Chapitre8.pdf  => cours de stats
 https://www.atala.org/IMG/pdf /4-Lavalley-TAL51-3.pdf  => extraction de collocations
 http://www.aclweb.org/anthology/F13-5008 État de l’art des méthodes d’extraction automatique de termes-clés
@@ -249,3 +249,4 @@ http://www.lattice.cnrs.fr/sites/itellier/poly_info_ling/linguistique007.html
 
 
 
+http://blog.plover.com/prog/
