@@ -1,4 +1,4 @@
-links Corps du message
+links 
 http://statwww.epfl.ch/davison/teaching/ProbStatSC/20032004/Chapitre8.pdf  => cours de stats
 https://www.atala.org/IMG/pdf /4-Lavalley-TAL51-3.pdf  => extraction de collocations
 http://www.aclweb.org/anthology/F13-5008 État de l’art des méthodes d’extraction automatique de termes-clés
@@ -9,7 +9,7 @@ Manipulating a workbook in memory — openpyxl 2.4.0 documentation
 http://www.atala.org/taln_archives/TALN/TALN-2015/taln-2015-long-009.pdf 
 https://deft.limsi.fr/actes/2014/pdf /deft2014_04_irit.pdf 
 http://www.cs.cornell.edu/home/llee/omsa/omsa.pdf  Pang & Lee
-https://page.mi.fu-berlin.de/rojas/neural/chapter/K5.pdf  Unsupervised learning and clustering algorithmsClustering - Fuzzy C-meansCorps du message
+https://page.mi.fu-berlin.de/rojas/neural/chapter/K5.pdf  Unsupervised learning and clustering algorithmsClustering - Fuzzy C-means
 https://www.amstat.org/sections/srms/proceedings/y2014/files/311463_87563.pdf  > survey answer clustering
 http://www.collectionscanada.gc.ca/obj/thesescanada/vol2/QSHERU/TC-QSHERU-11143_5296.pdf  
 https://www.atala.org/IMG/pdf /TAL-2009-3-01-Jamoussi.pdf 
@@ -25,27 +25,27 @@ http://www.cse.msu.edu/~cse960/Papers/LSI/LSI.pdf  Latent Semantic Analysis
 http://www.cc.gatech.edu/~isbell/reading/papers/berkhin02survey.pdf  Survey of Clustering Data Mining Techniques 
 http://www.cse.msu.edu/~cse960/Papers/LSI/LSI.pdf 
 http://nlp.stanford.edu/IR-book/pdf /18lsi.pdf 
-http://www.lrec-conf.org/proceedings/lrec2008/pdf /438_paper.pdf numpy.linalg.svd — NumPy v1.10 ManualCorps du message
+http://www.lrec-conf.org/proceedings/lrec2008/pdf /438_paper.pdf numpy.linalg.svd — NumPy v1.10 Manual
 http://eric.univ-lyon2.fr/~sabine/EGC2013_VG.pdf Cours - Fouille de données textuelles — Cours Cnam RCP216 Cours - Fouille de données textuelles — Cours Cnam RCP2...
 Représentation vectorielle des textes¶ L’analyse et la fouille de données font souvent appel à des méthodes qui travaillent sur des représentations vectorielles des...
-Afficher sur cedric.cnam.fr
+cedric.cnam.fr
 https://mlc.linguistics.georgetown.edu/wp-content/uploads/2011/12/MAPOR-final-paper.pdf  Readings in Latent Semantic AnalysisReadings in Latent Semantic Analysis
 Readings in Latent Semantic Analysis for Cognitive Science and Education
-Afficher sur lpnc.univ-grenoble-alpes.fr
+lpnc.univ-grenoble-alpes.fr
 CiteSeerX — Document Not Found
 No document with DOI "10.1.1.603.3805" The supplied document identifier does not match any document in our repository.
-Afficher sur citeseerx.ist.psu.edu
+citeseerx.ist.psu.edu
 http://www.cs.cmu.edu/~tom/mlbook.html  
 http://lpnc.univ-grenoble-alpes.fr/resources/benoit_lemaire/lsa.html 
 http://blog.onyme.com/stats-semantique-lsa/
 https://fr.wikipedia.org/wiki/D%C3%A9composition_en_valeurs_singuli%C3%A8resThe Power of Babble: Using Text Analytics and Data Mining to Uncover Actionable Customer Insights | Marketing Research AssociationThe Power of Babble: Using Text Analytics and Data Minin...
 From CRM databases, transactional systems, questionnaires and customer contact logs, pop-up surveys, online consumer reviews and forum postings, to chats, blogs, ...
-Afficher sur www.marketingre...
+www.marketingre...
 https://fr.wikipedia.org/wiki/Décomposition_en_valeurs_singulières 
 http://personal.disco.unimib.it/Vanneschi/McGrawHill_-_Machine_Learning_-Tom_Mitchell.pdf  Stanford CoreNLP 
 https://opensource.com/business/15/7/five-open-source-nlp-tools Stanford CoreNLP
 Widely used, high performance language analysis tools. Available open source; written in Java.
-Afficher sur stanfordnlp.github.io
+stanfordnlp.github.io
 http://www.cse.iitm.ac.in/~ravi/papers/Sangam_CICLing15.pdf Automated text clustering system on responses to open-ended questions in course evaluations
 Author(s) Min Kang ; Fac. of Cross-Cultural Studies, Kobe Univ., Japan ; K. Asakimori ; A. Utsuki ; M. Kaburagi
 http://www.ijcse.net/docs/IJCSE14-03-02-052.pdf  
@@ -55,29 +55,29 @@ http://diego.assencio.com/?index=8bfc2bade698bb0c82690aedf17c7875
 http://www.les-mathematiques.net/phorum/read.php?3,406840
 https://automatetheboringstuff.com/chapter12/Pyspread - PyspreadPyspread - Pyspread
 Pyspread is a non-traditional spreadsheet application.
-Afficher sur manns.github.io
+manns.github.io
 Tim Golden's Python Stuff: Win32 How Do I...?Tim Golden's Python Stuff: Win32 How Do I...?
 Win32 How Do I...? Tim Golden > Python Stuff > Win32 How Do I...? Introduction The idea of this page is to answer various of the How Do I...? questions relating to Python under Win32.
-Afficher sur timgolden.me.uk
+timgolden.me.uk
 gensim: topic modelling for humansgensim: topic modelling for humans
 Efficient topic modelling in Python
-Afficher sur radimrehurek.com
+radimrehurek.com
 https://www.ling.ohio-state.edu/~kbaker/pubs/Singular_Value_Decomposition_Tutorial.pdf 
 http://repository.cmu.edu/cgi/viewcontent.cgi?article=2395&context=compsci 
 http://ceur-ws.org/Vol-1100/paper9.pdf Short Text Classification: A Survey Ge Song, Yunming Ye, Xiaolin Du, Xiaohui Huang, and Shifu Bie Shenzhen Key Laboratory of Internet Information Collaboration, Shenzhen Graduate School, Harbin Institute of Technology, Shenzhen, 518055, China c'est tout pour aujourd'huiRadim Řehůřek: Machine learning consulting 
 Radim Řehůřek: Machine learning consulting
 I help clients define, design, and build systems for intelligent data processing.
-Afficher sur radimrehurek.com
+radimrehurek.com
 Blog | RaRe TechnologiesBlog | RaRe Technologies
 Go, Games, Strategy and Life: The Big Picture Radim Řehůřek 2016-02-29 Go, Machine Learning 6 Comments Everyone and their dog have shared their opinion on the ...
-Afficher sur rare-technologies...
+rare-technologies...
 Recueil de fiches explicatives de licences libresgensim: topic modelling for humans gensim: topic modelling for humans
 Efficient topic modelling in Python
-Afficher sur radimrehurek.com
+radimrehurek.com
 [1211.1107] An effective web document clustering for information retrieval[1211.1107] An effective web document clustering for inf...
 Submission history From: S. K. Sahay [view email] [v1] Tue, 6 Nov 2012 04:39:30 GMT (815kb)
-Afficher sur arxiv.org
-http://brandonrose.org/clustering#Latent-Dirichlet-Allocation Corps du message
+arxiv.org
+http://brandonrose.org/clustering#Latent-Dirichlet-Allocation 
 http://webpages.ursinus.edu/akontostathis/KontostathisHICSSFinal.pdf 
 http://www.mitpressjournals.org/doi/pdf /10.1162/coli_a_00032
 http://www.aclweb.org/anthology/N03-2032 Gazdar, Pullum & Sag 1982
@@ -91,142 +91,139 @@ http://www.charuaggarwal.net/text-cluster.pdf
 http://www.arbylon.net/publications/text-est.pdf Exploring public discourses about emerging technologies through statistical clustering of open-ended survey questions Paul Stoneman and Patrick Sturgis University of Southampton, UK Nick Allum University of Essex, UKHandbook of Latent Semantic Analysis
 publié par Thomas K. Landauer,Danielle S. McNamara,Simon Dennis,Walter KintschIn his early career Chomsky collaborated with Marcel-Paul Schützenberger (see, e.g., the opening line of Schützenberger, 1963 ; Chomsky & Schützenberger, 1967 ). Schützenberger was a distinguished pure mathematician, and although based in Paris was affi liated during part of that time with the IBM research centre in New York State, where compiler design was an important topic. Neither Chomsky nor Schützenberger, so far as I know, have ever specifi ed the division of labour in their collaboration, but the best guess must be that Schützenberger was responsible for the maths of the “Chomsky hierarchy”, so-called, and Chomsky was responsible for drawing links between the abstract hierarchy and human language. Chomsky ( 1959 ) cited unpublished work by Schützenberger. By the time of Chomsky ( 1963 ), which unlike Syntactic Structures did spell out the mathematics of the hierarchy, almost every theorem was explicitly attributed to publications by Schützenberger or other writers. 3 
 http://www.grsampson.net/ARsy.pdf Un vrai pro.
-http://www.visiondummy.com/Corps du message
+
+
+http://www.visiondummy.com/
 http://www.lel.ed.ac.uk/~gpullum/Ungrammaticality.pdf  
 " Looking back at the syntax published a couple of decades ago makes it rather clear that much of it is going to have to be redone from the ground up just to reach minimal levels of empirical accuracy"
 "Goodall’s judgments of ungrammaticality are just wrong, and could only be taken seriously because they were published in pre-Google times, and there is a tradition among syntacticians of passively accepting judgments of others rather than starting unproductive ‘my dialect /your dialect’ disputes."LINGUIST List 22.4631: Disc: Remarks by Noam Chomsky in LondonLINGUIST List 22.4631: Disc: Remarks by Noam Chomsk...
 Date: 14-Nov-2011 From: Geoff Pullum <gpullumling.ed.ac.uk> Subject: Remarks by Noam Chomsky in London E-mail this message to a friend
-Afficher sur linguistlist.org
+linguistlist.org
 Language Log: My prescriptive valentineLanguage Log: My prescriptive valentine
 My love for you is a love which that will never die.
-Afficher sur itre.cis.upenn.edu
+itre.cis.upenn.edu
 Language Log: Happy birthday, NoamLanguage Log: Happy birthday, Noam
 Happy birthday, Noam. (Noam Chomsky, unquestionably the most famous member of the linguistics profession, turned 78 today.)
-Afficher sur itre.cis.upenn.edu
+itre.cis.upenn.edu
 http://www.lel.ed.ac.uk/~gpullum/CreationMyths.pdf   How or why the SS analysis of auxiliaries came to be regarded as elegant or attractive is not clear.
 http://statistique.blogs.sciencesetavenir.fr/
 http://www.biolinguistics.eu/index.php/biolinguistics/article/viewFile/91/98How to Make Pittsburgh a Startup HubHow to Make Pittsburgh a Startup Hub
 April 2016 (This is a talk I gave at an event called Opt412 in Pittsburgh. Much of it will apply to other towns.
-Afficher sur www.paulgraham...
+www.paulgraham...
 Perplexity To Evaluate Topic ModelsPerplexity To Evaluate Topic Models
 The most common way to evaluate a probabilistic model is to measure the log-likelihood of a held-out test set.
-Afficher sur qpleple.com
-http://qpleple.com/Corps du message
+qpleple.com
+http://qpleple.com/
 http://blogs.discovermagazine.com/neuroskeptic/2016/04/02/confounding-variables/#.Vxc6VvmLSUm 
 http://www.stat.columbia.edu/~gelman/research/published/ChanceEthics8.pdf Too big to fail: Why it's unrealistic to expect scientific journals to retract their huge backlog of erroneous papers - Statistical Modeling, Causal Inference, and Social ScienceToo big to fail: Why it's unrealistic to expect scientif...
 I couple years ago I wrote an article, “It’s too hard to publish criticisms and obtain data for replication.” I gave two examples demonstrating the struggles of mys...
-Afficher sur andrewgelman.com
+andrewgelman.com
 "Un posthite sur le frigo 
 http://blog.clarifai.com/what-convolutional-neural-networks-see-at-when-they-see-nudity/ 
 http://nymag.com/scienceofus/2016/04/the-psychological-cost-of-boring-buildings.html  What convolutional neural networks look at when they see nudity | Hacker NewsWhat convolutional neural networks look at when they see nudity | Hacker News
 Hacker News new | comments | apply | show | ask | jobs | submit login What convolutional neural networks look at when they see nudity (clarifai.com)
-Afficher sur news.ycombinator.com
+news.ycombinator.com
 Predicting what user reviews are about with LDA and gensimPredicting what user reviews are about with LDA and gens...
 My personal website
-Afficher sur www.vladsandules...
+www.vladsandules...
 Google GroupsGoogle Groups
 Google Groups allows you to create and participate in online forums and email-based groups with a rich experience for community conversations.
-Afficher sur groups.google.com
-http://radimrehurek.com/topic_modeling_tutorial/2%20-%20Topic%20Modeling.html  Corps du message
+groups.google.com
+http://radimrehurek.com/topic_modeling_tutorial/2%20-%20Topic%20Modeling.html  
 Introduction to Latent Dirichlet AllocationIntroduction to Latent Dirichlet Allocation
 Introduction Suppose you have the following set of sentences: I like to eat broccoli and bananas. I ate a banana and spinach smoothie for breakfast. Chinchillas and...
-Afficher sur blog.echen.me
+blog.echen.me
 http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf   longest least-cost alignment (Heeringa, 2004: 130-132). 
 https://www.researchgate.net/publication/6397822_A_Normalized_Levenshtein_Distance_Metric How to normalise Levenshtein distance for maximum alignment length rather than for string length?How to normalise Levenshtein distance for maximum alig...
 Problem: A few R packages feature Levenshtein distance implementations for computing the similarity of two strings, e.g. 
 http://finzi.psych.upenn.edu/R/library/R...
-Afficher sur stackoverflow.com
+stackoverflow.com
 Topic modeling made just simple enough.Topic modeling made just simple enough.
 Right now, humanists often have to take topic modeling on faith. There are several good posts out there that introduce the principle of the thing (by Matt Jockers, ...
-Afficher sur tedunderwood.com
+tedunderwood.com
 David M. BleiDavid M. Blei
-Afficher sur www.cs.princeton...
+www.cs.princeton...
  So You Think You Have a Power Law — Well Isn't That Special?So You Think You Have a Power Law — Well Isn't That Special?
 So You Think You Have a Power Law — Well Isn't That Special?
-Afficher sur bactra.org
+bactra.org
 the Internet is a major force in generating unstructured text 
 http://www.jmlr.org/proceedings/papers/v15/xiong11a/xiong11a.pdf 
 https://www.cl.cam.ac.uk/teaching/1011/L101/ml4lp-lect8.pdf  
 http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2943854/ 
 http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2943854/2.5. Decomposing signals in components (matrix factorization problems) — scikit-learn 0.17.1 documentation2.5. Decomposing signals in components (matrix factoriza...
 2.5. Decomposing signals in components (matrix factorization problems)¶ 2.5.1. Principal component analysis (PCA)¶ 2.5.1.1. Exact PCA and probabilistic interpretati...
-Afficher sur scikit-learn.org
+scikit-learn.org
 Stanford Topic Modeling ToolboxStanford Topic Modeling Toolbox
 The Stanford Natural Language Processing Group
-Afficher sur nlp.stanford.edu
+nlp.stanford.edu
 http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf  
 https://www.insight-centre.org/sites/default/files/publications/14.080_ecml14topic.pdf  
 https://www.cs.princeton.edu/~blei/papers/Blei2012.pdf  The Stone and the ShellThe Stone and the Shell
 Using large digital libraries to advance literary history
-Afficher sur tedunderwood.com
+tedunderwood.com
 http://sappingattention.blogspot.fr/2011/11/compare-and-contrast.html  
 https://moz.com/blog/lda-and-googles-rankings-well-correlated 
 https://www.cs.princeton.edu/~blei/papers/BleiMcAuliffe2007.pdf  
 http://arxiv.org/pdf /1003.0783.pdf ProxTeam: Un correcteur orthographique en 21 lignes de PythonProxTeam: Un correcteur orthographique en 21 lignes de Python
 Traduction et adaptation du mini correcteur de Peter Norvig Dans un article pédagogique, Peter Norvig nous explique comment coder un correcteur orthographique simple en 21 lignes de Python.
-Afficher sur blog.proxteam.eu
+blog.proxteam.eu
 Supervised Topic Modeling, Blei 
 http://www.rug.nl/research/portal/files/2558553/06c6.pdf  
 http://iswc2012.semanticweb.org/sites/default/files/76490321.pdf  
 https://www.cs.cmu.edu/~epxing/Class/10715/project-reports/WangLiLin.pdf 
-https://www.cs.princeton.edu/~blei/papers/BleiMcAuliffe2007.pdf  Corps du message
+https://www.cs.princeton.edu/~blei/papers/BleiMcAuliffe2007.pdf  
 IEEE Xplore - Error Page IEEE Xplore - Error Page
 Page Not Found We're sorry. We cannot find a page that matches your request. Below are some suggestions that may assist: Return to the IEEE Xplore Home Page.
-Afficher sur ieeexplore.ieee.org
+ieeexplore.ieee.org
 The input parameters for using latent Dirichlet allocationThe input parameters for using latent Dirichlet allocati...
 When using topic modeling (Latent Dirichlet Allocation), the number of topics is an input parameter that the user need to specify. Looks to me that we should also p...
-Afficher sur stats.stackexchan...
+stats.stackexchan...
 Topic models: cross validation with loglikelihood or perplexityTopic models: cross validation with loglikelihood or per...
 I'm clustering documents using topic modeling. I need to come up with the optimal topic numbers. So, I decided to do ten fold cross validation with topics 10, 20, ....
-Afficher sur stackoverflow.com
+stackoverflow.com
 Google Groups Google Groups
 Google Groups allows you to create and participate in online forums and email-based groups with a rich experience for community conversations.
-Afficher sur groups.google.com
+groups.google.com
 Asymmetric LDA Priors, Christmas Edition | RaRe TechnologiesAsymmetric LDA Priors, Christmas Edition | RaRe Techno...
 The end of the year is proving crazy busy as usual, but gensim acquired a cool new feature that I just had to blog about. Ben Trahan sent a patch that allows automa...
-Afficher sur rare-technologies...
+rare-technologies...
 What is the best way to obtain the optimal number of topics for a LDA-Model using Gensim?What is the best way to obtain the optimal number of top...
 I am trying to obtain the optimal number of topics for an LDA-model within Gensim. One method I found is to calculate the log likelihood for each model and compare ...
-Afficher sur stackoverflow.com
+stackoverflow.com
 http://ai.stanford.edu/~ang/papers/nips01-lda.pdf  
 http://cpsievert.github.io/projects/615/xkcd/Finding the natural number of topics for Latent Dirichlet Allocation - Christopher GraingerFinding the natural number of topics for Latent Dirichle...
 Update (July 13, 2014): I’ve been informed that I should be looking at hierarchical topic models (see Blei’s papers here and here).
-Afficher sur blog.cigrainger.com
+blog.cigrainger.com
 Using topic words generated by LDA to represent a document Using topic words generated by LDA to represent a docum...
 I want to do document classification by representing each document as a set of features. I know that there are many ways: BOW, TFIDF, ... I want to use Latent Diric...
-Afficher sur stats.stackexchan...
+stats.stackexchan...
 Un Open Access sans licence libre a-t-il un sens ?Un Open Access sans licence libre a-t-il un sens ?
 Voilà un moment déjà que je voulais écrire sur les rapports entre l’Open Access et les licences libres, et une affaire survenue à propos du site MyScienceWork la se...
-Afficher sur scinfolex.com
-À	
-Arthur2
-Corps du message
-Bad DreamsBad Dreams
-[Content warning: Scary stuff, gawking at weird diseases] My first sign that something was up was when I noticed my Sleep Medicine textbook was written by a Dr. D...
-Afficher sur slatestarcodex.com
+scinfolex.com
+
 Lesk algorithm - Wikipedia, the free encyclopediaLesk algorithm - Wikipedia, the free encyclopedia
 The Lesk algorithm is a classical algorithm for word sense disambiguation introduced by Michael E. Lesk in 1986. [1]
-Afficher sur en.wikipedia.org
+en.wikipedia.org
 http://ai.stanford.edu/~ang/papers/jair03-lda.pdf 
 https://papers.nips.cc/paper/4094-word-features-for-latent-dirichlet-allocation.pdf  Differences between SVD and Latent Dirichlet Allocation for...Differences between SVD and Latent Dirichlet Allocation ...
 I have a binary classification problem for NLP tasks. I need to identify news which I am interested in from a news corpus. I want to conduct a method to reduce and ...
-Afficher sur www.researchgate...
+www.researchgate...
 https://terpconnect.umd.edu/~oard/pdf /asist11.pdf  Slides 
 https://www.cs.umd.edu/class/spring2008/cmsc828g/Slides/topic-models.pdf  
 https://www.cs.umd.edu/class/spring2008/cmsc828g/Slides/topic-models.pdf  
-http://www.cs.cmu.edu/~pengtaox/papers/uai2013paper.pdf  Corps du message
+http://www.cs.cmu.edu/~pengtaox/papers/uai2013paper.pdf  
 http://www.stat.washington.edu/courses/stat535/fall11/Handouts/l14-clustering-slides.pdf Bon, et si on en parlait quand même ? Considérations impolies sur le « relativisme sociologisant dans les milieux de décision », et son effet sur les politiques de recherche | ZilselBon, et si on en parlait quand même ? Considérations imp...
 Cet article part d’une minuscule anicroche, une de celles qui émaillent régulièrement le microcosme académique. Une petite chicanerie sans conséquence, que chacun v...
-Afficher sur zilsel.hypotheses.org
+zilsel.hypotheses.org
 Automatic topic-modelling with Latent Dirichlet Allocation - Intent HQ Engineering blogAutomatic topic-modelling with Latent Dirichlet Allocati...
 LDA automatically assigns topics to text documents. How is it done? Which are its limitations? What is the best open-source library to use in your code?
-Afficher sur engineering.intent...
+engineering.intent...
 F*** You, I Quit — Hiring Is BrokenF*** You, I Quit — Hiring Is Broken
 Disclaimer: This is a story about my interview experience in the tech industry. No personal names will be used to preser…
-Afficher sur medium.com
+medium.com
 The FBI faked an entire field of forensic science (2015) | Hacker News The FBI faked an entire field of forensic science (2015) | Hacker News
 Hacker News new | comments | apply | show | ask | jobs | submit login The FBI faked an entire field of forensic science (2015) (slate.com)
-Afficher sur news.ycombinator.com
+news.ycombinator.com
 http://blog.datumbox.com/clustering-documents-and-gaussian-data-with-dirichlet-process-mixture-models/ 
 http://blog.datumbox.com/overview-of-cluster-analysis-and-dirichlet-process-mixture-models/
 http://lxml.de/tutorial.html 
@@ -238,3 +235,15 @@ https://stevebennett.me/2012/02/24/10-things-i-hate-about-git/
 http://www.daemonology.net/
 
 http://www.alexkras.com/19-git-tips-for-everyday-use/
+
+https://kalkis-research.com/google-end-of-the-online-advertising-bubble
+
+http://www.ncbi.nlm.nih.gov/pubmed/14514185
+https://arxiv.org/ftp/physics/papers/0208/0208101.pdf
+
+http://www.mit.edu/~gari/teaching/6.222j/ICASVDnotes.pdf
+
+_ .. .. _ S 
+
+
+
