@@ -247,6 +247,7 @@ _ .. .. _ S
 
 http://www.lattice.cnrs.fr/sites/itellier/poly_info_ling/linguistique007.html
 
-
+https://web.archive.org/web/20120430053011/http://www.knowledgesearch.org/lsi/structured_data.htm
+http://slatestarcodex.com/2015/01/06/links-12015-an-extraordinary-url-in-an-ordinary-world/#comment-171841
 
 http://blog.plover.com/prog/
