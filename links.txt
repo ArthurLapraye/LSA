@@ -218,9 +218,6 @@ zilsel.hypotheses.org
 Automatic topic-modelling with Latent Dirichlet Allocation - Intent HQ Engineering blogAutomatic topic-modelling with Latent Dirichlet Allocati...
 LDA automatically assigns topics to text documents. How is it done? Which are its limitations? What is the best open-source library to use in your code?
 engineering.intent...
-F*** You, I Quit — Hiring Is BrokenF*** You, I Quit — Hiring Is Broken
-Disclaimer: This is a story about my interview experience in the tech industry. No personal names will be used to preser…
-medium.com
 The FBI faked an entire field of forensic science (2015) | Hacker News The FBI faked an entire field of forensic science (2015) | Hacker News
 Hacker News new | comments | apply | show | ask | jobs | submit login The FBI faked an entire field of forensic science (2015) (slate.com)
 news.ycombinator.com
@@ -247,6 +244,15 @@ _ .. .. _ S
 
 http://www.lattice.cnrs.fr/sites/itellier/poly_info_ling/linguistique007.html
 
+<<<<<<< HEAD
 https://web.archive.org/web/20120808061648/http://www.knowledgesearch.org/lsi/lsa_intro.htm
 
 http://blog.plover.com/prog/
+=======
+https://web.archive.org/web/20120430053011/http://www.knowledgesearch.org/lsi/structured_data.htm
+http://slatestarcodex.com/2015/01/06/links-12015-an-extraordinary-url-in-an-ordinary-world/#comment-171841
+
+http://blog.plover.com/prog/
+
+http://www.scottaaronson.com/writings/bignumbers.html
+>>>>>>> 3ec5b3da1727892b02e0b8662e966812cd3d24d7
