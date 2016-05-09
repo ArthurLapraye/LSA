@@ -247,6 +247,6 @@ _ .. .. _ S
 
 http://www.lattice.cnrs.fr/sites/itellier/poly_info_ling/linguistique007.html
 
-
+https://web.archive.org/web/20120808061648/http://www.knowledgesearch.org/lsi/lsa_intro.htm
 
 http://blog.plover.com/prog/
