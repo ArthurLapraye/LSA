@@ -266,7 +266,6 @@ Shall break into a hundred thousand flaws,
 Or ere I'll weep. O fool, I shall go mad!
 
 http://www.cs.cmu.edu/~pengtaox/papers/uai2013paper.pdf
-https://arxiv.org/ftp/arxiv/papers/1309/1309.6874.pdf
 
 https://en.wikipedia.org/wiki/Explicit_semantic_analysis
 https://en.wikipedia.org/wiki/Non-negative_matrix_factorization
