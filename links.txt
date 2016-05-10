@@ -219,7 +219,6 @@ Automatic topic-modelling with Latent Dirichlet Allocation - Intent HQ Engineeri
 LDA automatically assigns topics to text documents. How is it done? Which are its limitations? What is the best open-source library to use in your code?
 engineering.intent...
 The FBI faked an entire field of forensic science (2015) | Hacker News The FBI faked an entire field of forensic science (2015) | Hacker News
-Hacker News new | comments | apply | show | ask | jobs | submit login The FBI faked an entire field of forensic science (2015) (slate.com)
 news.ycombinator.com
 http://blog.datumbox.com/clustering-documents-and-gaussian-data-with-dirichlet-process-mixture-models/ 
 http://blog.datumbox.com/overview-of-cluster-analysis-and-dirichlet-process-mixture-models/
