@@ -476,9 +476,9 @@ Changer le système de seuil si c'est des probas pour permettre l'attribution au
 
 Système de re-classification : dégager les sujets dans un 1er temps puis les utiliser pour reclasser le reste. 
 
-Créer un système pour permettre d'identifier les synonymes du corpus
+Créer un système pour permettre d'identifier les synonymes du corpus +> FAIT (et ça marche pas)
 
 Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
-#TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments
-#TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ?
+#TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments DONE
+#TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ? 
