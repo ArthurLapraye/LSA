@@ -299,7 +299,7 @@ https://www.eecs.berkeley.edu/~jhoffman/domainadapt/
 
 https://www.embeddedrelated.com/showarticle/152.php
 
-https://pinboard.in/u:maciej/public/before:1436030863
+
 
 http://aurellem.org/thoughts/html/sussman-reading-list.html
 
@@ -308,3 +308,4 @@ https://www.cairn.info/revue-langage-et-societe-2016-1-page-15.htm
 http://jmlr.org/proceedings/papers/v37/ganin15.pdf
 
 https://en.wikipedia.org/wiki/Law_of_triviality
+lisp macro == grammaire generative
