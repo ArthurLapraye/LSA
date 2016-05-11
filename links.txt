@@ -269,3 +269,19 @@ http://www.cs.cmu.edu/~pengtaox/papers/uai2013paper.pdf
 
 https://en.wikipedia.org/wiki/Explicit_semantic_analysis
 https://en.wikipedia.org/wiki/Non-negative_matrix_factorization
+
+http://www.tecmint.com/command-line-tools-to-monitor-linux-performance/
+
+http://www.tecmint.com/linux-performance-monitoring-tools/
+ 
+http://utf8everywhere.org/
+
+http://arxiv.org/pdf/1605.02019v1.pdf
+
+http://www.umiacs.umd.edu/~hal/docs/daume02yaht.pdf
+
+https://www.eecs.berkeley.edu/~jhoffman/domainadapt/
+http://l2r.cs.uiuc.edu/~danr/Teaching/CS546-09/Lectures/domain-adapt.pdf
+http://www.umiacs.umd.edu/~hal/docs/daume15lols.pdf
+
+http://www.umiacs.umd.edu/~hal/docs/daume07easyadapt.pdf
