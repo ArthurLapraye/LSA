@@ -285,3 +285,22 @@ http://l2r.cs.uiuc.edu/~danr/Teaching/CS546-09/Lectures/domain-adapt.pdf
 http://www.umiacs.umd.edu/~hal/docs/daume15lols.pdf
 
 http://www.umiacs.umd.edu/~hal/docs/daume07easyadapt.pdf
+
+https://pinboard.in/u:maciej/public/before:1445662089
+
+http://l2r.cs.uiuc.edu/~danr/Teaching/CS546-09/Lectures/domain-adapt.pdf
+
+http://research.google.com/pubs/pub43146.html
+
+http://arxiv.org/pdf/1605.02019v1.pdf
+
+https://www.cairn.info/revue-langage-et-societe-2016-1-page-15.htm
+https://www.eecs.berkeley.edu/~jhoffman/domainadapt/
+
+https://www.embeddedrelated.com/showarticle/152.php
+
+https://pinboard.in/u:maciej/public/before:1436030863
+
+http://aurellem.org/thoughts/html/sussman-reading-list.html
+
+https://www.cairn.info/revue-langage-et-societe-2016-1-page-15.htm
