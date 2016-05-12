@@ -189,82 +189,13 @@ def tokenize(corpus):
 					lexicon[word] += 1
 		
 		texts.append(elem)
-		#logging.info(elem)
-	
-	# texts=collocs(texts)
-	# mort=set()
-	
-	# for word in lexicon:
-	
-		# for s in syno[word]:
-			
-			# if s in lexicon:
-				# if word != s:
-					# majo,mino = (word,s) if lexicon[word] > lexicon[s] else (s,word)
-					# if mino not in mort:
-						# text2=list()
-						# for t in texts:
-							# elem=[x if x != mino else majo for x in t ]
-							# text2.append(elem)
-						
-						# texts=text2
-						
-						# print >> sys.stderr, "Remplacé",mino.encode("utf-8"),lexicon[mino],"par",majo.encode("utf-8"),lexicon[majo]
-						# mort.add(mino)
-					
 		
 	return texts
-
-
-	
-# def distdl(a,b):
-	# d=defaultdict(float)
-	# cost=0
-	
-	# for i in xrange(-1,len(a)):
-		# d[i, 0] = i
-	# for j in xrange(-1,len(b)):
-		# d[(0, j)] = j
-	
-	# for i in range(0,len(a)):
-		# for j in range(0,len(b)):
-			# if a[i] == b[j]:
-				# cost = 0
-			# else:
-				# cost = 1
-			# d[i, j]= min(d[i-1, j] + 1,d[i, j-1] + 1,d[i-1, j-1] + cost)
-			
-			# if i > 1 and j > 1 and a[i] == b[j-1] and a[i-1] == b[j]:
-				# d[i, j] = min(d[i, j],d[i-2, j-2] + cost)
-			
-	# return d[len(a)-1, len(b)-1]
 
 
 logging.info("Tokenisation")
 	
 texts= tokenize(corpus)
-
-# print texts
-# print len(texts)
-# print len([x for x in texts if len(x) > 0])
-
-# lexicon=defaultdict(float)
-# for t in texts:
-	# for w in t:
-		# lexicon[w] += 1
-
-# for elem in sorted(stoplist):
-	# print elem.encode("utf-8")
-
-# for w in sorted(lexicon,key=lambda x : lexicon[x], reverse=True):
-	# print w,lexicon[w]
-	
-# dist=dict()
-	
-# for keys in lexicon:
-	# for clefs in lexicon:
-		# if clefs != keys:
-			# dist[clefs,keys]=distdl(clefs,keys)
 
 if True:
 	dictionary = corpora.Dictionary(texts)
