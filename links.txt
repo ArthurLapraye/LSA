@@ -309,3 +309,6 @@ http://jmlr.org/proceedings/papers/v37/ganin15.pdf
 
 https://en.wikipedia.org/wiki/Law_of_triviality
 lisp macro == grammaire generative
+http://www.leboucher.com/pdf/courteline/ronds-de-cuir.pdf
+
+http://www.jstor.org/stable/4047619?seq=1#page_scan_tab_contents

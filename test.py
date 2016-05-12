@@ -268,6 +268,12 @@ texts= tokenize(corpus)
 
 if True:
 	dictionary = corpora.Dictionary(texts)
+	
+	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
+	dictionary.filter_tokens(once_ids)
+	dictionary.filter_extremes(no_below=2,no_above=0.90)
+	dictionary.compactify()
+	
 	bow = [dictionary.doc2bow(text) for text in texts]
 
 	tfidf = models.TfidfModel(bow)
@@ -425,10 +431,7 @@ if True:
 		# print similarities
 
 #dictionary = corpora.Dictionary(line.lower().split() for line in open('corpus.txt','rb'))
-	# once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
-	#dictionary.filter_tokens(once_ids)
-	#dictionary.filter_extremes(no_above=5,keep_n=100000)
-	#dictionary.compactify()
+	# 
 	
 	# From http://blog.cigrainger.com/2014/07/lda-number.html
 
