@@ -116,7 +116,8 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.3
-SEUILMOT=0.87
+SEUILMOT=0.75
+MINIMUM=2
 np.random.seed(42)
 
 lemmatiseur=defaultdict(set)
@@ -141,28 +142,28 @@ syno=synonymes()
 logging.info("Dictionnaire de synonymes chargés")
 
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"Seuil mot:\t",SEUILMOT
+print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
 
 
 
 corpus=dict()
 i=0
 
-# wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-# for row in wb['A1']:
-	# if row[2].value:
-		# uuid=row[1].value
-		# corpus[i]=unicode(row[2].value)
-		# i += 1
+wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
+for row in wb['A1']:
+	if row[2].value:
+		uuid=row[1].value
+		corpus[i]=unicode(row[2].value)
+		i += 1
 
 
 		
-with open("../241013efs_all.csv") as openfile:
-	z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	for x in z:
-		if x[58]:
-			corpus[i]=x[58].decode("utf-8")
-			i += 1
+# with open("../241013efs_all.csv") as openfile:
+	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
+	# for x in z:
+		# if x[58]:
+			# corpus[i]=x[58].decode("utf-8")
+			# i += 1
 
 logging.info("Corpus chargé")
 			
@@ -203,7 +204,7 @@ if True:
 	
 	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
 	dictionary.filter_tokens(once_ids)
-	dictionary.filter_extremes(no_below=5,no_above=SEUILMOT)
+	dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
 	dictionary.compactify()
 	
 	bow = [dictionary.doc2bow(text) for text in texts]

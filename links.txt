@@ -316,3 +316,9 @@ http://www.jstor.org/stable/4047619?seq=1#page_scan_tab_contents
 https://github.com/piskvorky/gensim/wiki/Recipes-&-FAQ
 
 http://christop.club/2014/05/06/using-gensim-for-lda/
+
+http://www.maa.org/sites/default/files/pdf/pubs/AMM-March11_Cantor.pdf
+
+http://legacy.earlham.edu/~peters/writing/infapp.htm
+
+"Aus dem Paradies, das Cantor uns geschaffen, soll uns niemand vertreiben können."
