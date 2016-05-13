@@ -312,3 +312,7 @@ lisp macro == grammaire generative
 http://www.leboucher.com/pdf/courteline/ronds-de-cuir.pdf
 
 http://www.jstor.org/stable/4047619?seq=1#page_scan_tab_contents
+
+https://github.com/piskvorky/gensim/wiki/Recipes-&-FAQ
+
+http://christop.club/2014/05/06/using-gensim-for-lda/

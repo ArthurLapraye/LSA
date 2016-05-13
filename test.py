@@ -116,6 +116,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.3
+SEUILMOT=0.87
 np.random.seed(42)
 
 lemmatiseur=defaultdict(set)
@@ -140,7 +141,7 @@ syno=synonymes()
 logging.info("Dictionnaire de synonymes chargés")
 
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA
+print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"Seuil mot:\t",SEUILMOT
 
 
 
@@ -202,7 +203,7 @@ if True:
 	
 	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
 	dictionary.filter_tokens(once_ids)
-	dictionary.filter_extremes(no_below=2,no_above=0.90)
+	dictionary.filter_extremes(no_below=5,no_above=SEUILMOT)
 	dictionary.compactify()
 	
 	bow = [dictionary.doc2bow(text) for text in texts]
