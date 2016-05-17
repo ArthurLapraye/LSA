@@ -116,7 +116,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 NUMTOPICS=int(sys.argv[1])
 NUMPASS=int(sys.argv[2])
 SEUILPROBA =0.3
-SEUILMOT=0.75
+SEUILMOT=0.85
 MINIMUM=2
 np.random.seed(42)
 FICHIER="../241013efs_all.csv"
@@ -138,21 +138,18 @@ lemmatiseur.update(l2)
 
 logging.info("Lemmatiseur fini de charger !")
 
-syno=synonymes()
-
-logging.info("Dictionnaire de synonymes chargés")
-
 # print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
 print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
 
 
 def loadfile(filename):
-	_,ext=filename.split(".")
+	
+	name, ext=os.path.splitext(filename)
 	
 	corpus=dict()
 	i=0
 	
-	if ext == "csv":
+	if ext == ".csv":
 		with open(filename) as openfile:
 			z=csv.reader(openfile,delimiter=";", quotechar="\"")
 			col=int(raw_input("Donnez la colonne à analyser."))
@@ -162,7 +159,7 @@ def loadfile(filename):
 					i += 1
 
 	
-	elif ext == "xlsx":
+	elif ext == ".xlsx":
 		wb = xl.load_workbook(filename, guess_types=True)
 		feuille=raw_input("Donner le nom de la feuille")
 		col=int(raw_input("Donnez la colonne à analyser."))
@@ -184,13 +181,14 @@ def loadfile(filename):
 def tokenize(corpus):
 	
 	total,lemma=0.0,0.0
-	tok=re.compile(u"[0-9#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
+	tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 	texts=list()
 	
 	lexicon=defaultdict(float)
 		
 	for x in corpus:
 		elem=[]
+		re.sub("[0-9]+"," \1 ",corpus[x],0)
 		for word in tok.split(corpus[x].lower()):
 			if word not in stoplist:
 				total += 1.0
@@ -225,9 +223,8 @@ if True:
 	dictionary.compactify()
 	
 	bow = [dictionary.doc2bow(text) for text in texts]
-
-	tfidf = models.TfidfModel(bow)
-	corpus_tfidf = tfidf[bow]
+	
+	corpus_tfidf =  models.TfidfModel(bow)[bow]
 	
 
 	lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
@@ -274,14 +271,11 @@ if True:
 
 
 """Idées : 
-Correcteur d'orthographe online (?) basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur.
 => Peut-etre rajouter les mots proches présents dans le corpus (e,g sauvé sera rajouter à ce qui contient sauver etc... sans doute une mauvaise idée mais à tester)
  
 Changer le système de seuil si c'est des probas pour permettre l'attribution automatique de plusieurs codes
 
 Système de re-classification : dégager les sujets dans un 1er temps puis les utiliser pour reclasser le reste. 
-
-Créer un système pour permettre d'identifier les synonymes du corpus +> FAIT (et ça marche pas)
 
 Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
