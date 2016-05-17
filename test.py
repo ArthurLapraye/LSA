@@ -119,6 +119,7 @@ SEUILPROBA =0.3
 SEUILMOT=0.75
 MINIMUM=2
 np.random.seed(42)
+FICHIER="../241013efs_all.csv"
 
 lemmatiseur=defaultdict(set)
 l2=defaultdict(set)
@@ -145,27 +146,40 @@ logging.info("Dictionnaire de synonymes chargés")
 print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
 
 
+def loadfile(filename):
+	_,ext=filename.split(".")
+	
+	corpus=dict()
+	i=0
+	
+	if ext == "csv":
+		with open(filename) as openfile:
+			z=csv.reader(openfile,delimiter=";", quotechar="\"")
+			col=int(raw_input("Donnez la colonne à analyser."))
+			for x in z:
+				if x[col]:
+					corpus[i]=x[col].decode("utf-8")
+					i += 1
 
-corpus=dict()
-i=0
+	
+	elif ext == "xlsx":
+		wb = xl.load_workbook(filename, guess_types=True)
+		feuille=raw_input("Donner le nom de la feuille")
+		col=int(raw_input("Donnez la colonne à analyser."))
+		for row in wb[feuille]:
+			if row[col].value:
+				uuid=row[1].value
+				corpus[i]=unicode(row[col].value)
+				i += 1
 
-wb = xl.load_workbook("../QO10 - Copie.xlsx", guess_types=True)
-for row in wb['A1']:
-	if row[2].value:
-		uuid=row[1].value
-		corpus[i]=unicode(row[2].value)
-		i += 1
-
+	else:
+		logging.critical("Type de fichier non reconnu")
+		sys.exit(-1)
+	
+	return corpus
 
 		
-# with open("../241013efs_all.csv") as openfile:
-	# z=csv.reader(openfile,delimiter=";", quotechar="\"")
-	# for x in z:
-		# if x[58]:
-			# corpus[i]=x[58].decode("utf-8")
-			# i += 1
-
-logging.info("Corpus chargé")
+# with open("") 
 			
 def tokenize(corpus):
 	
@@ -195,8 +209,11 @@ def tokenize(corpus):
 	return texts
 
 
+corpus=loadfile(FICHIER)
+logging.info("Corpus chargé")
+
 logging.info("Tokenisation")
-	
+
 texts= tokenize(corpus)
 
 if True:
@@ -254,155 +271,7 @@ if True:
 	for element in corpus:
 		print str(element)+"\t"+corpus[element].encode("utf-8")+"\t"+"\t".join([str(x) for x,y in c[element]])
 	
-	
-	
-	# data = lda[bow]
-			# kmodel=km(n_clusters=10,n_init=100)
-	# kmodel = SC(n_clusters=10,n_neighbors=20)
-	# print len(dictionary)
-	# densetf = matutils.corpus2dense(corpus_tfidf,num_terms=len(dictionary))
-	# kmodel.fit(densetf)
-	
-	# clusters = kmodel.labels_.tolist()
 
-	#for i,elem in enumerate(clusters):
-		# print elem,unicode(corpus[identifiant[i]]).encode("utf-8")
-	
-	# raw_input()
-	
-	# for i,elem in enumerate(kmodel.predict(densetf)):
-		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
-	
-
-	
-	# kmodel=km(n_clusters=5)
-	# print len(dictionary)
-	# kmodel.fit(corpus_lsi)
-	
-	# for i,elem in enumerate(kmodel.predict(corpus_lsi)):
-		# print unicode(corpus[identifiant[i]]).encode("UTF-8"),unicode(elem)
-	
-	
-	# column_labels = range(0,len(dictionary))
-	# row_labels = dictionary.keys()
-	# data = corpus_tfidf
-	
-	#From 
-
-	
-	# convert two components as we're plotting points in a two-dimensional plane
-	# "precomputed" because we provide a distance matrix
-	# we will also specify `random_state` so the plot is reproducible.
-	
-	# MDS()
-
-	# mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
-
-	# pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
-
-	# xs, ys = pos[:, 0], pos[:, 1]
-		
-	
-	
-	# print data
-	# fig, ax = plt.subplots()
-	# heatmap = ax.pcolor(data, cmap=plt.cm.Blues)
-
-	# put the major ticks at the middle of each cell
-	# ax.set_xticks(np.arange(data.shape[0])+0.5, minor=False)
-	# ax.set_yticks(np.arange(data.shape[1])+0.5, minor=False)
-
-	# want a more natural, table-like display
-	# ax.invert_yaxis()
-	# ax.xaxis.tick_top()
-
-	# ax.set_xticklabels(row_labels, minor=False)
-	# ax.set_yticklabels(column_labels, minor=False)
-	# plt.show()
-	
-	# print corpus_tfidf
-	
-
-	# sims = index[data]
-	# sims = sorted(enumerate(sims), key=lambda item: -item[1])
-	# print sims
-		
-		
-	# data = np.transpose(matutils.corpus2dense(data, num_terms=100 ))
-	
-	# plt.matshow(data)
-	# plt.show()
-	
-	
-	# pprint(lsi.show_topics(10))
-
-	#for doc in corpus_lsi:
-	#	print doc
-
-	# print "toto"
-	# index = similarities.MatrixSimilarity(lsi[bow])
-	
-	# for elt in enumerate(index):
-		# print corpus[identifiant[i]],elt
-	
-	
-
-	#print corpus_lsi
-
-	#text.pack( side = t.LEFT, fill = t.BOTH, expand=1 )
-	#scroll2.config( command = text.xview )
-	#scrollbar.config( command = text.yview )
-	#text.pack()
-	#root.mainloop()
-	
-	# for i,toto in enumerate(bow):
-		# print corpus[identifiant[i]].encode("utf-8"),toto,[ dictionary[x] for x,y in toto]
-	
-	#for x in sorted(dictionary,key= lambda x : len(dictionary[x]), reverse=False) :
-	#	print x, dictionary[x].encode("utf-8")
-	# for similarities in index[:3]:
-		# print similarities
-
-#dictionary = corpora.Dictionary(line.lower().split() for line in open('corpus.txt','rb'))
-	# 
-	
-	# From http://blog.cigrainger.com/2014/07/lda-number.html
-
-	# class MyCorpus(object):
-		# def __iter__(self):
-			# for line in open('corpus.txt','r'):
-				# yield dictionary.doc2bow(line.lower().split())
-
-	# my_corpus = MyCorpus()
-
-	# l = np.array([sum(cnt for _, cnt in doc) for doc in bow])
-	
-	# def sym_kl(p,q):
-		# return np.sum([stats.entropy(p,q),stats.entropy(q,p)])
- 
-	# def arun(corpus,dictionary,min_topics=1,max_topics=10,step=1):
-		# kl = []
-		# for i in range(min_topics,max_topics,step):
-			# lda = models.ldamodel.LdaModel(corpus=corpus,id2word=dictionary,num_topics=i)
-			# m1 = lda.expElogbeta
-			# U,cm1,V = np.linalg.svd(m1)
-			# Document-topic matrix
-			# lda_topics = lda[bow]
-			# m2 = matutils.corpus2dense(lda_topics, lda.num_topics).transpose()
-			# cm2 = l.dot(m2)
-			# cm2 = cm2 + 0.0001
-			# cm2norm = np.linalg.norm(l)
-			# cm2 = cm2/cm2norm
-			# kl.append(sym_kl(cm1,cm2))
-		# return kl
-		
-	# kl = arun(bow,dictionary,max_topics=100)
-
-	# Plot kl divergence against number of topics
-	# plt.plot(kl)
-	# plt.ylabel('Symmetric KL Divergence')
-	# plt.xlabel('Number of Topics')
-	# plt.savefig('kldiv.png', bbox_inches='tight')
 
 """Idées : 
 Correcteur d'orthographe online (?) basé sur une distance de levenshtein, pour remplacer l'absence de lemmatiseur.
@@ -416,5 +285,5 @@ Créer un système pour permettre d'identifier les synonymes du corpus +> FAIT (
 
 Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
 """
-#TODO : Examiner le reliquat ; Trier les sujets par nb d'éléments DONE
+
 #TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ? 

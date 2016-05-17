@@ -322,3 +322,5 @@ http://www.maa.org/sites/default/files/pdf/pubs/AMM-March11_Cantor.pdf
 http://legacy.earlham.edu/~peters/writing/infapp.htm
 
 "Aus dem Paradies, das Cantor uns geschaffen, soll uns niemand vertreiben können."
+
+https://news.ycombinator.com/item?id=1803815
