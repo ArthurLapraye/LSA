@@ -113,13 +113,13 @@ u"être",
 u"vous"])
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-NUMTOPICS=int(sys.argv[1])
-NUMPASS=int(sys.argv[2])
+NUMTOPICS=int(sys.argv[2])
+NUMPASS=int(sys.argv[3])
 SEUILPROBA =0.3
-SEUILMOT=0.85
+SEUILMOT=0.95
 MINIMUM=2
 np.random.seed(42)
-FICHIER="../241013efs_all.csv"
+FICHIER=sys.argv[1]
 
 lemmatiseur=defaultdict(set)
 l2=defaultdict(set)

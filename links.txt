@@ -324,3 +324,5 @@ http://legacy.earlham.edu/~peters/writing/infapp.htm
 "Aus dem Paradies, das Cantor uns geschaffen, soll uns niemand vertreiben können."
 
 https://news.ycombinator.com/item?id=1803815
+
+http://kodu.ut.ee/~treumuth/NLP/syntax.pdf
