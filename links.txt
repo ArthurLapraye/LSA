@@ -337,3 +337,5 @@ capable d'emplir en un jour l'achéron
 et le Styx
 Faisait aux ordis la guerre
 Ils ne mouraient pas tous, mais tous étaient touchés.
+
+https://www.reddit.com/r/haskell/comments/4f47ou/why_does_haskell_in_your_opinion_suck/
