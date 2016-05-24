@@ -359,3 +359,6 @@ http://ep.yimg.com/ty/cdn/paulgraham/onlisp.pdf
 
 http://gizmodo.com/the-images-from-indias-first-ever-space-shuttle-launch-1778176802
 https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system
+
+https://a3nm.net/work/writing/desordre/desordre.pdf
+
