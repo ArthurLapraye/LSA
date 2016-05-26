@@ -373,6 +373,17 @@ https://tafotaaf.wordpress.com/2014/08/20/petit-lexique-pafien/
 http://mapcarta.com/15437984
 http://marinepouvreau.free.fr/dotclear/index.php?post/2011/04/16/Le-Val-Studer.-Glace-au-chou.
 http://thefrenchexit.blogspot.fr/2011/11/richard-feynman-on-female-mind.html
+http://lacuisinededoria.over-blog.com/article-en-direct-des-iles-kerguelen-carnet-de-bord-d-une-jeune-scientifique-64201651.html
+http://www.univ-paris-diderot.fr/sc/site.php?bc=kerguelen&np=TOUT
+http://tom-aux-kerguelen.blogspot.fr/2010/12/cabane-jacky.html
+http://www.ipev.fr/pages/purpan/accueilpurpan.html
+http://anciensite.taaf.fr/spip/spip.php?article361
+http://un-corbeau-a-kerguelen.blogspot.fr/2013_07_01_archive.html
+https://www.reddit.com/r/EarthPorn/comments/im87y/val_studer_kerguelen_south_indian_ocean_1024_x_768/
+http://www.univ-st-etienne.fr/iaaf/kergueln/parcours/reponse_trekkerguelen/trekerguelen.htm
+https://talks.traveleronstage.com/2-ans-dans-les-%C3%AEles-de-la-d%C3%A9solation-une-aventure-humaine-grandeur-nature-dc97a8ad355f#.iv153lt3x
+http://www.clubdesargonautes.org/histoirestem/livreguyjacques/paradoxe_ocean_austral_chap7.pdf
+http://za-antarctique.univ-rennes1.fr/fichiers/Rapport_SALMEVOL_IPEV_1041.pdf
 
 Murray Gell-Mann remarked, “Feynman was a great scientist, but he spent a great deal of his effort generating anecdotes about himself.”[64]
 
@@ -380,3 +391,4 @@ onlisp pp 85
 
 https://www.quora.com/Is-going-for-a-Ph-D-worth-it-if-Im-extremely-passionate-about-a-field-but-dont-really-want-to-spend-my-20s-poor-toiling-away-in-a-lab-and-living-in-a-city-that-I-dont-particularly-want-to-live-in/answer/Mark-Eichenlaub?srid=slK&share=1
 
+"Closures are a poor man's object, objects are a poor man's closures"
