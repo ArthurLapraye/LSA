@@ -160,7 +160,7 @@ def loadfile(filename):
 
 	
 	elif ext == ".xlsx":
-		wb = xl.load_workbook(filename, guess_types=True)
+		wb = xl.load_workbook(filename, guess_types=False)
 		feuille=raw_input("Donner le nom de la feuille")
 		col=int(raw_input("Donnez la colonne à analyser."))
 		for row in wb[feuille]:
