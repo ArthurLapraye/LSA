@@ -25,3 +25,7 @@ def col1(texts):
 	
 	return texts
 
+if __name__=="__main__":
+	"""
+		output : corpus collocs
+	"""
