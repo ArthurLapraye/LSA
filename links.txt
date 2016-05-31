@@ -400,3 +400,27 @@ Présentée et soutenue publiquement le 14 janvier 2011
 Éco-physiologie des réponses aux stress chimiques chez le
 poisson en milieu naturel
 Cas des salmonidés des îles Kerguelen
+
+http://www.sas.upenn.edu/~nathanen/files/cbi-gender.pdf
+https://www.cs.utexas.edu/users/EWD/transcriptions/EWD11xx/EWD1175.html
+http://www.cs.utexas.edu/users/EWD/ewd04xx/EWD473.PDF
+http://www.christianegeoffroy.com/blogs/blog/archipel-de-kerguelen/
+
+https://www.quora.com/Whats-your-take-on-John-Searles-Chinese-room-argument/answer/Scott-Aaronson
+
+https://www.quora.com/What-was-it-like-for-you-to-be-widely-attacked-online/answer/Scott-Aaronson
+
+
+http://slatestarcodex.com/2016/01/20/side-effects-may-include-anything/
+
+http://www.christianegeoffroy.com/blogs/
+
+Safehead :: [a] -> Maybe a 
+Safehead [] = Nothing
+Safehead (x:xs) = x
+
+https://www.kerguelen-island.org/album_photo/page.php?album=ptchristmas&id=7
+
+http://slatestarcodex.com/2014/04/11/going-loopy/
+https://vanemden.wordpress.com/2008/05/06/i-remember-edsger-dijkstra-1930-2002/
+https://www.quora.com/Why-does-Java-encourage-over-engineering
