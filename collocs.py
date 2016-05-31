@@ -28,4 +28,7 @@ def col1(texts):
 if __name__=="__main__":
 	"""
 		output : corpus collocs
+		
+		à intégrer avec le système de recherche
+		
 	"""
