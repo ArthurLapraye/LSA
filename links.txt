@@ -425,3 +425,7 @@ http://slatestarcodex.com/2014/04/11/going-loopy/
 https://vanemden.wordpress.com/2008/05/06/i-remember-edsger-dijkstra-1930-2002/
 https://www.quora.com/Why-does-Java-encourage-over-engineering
 http://www.eng.utah.edu/~cs3100/lectures/l18/pda-notes.pdf
+
+http://chronikeraustral.blogspot.fr/2014_10_01_archive.html
+
+http://www.cs.utexas.edu/~EWD/transcriptions/EWD12xx/EWD1277.html
