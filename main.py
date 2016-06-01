@@ -14,9 +14,9 @@ from PyQt4.QtCore import *
 _fromUtf8 = QtCore.QString.fromUtf8
 
 
-class Table(QtGui.QtableWidget):
-	def __init__(self,sheet):
-		super(Table).__init__()
+class Table(QtGui.QTableWidget):
+	def __init__(self,row_count,column_count,sheet):
+		super(Table,self).__init__(row_count,column_count)
 		 
 		 			
 		r,x=0,0
@@ -27,7 +27,7 @@ class Table(QtGui.QtableWidget):
 					newitem=QtGui.QTableWidgetItem( unicode(fn.value))
 				else:
 					newitem=QtGui.QTableWidgetItem("")
-					self.tabtable[sheet.title].setItem(r,x,newitem)
+					self.setItem(r,x,newitem)
 					x += 1
 				
 				r += 1
@@ -39,22 +39,14 @@ class Table(QtGui.QtableWidget):
 	def __setitem__(self,pair,value):
 		x,y=pair
 		sheet[x][y]=value
-		self.tabtable[sheet.title].setItem(x,y, value)
-		
+		item=self.itemAt(row, column)
+		item.value = sheet[x][y]		
 
 class Main(QtGui.QMainWindow):
 	
 	def __init__(self):
 		super(Main, self).__init__()
 		
-		self.initUI()
-	
-	
-	def changeTitle(self,row,col):
-		self.setWindowTitle(self.table.tr("row:%s,col:%s"%(row,col)))
-	
-		
-	def initUI(self):               
 		
 		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)        
 		exitAction.setShortcut('Ctrl+Q')
