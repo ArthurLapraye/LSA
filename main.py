@@ -13,9 +13,34 @@ from PyQt4.QtCore import *
 
 _fromUtf8 = QtCore.QString.fromUtf8
 
-class frame(QtGui.QTableWidget):
-	def __init__(self):
-		pass
+
+class Table(QtGui.QtableWidget):
+	def __init__(self,sheet):
+		super(Table).__init__()
+		 
+		 			
+		r,x=0,0
+		for row in sheet:
+			x=0
+			for fn in row:
+				if fn.value:
+					newitem=QtGui.QTableWidgetItem( unicode(fn.value))
+				else:
+					newitem=QtGui.QTableWidgetItem("")
+					self.tabtable[sheet.title].setItem(r,x,newitem)
+					x += 1
+				
+				r += 1
+	
+	def __getitem__(self,pair):
+		x,y=pair
+		return sheet[x][y]
+	
+	def __setitem__(self,pair,value):
+		x,y=pair
+		sheet[x][y]=value
+		self.tabtable[sheet.title].setItem(x,y, value)
+		
 
 class Main(QtGui.QMainWindow):
 	
@@ -84,32 +109,14 @@ class Main(QtGui.QMainWindow):
 					column_count = sheet.max_column + 1
 					
 					
-					self.tabtable[sheet.title] = QtGui.QTableWidget(row_count, column_count)
+					self.tabtable[sheet.title] = Table(row_count, column_count, sheet)
 					self.tabs.addTab(self.tabtable[sheet.title],sheet.title)
 					
 					self.show()
-									
-					r,x=0,0
-					for row in sheet:
-						x=0
-						for fn in row:
-							if fn.value:
-								newitem=QtGui.QTableWidgetItem( unicode(fn.value))
-							else:
-								newitem=QtGui.QTableWidgetItem("")
-							#newitem.setText("toto")
-							self.tabtable[sheet.title].setItem(r,x,newitem)
-							x += 1
 						
-						r += 1
-					
-					#self.table.setRowCount(r)
-					#self.table.setColumnCount(x)
-					
 					self.tabtable[sheet.title].show()
 					
-					#self.setCentralWidget(self.table)
-					#self.setGeometry(300, 300, 300, 200)
+				
 				self.setWindowTitle(os.path.basename(filename) )
 			
 			else:
