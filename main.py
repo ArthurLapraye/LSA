@@ -11,15 +11,16 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+_fromUtf8 = QtCore.QString.fromUtf8
 
 class frame(QtGui.QTableWidget):
 	def __init__(self):
 		pass
 
-class Example(QtGui.QMainWindow):
+class Main(QtGui.QMainWindow):
 	
 	def __init__(self):
-		super(Example, self).__init__()
+		super(Main, self).__init__()
 		
 		self.initUI()
 	
@@ -75,7 +76,7 @@ class Example(QtGui.QMainWindow):
 	def openfile(self, filename):
 			if filename.endswith(".xlsx"):
 				
-				wb = opx.load_workbook(filename, guess_types=False)
+				wb = opx.load_workbook(filename, guess_types=True)
 		
 				for sheet in wb:
 					
@@ -113,16 +114,10 @@ class Example(QtGui.QMainWindow):
 			
 			else:
 				QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
-				
-				
-		
-		
-def main():
-	
-	app = QtGui.QApplication(sys.argv)
-	ex = Example()
-	sys.exit(app.exec_())
 
 
+				
 if __name__ == '__main__':
-	main()    
+	app = QtGui.QApplication(sys.argv)
+	ex = Main()
+	sys.exit(app.exec_())
