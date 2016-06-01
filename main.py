@@ -32,70 +32,89 @@ class Example(QtGui.QMainWindow):
 		
 		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)        
 		exitAction.setShortcut('Ctrl+Q')
-		exitAction.setStatusTip('Exit application')
+		exitAction.setStatusTip("Quitte l'application")
 		exitAction.triggered.connect(QtGui.qApp.quit)
 		
 		loadAction = QtGui.QAction(QtGui.QIcon('open.png'),'&Ouvrir',self)
 		loadAction.setShortcut("Ctrl+O")
 		loadAction.setStatusTip("Ouvre un fichier .xlsx")
-		loadAction.triggered.connect(self.openfile)
+		loadAction.triggered.connect(lambda : self.openfile(self.getfilename() ) )
 		
+		self.textbar = QLineEdit()
 		
 		self.statusBar()
 		menubar = self.menuBar()
-		fileMenu = menubar.addMenu('&File')
+		fileMenu = menubar.addMenu('&Fichier')
 		fileMenu.addAction(loadAction)
 		fileMenu.addAction(exitAction)
 		self.tabs	= QtGui.QTabWidget()
 		
+		self.setCentralWidget(self.tabs)
+		
 		self.tabtable = dict()
 		
+		
+		bardoutil= QToolBar()
+		bardoutil.addWidget(self.textbar)
+		self.addToolBar(Qt.TopToolBarArea, bardoutil)
+		
+		
+		self.setGeometry(100,100,800,600)
 		self.show()
 	
-	def openfile(self):
-		files_types = "XLSX (*.xlsx *.xls);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
+	def getfilename(self):
+		files_types = "XLSX (*.xlsx);;XLS (*.xls);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
 		filename = QFileDialog.getOpenFileName(None,
 						caption=QtCore.QString("Ouvrir"),
 						directory=QtCore.QString('./'),
 						filter=files_types,
 						selectedFilter=QtCore.QString('*.xlsx'))
-	
-		wb = opx.load_workbook(filename, guess_types=True)
 		
+		return unicode(filename)
 		
-		if filename.endswith(".xlsx") or filename.endswith("xls"):
-			for sheet in wb:
-				self.tabtable[sheet.title] = QtGui.QTableWidget(row_count, column_count)
-				self.tabs.addTab(self.tabtable[sheet.title],sheet.title)
-				row_count = sheet.max_row - 1
-				column_count = sheet.max_column + 1
-				self.tabs.show()
-								
-				r,x=0,0
-				for row in sheet:
-					x=0
-					for fn in row:
-						#print fn.value
-						newitem=QtGui.QTableWidgetItem( unicode(fn.value))
-						#newitem.setText("toto")
-						self.tabtable[sheet.title].setItem(r,x,newitem)
-						x += 1
+	def openfile(self, filename):
+			if filename.endswith(".xlsx"):
+				
+				wb = opx.load_workbook(filename, guess_types=False)
+		
+				for sheet in wb:
 					
-					r += 1
+					row_count = sheet.max_row - 1
+					column_count = sheet.max_column + 1
+					
+					
+					self.tabtable[sheet.title] = QtGui.QTableWidget(row_count, column_count)
+					self.tabs.addTab(self.tabtable[sheet.title],sheet.title)
+					
+					self.show()
+									
+					r,x=0,0
+					for row in sheet:
+						x=0
+						for fn in row:
+							if fn.value:
+								newitem=QtGui.QTableWidgetItem( unicode(fn.value))
+							else:
+								newitem=QtGui.QTableWidgetItem("")
+							#newitem.setText("toto")
+							self.tabtable[sheet.title].setItem(r,x,newitem)
+							x += 1
+						
+						r += 1
+					
+					#self.table.setRowCount(r)
+					#self.table.setColumnCount(x)
+					
+					self.tabtable[sheet.title].show()
+					
+					#self.setCentralWidget(self.table)
+					#self.setGeometry(300, 300, 300, 200)
+				self.setWindowTitle(os.path.basename(filename) )
+			
+			else:
+				QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
 				
-				#self.table.setRowCount(r)
-				#self.table.setColumnCount(x)
 				
-				self.tabtable[sheet.title].show()
-				
-				#self.setCentralWidget(self.table)
-				self.setGeometry(300, 300, 300, 200)
-				#self.setWindowTitle('Menubar')    
-				
-				
-				
-		
-		self.show()
 		
 		
 def main():
