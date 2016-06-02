@@ -41,7 +41,7 @@ class Table(QtGui.QTableWidget):
 					
 				r += 1
 		else:
-			super(Table,self).__init__(500,500)
+			super(Table,self).__init__(500,100)
 		
 	def __getitem__(self,pair):
 		x,y=pair
@@ -69,6 +69,7 @@ class Main(QtGui.QMainWindow):
 	def __init__(self):
 		super(Main, self).__init__()
 		
+		#Actions du menu fichier
 		
 		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)        
 		exitAction.setShortcut('Ctrl+Q')
@@ -86,14 +87,39 @@ class Main(QtGui.QMainWindow):
 		saveAction.setStatusTip("Sauvegarde le fichier courant")
 		saveAction.triggered.connect(lambda : self.savefile(self.getfilename(flag=2) ) )
 		
-		self.textbar = QLineEdit()
+		#Actions du menu recherche
 		
+		lemmaSearch = QtGui.QAction(QtGui.QIcon('searchMenu.png'),'&Recherche par lemmes',self)
+		lemmaSearch.setShortcut('Ctrl+Maj+L')
+		lemmaSearch.setStatusTip("Rechercher les différentes formes d'un mot dans le corpus")
+		lemmaSearch.triggered.connect(self.lemmasearch)
+		
+		#Actions du menu classifier
+		classAction = QtGui.QAction(QtGui.QIcon('searchMenu.png'),'&Classification LDA',self)
+		classAction.setShortcut('Ctrl+Maj+T')
+		classAction.setStatusTip("Classifier automatiquement les éléments du corpus.")
+		classAction.triggered.connect(self.classify)
+		
+		#Mise en place de la barre d'outil et de la barre d'état.
+		self.textbar = QLineEdit()
 		self.statusBar()
+		
+		#Barre d'outil
 		menubar = self.menuBar()
+		
+		#Menu fichier
 		fileMenu = menubar.addMenu('&Fichier')
 		fileMenu.addAction(loadAction)
 		fileMenu.addAction(saveAction)
 		fileMenu.addAction(exitAction)
+		
+		#Menu recherche
+		searchMenu = menubar.addMenu('&Recherche')
+		searchMenu.addAction(lemmaSearch)
+		
+		#Menu classifier
+		classMenu = menubar.addMenu("Classifier")
+		classMenu.addAction(classAction)
 		
 		self.tabindex=0
 		self.tabs	= QtGui.QTabWidget()
@@ -129,7 +155,7 @@ class Main(QtGui.QMainWindow):
 		return unicode(filename)
 
 	def savefile(self,filename):
-		QMessageBox.critical(self, "Erreur","Non implémenté !")
+		QMessageBox.critical(self, "Erreur", _fromUtf8("Non implémenté !"))
 		
 	
 	def openfile(self, filename):
@@ -153,9 +179,7 @@ class Main(QtGui.QMainWindow):
 						z=csv.reader(openfile,delimiter="\t")
 						self.tabtable[filename]=Table()
 						for i,x in enumerate(z):
-							print i,x
 							for j,y in enumerate(x):
-								print j,y
 								self.tabtable[filename][i,j]=y
 					
 					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
@@ -168,7 +192,11 @@ class Main(QtGui.QMainWindow):
 				else:
 					QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
 					
-
+	def lemmasearch(self):
+		raise NotImplementedError
+	
+	def classify(self):
+		raise NotImplementedError
 				
 if __name__ == '__main__':
 	app = QtGui.QApplication(sys.argv)
