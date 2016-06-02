@@ -5,6 +5,7 @@ import openpyxl as opx
 import gensim
 import sys
 import os
+import csv
 
 from PyQt4 import *
 from PyQt4 import QtCore, QtGui, QtWebKit
@@ -15,53 +16,54 @@ _fromUtf8 = QtCore.QString.fromUtf8
 
 
 class Table(QtGui.QTableWidget):
-	def __init__(self,sheet):
-		self.sheet=sheet
+	def __init__(self,sheet=None):
 		
-		row_count = sheet.max_row + 1
-		column_count = sheet.max_column + 1
-		
-		super(Table,self).__init__(row_count,column_count)
-	 		
-		r,x=1,1
-		for row in sheet:
-			x=1
-			for fn in row:
-				if fn.value:
-					newitem=QtGui.QTableWidgetItem( unicode(fn.value))
-				else:
-					newitem=QtGui.QTableWidgetItem("")
+		if sheet:
+			self.sheet=sheet
 				
-				self.setItem(r,x,newitem)
-				
-				x += 1
-				
-			r += 1
-		
+			row_count = sheet.max_row + 1
+			column_count = sheet.max_column + 1
+			super(Table,self).__init__(row_count,column_count)
 			
-		
-		self.cellChanged.connect(self.changeItem)
+			
+			r,y=0,0
+			for row in sheet:
+				y=0
+				for fn in row:
+					if fn.value:
+						newitem=QtGui.QTableWidgetItem( unicode(fn.value))
+					else:
+						newitem=QtGui.QTableWidgetItem("")
+					
+					self.setItem(r,y,newitem)
+					
+					y += 1
+					
+				r += 1
+		else:
+			super(Table,self).__init__(500,500)
 		
 	def __getitem__(self,pair):
 		x,y=pair
-		return sheet.cell(row=x, column=y)
+		return self.itemAt(x, y).text
 	
 	def __setitem__(self,pair,value):
 		x,y=pair
-		print type(value)
-		print x,y
+		x+=1
+		y+=1
 		item=self.itemAt(x, y)
-		print item.text(),self.sheet.cell(row=x, column=y).value
 		
-		self.sheet.cell(row=x, column=y).value = value
+		if not item:
+			if value:
+				item=QtGui.QTableWidgetItem(value)
+			else:
+				item=QtGui.QTableWidgetItem("")
+			self.setItem(x,y, item)
+		else:
+			item.setText(value)
 		
-		item.setText(value)		
-		print item.text(),self.sheet.cell(row=x, column=y).value
+		#QMessageBox.about(self, "Info",value)
 		
-	def changeItem(self,row,col):
-		item=self.itemAt(row,col)
-		self[row,col] = unicode(item.text())
-
 class Main(QtGui.QMainWindow):
 	
 	def __init__(self):
@@ -75,8 +77,14 @@ class Main(QtGui.QMainWindow):
 		
 		loadAction = QtGui.QAction(QtGui.QIcon('open.png'),'&Ouvrir',self)
 		loadAction.setShortcut("Ctrl+O")
-		loadAction.setStatusTip("Ouvre un fichier .xlsx")
-		loadAction.triggered.connect(lambda : self.openfile(self.getfilename() ) )
+		loadAction.setStatusTip("Ouvre un fichier .xlsx ou .csv")
+		loadAction.triggered.connect(lambda : self.openfile(self.getfilename(flag=1) ) )
+		
+		
+		saveAction = QtGui.QAction(QtGui.QIcon('save.png'),'&Sauvegarder',self)
+		saveAction.setShortcut('Ctrl+S')
+		saveAction.setStatusTip("Sauvegarde le fichier courant")
+		saveAction.triggered.connect(lambda : self.savefile(self.getfilename(flag=2) ) )
 		
 		self.textbar = QLineEdit()
 		
@@ -84,11 +92,12 @@ class Main(QtGui.QMainWindow):
 		menubar = self.menuBar()
 		fileMenu = menubar.addMenu('&Fichier')
 		fileMenu.addAction(loadAction)
+		fileMenu.addAction(saveAction)
 		fileMenu.addAction(exitAction)
+		
+		self.tabindex=0
 		self.tabs	= QtGui.QTabWidget()
-		
 		self.setCentralWidget(self.tabs)
-		
 		self.tabtable = dict()
 		
 		
@@ -97,35 +106,68 @@ class Main(QtGui.QMainWindow):
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
 		
-		self.setGeometry(100,100,800,600)
+		self.setGeometry(100,100,1280,1024)
 		self.show()
 	
-	def getfilename(self):
+	def getfilename(self,flag=None):
 		files_types = "XLSX (*.xlsx);;XLS (*.xls);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
-		filename = QFileDialog.getOpenFileName(None,
-						caption=QtCore.QString("Ouvrir"),
-						directory=QtCore.QString('./'),
-						filter=files_types,
-						selectedFilter=QtCore.QString('*.xlsx'))
-		
+		filename=""
+		if flag == 1:
+			filename = QFileDialog.getOpenFileName(None,
+							caption=QtCore.QString("Ouvrir"),
+							directory=QtCore.QString('./'),
+							filter=files_types,
+							selectedFilter=QtCore.QString('*.xlsx'))
+		elif flag == 2:
+			filename = QFileDialog.getSaveFileName(None,
+							caption=QtCore.QString("Sauvegarder"),
+							directory=QtCore.QString('./'),
+							filter=files_types,
+							selectedFilter=QtCore.QString('*.xlsx'))
+		else:
+			QMessageBox.critical(self,"Erreur","Le drapeau :",flag," ne correspond à aucune action.")
 		return unicode(filename)
-		
-	def openfile(self, filename):
-			if filename.endswith(".xlsx"):
-				
-				wb = opx.load_workbook(filename, guess_types=False)
-		
-				for sheet in wb:
-					
-					self.tabtable[sheet.title] = Table(sheet)
-					self.tabs.addTab(self.tabtable[sheet.title],sheet.title)
-									
-				self.setWindowTitle(os.path.basename(filename) )
-				self.show()
-			
-			else:
-				QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
 
+	def savefile(self,filename):
+		QMessageBox.critical(self, "Erreur","Non implémenté !")
+		
+	
+	def openfile(self, filename):
+			if filename:
+				if filename.endswith(".xlsx"):
+					subtab= QtGui.QTabWidget()
+					wb = opx.load_workbook(filename, guess_types=False)
+			
+					for sheet in wb:
+						
+						self.tabtable[sheet.title] = Table(sheet)
+						subtab.addTab(self.tabtable[sheet.title],sheet.title)
+										
+					self.tabs.addTab(subtab,os.path.basename(filename))
+					self.tabs.setTabToolTip (self.tabindex, QString(filename))
+					self.tabindex += 1
+					# self.show()
+				
+				elif filename.endswith(".csv"):
+					with open(filename) as openfile:
+						z=csv.reader(openfile,delimiter="\t")
+						self.tabtable[filename]=Table()
+						for i,x in enumerate(z):
+							print i,x
+							for j,y in enumerate(x):
+								print j,y
+								self.tabtable[filename][i,j]=y
+					
+					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
+					self.tabs.addTab(self.tabtable[filename],os.path.basename(filename))
+					self.tabs.setTabToolTip (self.tabindex, QString(filename))
+					self.tabindex += 1
+					self.show()
+						
+				
+				else:
+					QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
+					
 
 				
 if __name__ == '__main__':
