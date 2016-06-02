@@ -2,7 +2,7 @@
 #-*- encoding: utf-8 -*-
 
 import openpyxl as opx
-import gensim
+#import gensim
 import sys
 import os
 import csv
