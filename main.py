@@ -177,8 +177,7 @@ class Main(QtGui.QMainWindow):
 					table = self.tabtable[name][elem]
 					print name,elem
 					for row in xrange(1,table.rowCount()):
-						ro=[ table[row,col] for col in xrange(1,table.columnCount()) ]
-						sheet.append(ro)
+						sheet.append([ table[row,col] for col in xrange(1,table.columnCount()) ])
 						#for col in table.columnCount():
 				
 				
@@ -190,6 +189,7 @@ class Main(QtGui.QMainWindow):
 					# name=currwidg.tabtext()
 			if filename.endswith(".csv"):
 				name=self.nameindex[self.tabs.currentIndex()]
+				
 				
 		
 	
@@ -212,8 +212,9 @@ class Main(QtGui.QMainWindow):
 					# self.show()
 				
 				elif filename.endswith(".csv"):
+					delim,qc=self.csvaskbox()
 					with open(filename) as openfile:
-						z=csv.reader(openfile,delimiter="\t")
+						z=csv.reader(openfile,delimiter=delim,quotechar=qc)
 						self.tabtable[filename][os.path.basename(filename)]=Table()
 						for i,x in enumerate(z):
 							for j,y in enumerate(x):
@@ -229,7 +230,12 @@ class Main(QtGui.QMainWindow):
 				
 				else:
 					QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
-					
+		
+	def csvaskbox(self):
+		delimiter,quotechar="\t",None
+		return delimiter,quotechar
+	
+	
 	def lemmasearch(self):
 		raise NotImplementedError
 	
