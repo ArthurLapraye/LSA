@@ -8,7 +8,9 @@ from cx_Freeze import setup, Executable
 #Code tiré de http://www.developpez.net/forums/d1489444/autres-langages/python-zope/general-python/pyinstaller-cxfreeze-pur-utiliser-numpy-scipy-matplotlib/
 #http://python.jpvweb.com/mesrecettespython/doku.php?id=cx_freeze
 
-includes = []  # nommer les modules non trouves par cx_freeze
+includes = [
+			#"scipy.special._ufuncs"
+			]  # nommer les modules non trouves par cx_freeze
 excludes = ["tkinter","Tkinter"]
 packages = []  # nommer les packages utilises
 # copier les fichiers non-Python et/ou repertoires et leur contenu:
@@ -18,8 +20,9 @@ import scipy,numpy, scipy.special._ufuncs
 
 includefiles = [os.path.dirname(scipy.__file__),
       #  os.path.dirname(scipy.__file__),
-		os.path.dirname(scipy.special._ufuncs.__file__),
-		r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"]
+		#os.path.dirname(scipy.special._ufuncs.__file__),
+		r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"
+		]
 
 excludefiles = [] 
 

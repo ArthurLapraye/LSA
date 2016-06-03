@@ -2,10 +2,12 @@
 #-*- encoding: utf-8 -*-
 
 import openpyxl as opx
-#import gensim
+import gensim
 import sys
 import os
 import csv
+
+from collections import defaultdict
 
 from PyQt4 import *
 from PyQt4 import QtCore, QtGui, QtWebKit
@@ -31,7 +33,7 @@ class Table(QtGui.QTableWidget):
 				y=0
 				for fn in row:
 					if fn.value:
-						newitem=QtGui.QTableWidgetItem( unicode(fn.value))
+						newitem=QtGui.QTableWidgetItem( _fromUtf8(unicode(fn.value)))
 					else:
 						newitem=QtGui.QTableWidgetItem("")
 					
@@ -45,7 +47,11 @@ class Table(QtGui.QTableWidget):
 		
 	def __getitem__(self,pair):
 		x,y=pair
-		return self.itemAt(x, y).text
+		item=self.item(x, y)
+		#print item
+		z = unicode(item.text()) if item else ""
+		print x,y,z.encode("utf-8")
+		return z
 	
 	def __setitem__(self,pair,value):
 		x,y=pair
@@ -68,6 +74,9 @@ class Main(QtGui.QMainWindow):
 	
 	def __init__(self):
 		super(Main, self).__init__()
+		
+		self.setGeometry(100,100,800,600)
+		self.show()
 		
 		#Actions du menu fichier
 		
@@ -122,9 +131,10 @@ class Main(QtGui.QMainWindow):
 		classMenu.addAction(classAction)
 		
 		self.tabindex=0
+		self.nameindex=dict()
 		self.tabs	= QtGui.QTabWidget()
 		self.setCentralWidget(self.tabs)
-		self.tabtable = dict()
+		self.tabtable = defaultdict(dict)
 		
 		
 		bardoutil= QToolBar()
@@ -132,8 +142,7 @@ class Main(QtGui.QMainWindow):
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
 		
-		self.setGeometry(100,100,1280,1024)
-		self.show()
+		# self.show()
 	
 	def getfilename(self,flag=None):
 		files_types = "XLSX (*.xlsx);;XLS (*.xls);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
@@ -155,7 +164,32 @@ class Main(QtGui.QMainWindow):
 		return unicode(filename)
 
 	def savefile(self,filename):
-		QMessageBox.critical(self, "Erreur", _fromUtf8("Non implémenté !"))
+		if filename:
+			if filename.endswith(".xlsx"):
+				name=self.nameindex[self.tabs.currentIndex()]
+				
+				fichier=opx.Workbook(write_only=True,guess_types=True)
+				
+				for elem in self.tabtable[name]:
+					sheet=fichier.create_sheet()
+					sheet.title = elem
+					table = self.tabtable[name][elem]
+					print name,elem
+					for row in xrange(1,table.rowCount()):
+						ro=[ table[row,col] for col in xrange(1,table.columnCount()) ]
+						print ro
+						sheet.append(ro)
+						#for col in table.columnCount():
+				
+				
+				fichier.save(filename)
+				
+				# 
+				# for index in xrange(0,currwidg.count()):
+					# z=currwidg.widget(index)
+					# name=currwidg.tabtext()
+					
+				
 		
 	
 	def openfile(self, filename):
@@ -166,27 +200,30 @@ class Main(QtGui.QMainWindow):
 			
 					for sheet in wb:
 						
-						self.tabtable[sheet.title] = Table(sheet)
-						subtab.addTab(self.tabtable[sheet.title],sheet.title)
+						self.tabtable[filename][sheet.title] = Table(sheet)
+						subtab.addTab(self.tabtable[filename][sheet.title],sheet.title)
 										
 					self.tabs.addTab(subtab,os.path.basename(filename))
 					self.tabs.setTabToolTip (self.tabindex, QString(filename))
+					self.nameindex[self.tabindex]=filename
 					self.tabindex += 1
+					self.tabs.setCurrentWidget(subtab)
 					# self.show()
 				
 				elif filename.endswith(".csv"):
 					with open(filename) as openfile:
 						z=csv.reader(openfile,delimiter="\t")
-						self.tabtable[filename]=Table()
+						self.tabtable[filename][filename]=Table()
 						for i,x in enumerate(z):
 							for j,y in enumerate(x):
-								self.tabtable[filename][i,j]=y
+								self.tabtable[filename][filename][i,j]=y
 					
 					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
-					self.tabs.addTab(self.tabtable[filename],os.path.basename(filename))
+					self.tabs.addTab(self.tabtable[filename][filename],os.path.basename(filename))
 					self.tabs.setTabToolTip (self.tabindex, QString(filename))
+					self.nameindex[self.tabindex]=filename
 					self.tabindex += 1
-					self.show()
+					self.tabs.setCurrentWidget(self.tabtable[filename][filename])
 						
 				
 				else:
