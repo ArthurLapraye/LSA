@@ -188,7 +188,8 @@ class Main(QtGui.QMainWindow):
 				# for index in xrange(0,currwidg.count()):
 					# z=currwidg.widget(index)
 					# name=currwidg.tabtext()
-					
+			if filename.endswith(".csv"):
+				name=self.nameindex[self.tabs.currentIndex()]
 				
 		
 	
