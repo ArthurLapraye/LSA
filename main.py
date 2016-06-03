@@ -50,7 +50,7 @@ class Table(QtGui.QTableWidget):
 		item=self.item(x, y)
 		#print item
 		z = unicode(item.text()) if item else ""
-		print x,y,z.encode("utf-8")
+		
 		return z
 	
 	def __setitem__(self,pair,value):
@@ -172,12 +172,12 @@ class Main(QtGui.QMainWindow):
 				
 				for elem in self.tabtable[name]:
 					sheet=fichier.create_sheet()
+					print elem
 					sheet.title = elem
 					table = self.tabtable[name][elem]
 					print name,elem
 					for row in xrange(1,table.rowCount()):
 						ro=[ table[row,col] for col in xrange(1,table.columnCount()) ]
-						print ro
 						sheet.append(ro)
 						#for col in table.columnCount():
 				
@@ -213,17 +213,17 @@ class Main(QtGui.QMainWindow):
 				elif filename.endswith(".csv"):
 					with open(filename) as openfile:
 						z=csv.reader(openfile,delimiter="\t")
-						self.tabtable[filename][filename]=Table()
+						self.tabtable[filename][os.path.basename(filename)]=Table()
 						for i,x in enumerate(z):
 							for j,y in enumerate(x):
-								self.tabtable[filename][filename][i,j]=y
+								self.tabtable[filename][os.path.basename(filename)][i,j]=y
 					
 					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
-					self.tabs.addTab(self.tabtable[filename][filename],os.path.basename(filename))
+					self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
 					self.tabs.setTabToolTip (self.tabindex, QString(filename))
 					self.nameindex[self.tabindex]=filename
 					self.tabindex += 1
-					self.tabs.setCurrentWidget(self.tabtable[filename][filename])
+					self.tabs.setCurrentWidget(self.tabtable[filename][os.path.basename(filename)])
 						
 				
 				else:
