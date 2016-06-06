@@ -194,7 +194,9 @@ class Main(QtGui.QMainWindow):
 				currtable=self.tabs.currentWidget().currentWidget()
 				with open(filename,"w") as sortie:
 					delimiter,quotechar=self.csvaskbox()
-						for elem in currtable.
+						for elem in xrange(1,currtable.rowCount()):
+							sortie.write(delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",table[row,col])+quotechar for col in xrange(1,table.columnCount()) ]))
+				
 		
 		else:
 			pass
@@ -245,6 +247,10 @@ class Main(QtGui.QMainWindow):
 	
 	
 	def lemmasearch(self):
+		if not self.ltok:
+			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
+		
+		
 		raise NotImplementedError
 	
 	def classify(self):
