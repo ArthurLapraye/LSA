@@ -25,7 +25,12 @@ includefiles = [os.path.dirname(scipy.__file__),
 		]
 
 excludefiles = [] 
-
+"""
+Icone sous Windows: il faut:
+=> un xxx.ico pour integration dans le exe, avec "icon=xxx.ico"
+=> un xxx.png pour integration avec PyQt4 + demander la recopie avec includefiles.
+"""
+ 
 #############################################################################
 # preparation des options
  

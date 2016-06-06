@@ -30,39 +30,7 @@ from collocs import collocs,col1
 #module local
 from synonyms import synonymes
 
-#Variables globales
-stoplist=set([u"","","",u"a","a",u"as","as",u"ai","ai",u"au","au",u"aux","aux",u"avec","avec",u"avoir","avoir",u"c","c",u"c'est","c'est",u"ça","ça",u"ca","ca",u"ces","ces",u"ce","ce",u"cela","cela",u"cet","cet",u"ci","ci",u"cette","cette",u"comme","comme",u"comment","comment",u"cln","cln",u"clr","clr",u"cla","cla",u"cld","cld",u"d","d","d",u"d'","d'",u"dans","dans",u"de","de",u"des","des",u"du","du",u"en","en",u"est","est",u"et","et",u"faire","faire",u"fait","fait",u"il","il",u"j","j",u"je","je",u"j","j",u"l","l","lui",u"la","la",u"là","là",u"le","le",u"les","les",u"lf","lf",u"m","m",u"mon","mon",u"me","me",u"ma","ma",u"mais","mais",u"moi","moi",u"n","n",u"ne","ne",u"on","on",u"ont","ont",u"ou","ou",u"où","où",u"parce","parce",u"plus","plus",u"pas","pas",u"pour","pour",u"par","par",u"qu","qu",u"que","que",u"qui","qui",u"quot","quot",u"r","r",u"sur","sur",u"s","s",u"sa","sa",u"se","se",u"sep","sep",u"si","si",u"son","son",u"suis","suis",u"très","très",u"un","un",u"une","une",u"y","y",u"à","à",u"ça","ça",
-u"été","été",u"être",u"vous"])
-
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-NUMTOPICS=int(sys.argv[2])
-NUMPASS=int(sys.argv[3])
-SEUILPROBA =0.3
-SEUILMOT=0.95
-MINIMUM=2
-np.random.seed(42)
-FICHIER=sys.argv[1]
-
-lemmatiseur=defaultdict(set)
-l2=defaultdict(set)
-
-with open("../lefff-3.4.mlex/lefff-3.4.mlex") as lexique:
-	lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
-	for x in lefff:
-		if x[0] not in stoplist and x[2] not in stoplist:
-			lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
-	
-for u in lemmatiseur:
-	if unidecode(u) not in lemmatiseur:
-		l2[unidecode(u)].update(lemmatiseur[u])
-		
-lemmatiseur.update(l2)
-
-logging.info("Lemmatiseur fini de charger !")
-
-# print "\""+ u"\",\"".join(sorted(list(stoplist))) + "\""
-print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
-
 
 def loadfile(filename):
 	
@@ -97,50 +65,80 @@ def loadfile(filename):
 	
 	return corpus
 
+class ltok(object):
+	def __init__(self,LEFFFPATH):
+	
+		self.stoplist=set([u"","","",u"a","a",u"as","as",u"ai","ai",u"au","au",u"aux","aux",u"avec","avec",u"avoir","avoir",u"c","c",u"c'est","c'est",u"ça","ça",u"ca","ca",u"ces","ces",u"ce","ce",u"cela","cela",u"cet","cet",u"ci","ci",u"cette","cette",u"comme","comme",u"comment","comment",u"cln","cln",u"clr","clr",u"cla","cla",u"cld","cld",u"d","d","d",u"d'","d'",u"dans","dans",u"de","de",u"des","des",u"du","du",u"en","en",u"est","est",u"et","et",u"faire","faire",u"fait","fait",u"il","il",u"j","j",u"je","je",u"j","j",u"l","l","lui",u"la","la",u"là","là",u"le","le",u"les","les",u"lf","lf",u"m","m",u"mon","mon",u"me","me",u"ma","ma",u"mais","mais",u"moi","moi",u"n","n",u"ne","ne",u"on","on",u"ont","ont",u"ou","ou",u"où","où",u"parce","parce",u"plus","plus",u"pas","pas",u"pour","pour",u"par","par",u"qu","qu",u"que","que",u"qui","qui",u"quot","quot",u"r","r",u"sur","sur",u"s","s",u"sa","sa",u"se","se",u"sep","sep",u"si","si",u"son","son",u"suis","suis",u"très","très",u"un","un",u"une","une",u"y","y",u"à","à",u"ça","ça",u"été","été",u"être",u"vous"])
 		
-# with open("") 
+		self.lemmatiseur=defaultdict(set)
+		l2=defaultdict(set)
+
+		with open(LEFFFPATH) as lexique:
+			lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
+			for x in lefff:
+				if x[0] not in self.stoplist and x[2] not in self.stoplist:
+					self.lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
 			
-def tokenize(corpus):
+		for u in self.lemmatiseur:
+			if unidecode(u) not in self.lemmatiseur:
+				l2[unidecode(u)].update(self.lemmatiseur[u])
+				
+		self.lemmatiseur.update(l2)
+
+		logging.info("Lemmatiseur fini de charger !")
 	
-	total,lemma=0.0,0.0
-	tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
-	texts=list()
-	
-	lexicon=defaultdict(float)
 		
-	for x in corpus:
-		elem=[]
-		re.sub("[0-9]+"," \1 ",corpus[x],0)
-		for word in tok.split(corpus[x].lower()):
-			if word not in stoplist:
-				total += 1.0
-				if word in lemmatiseur:
-					if lemmatiseur[word] not in stoplist:
-						elem += lemmatiseur[word]
-						lemma += 1
-						for x in lemmatiseur[word]:
-							lexicon[x] += 1
-				else:
-					elem.append(word)
-					lexicon[word] += 1
+	def tokenize(self,corpus):
 		
-		texts.append(elem)
+		total,lemma=0.0,0.0
+		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
+		texts=list()
 		
-	return texts
+		lexicon=defaultdict(float)
+			
+		for x in corpus:
+			elem=[]
+			re.sub("[0-9]+"," \1 ",corpus[x],0)
+			for word in tok.split(corpus[x].lower()):
+				if word not in self.stoplist:
+					total += 1.0
+					if word in self.lemmatiseur:
+						if self.lemmatiseur[word] not in self.stoplist:
+							elem += self.lemmatiseur[word]
+							lemma += 1
+							for x in self.lemmatiseur[word]:
+								lexicon[x] += 1
+					else:
+						elem.append(word)
+						lexicon[word] += 1
+			
+			texts.append(elem)
+			
+		return texts
 
 
-corpus=loadfile(FICHIER)
-logging.info("Corpus chargé")
+if __name__ == "__main__":
+	NUMTOPICS=int(sys.argv[2])
+	NUMPASS=int(sys.argv[3])
+	SEUILPROBA =0.3
+	SEUILMOT=0.95
+	MINIMUM=2
+	np.random.seed(42)
+	FICHIER=sys.argv[1]
 
-logging.info("Tokenisation")
+	print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
+	lemmtok=ltok("../lefff-3.4.mlex/lefff-3.4.mlex")
+		
+	corpus=loadfile(FICHIER)
+	logging.info("Corpus chargé")
+	texts= lemmtok.tokenize(corpus)	
+	logging.info("Tokenisation effectuée")
 
-texts= tokenize(corpus)
 
-if True:
 	dictionary = corpora.Dictionary(texts)
 	
-	once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
-	dictionary.filter_tokens(once_ids)
+	# once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
+	# dictionary.filter_tokens(once_ids)
 	dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
 	dictionary.compactify()
 	
