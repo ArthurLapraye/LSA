@@ -261,6 +261,7 @@ class Main(QtGui.QMainWindow):
 					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
 		
 	def csvaskbox(self):
+		choice1 = QtGui.QComboBox()
 		delimiter,quotechar="\t","\""
 		return delimiter,quotechar
 	
