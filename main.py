@@ -7,8 +7,11 @@ import sys
 import os
 import csv
 import logging
+import re
 
 from collections import defaultdict
+from gensim import corpora, models, similarities,matutils #Licence LGPL (check version)
+
 
 from PyQt4 import *
 from PyQt4 import QtCore, QtGui, QtWebKit
@@ -148,7 +151,7 @@ class Main(QtGui.QMainWindow):
 		# self.show()
 	
 	def getfilename(self,flag=None):
-		files_types = "XLSX (*.xlsx);;XLS (*.xls);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
+		files_types = "XLSX (*.xlsx);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
 		filename=""
 		if flag == 1:
 			filename = QFileDialog.getOpenFileName(None,
@@ -194,10 +197,26 @@ class Main(QtGui.QMainWindow):
 				currtable=self.tabs.currentWidget().currentWidget()
 				with open(filename,"w") as sortie:
 					delimiter,quotechar=self.csvaskbox()
-						for elem in xrange(1,currtable.rowCount()):
-							sortie.write(delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",table[row,col])+quotechar for col in xrange(1,table.columnCount()) ]))
+					for row in xrange(0,currtable.rowCount()):
+						for col in xrange(0,currtable.columnCount()):
+							rangee=""
+							element= currtable[row,col]
+							
+							if col > 1:
+									rangee += delimiter
+							if len(quotechar) == 1:
+								rangee += quotechar + re.sub(r"("+quotechar+")","\\\1",element) + quotechar
+							else:
+								rangee += currtable[row,col]
+							
+							sortie.write(rangee.encode("utf-8") )
+							#delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",currtable[row,col])+quotechar if len(quotechar) > 1 else currtable[row,col]  ]).encode("utf-8") 
+						sortie.write("\n")
 				
-		
+			
+			else:
+				QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
+			
 		else:
 			pass
 				
@@ -239,10 +258,10 @@ class Main(QtGui.QMainWindow):
 						
 				
 				else:
-					QMessageBox.about(self, "Erreur","Format de fichier non pris en charge.")
+					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
 		
 	def csvaskbox(self):
-		delimiter,quotechar="\t",None
+		delimiter,quotechar="\t","\""
 		return delimiter,quotechar
 	
 	
