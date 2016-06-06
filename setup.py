@@ -11,7 +11,7 @@ from cx_Freeze import setup, Executable
 includes = [
 			#"scipy.special._ufuncs"
 			]  # nommer les modules non trouves par cx_freeze
-excludes = ["tkinter","Tkinter"]
+excludes = ["tkinter","Tkinter","collections.abc","collections.sys"]
 packages = []  # nommer les packages utilises
 # copier les fichiers non-Python et/ou repertoires et leur contenu:
 
@@ -21,7 +21,8 @@ import scipy,numpy, scipy.special._ufuncs
 includefiles = [os.path.dirname(scipy.__file__),
       #  os.path.dirname(scipy.__file__),
 		#os.path.dirname(scipy.special._ufuncs.__file__),
-		r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"
+		r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd",
+		"lefff-3.4.mlex/lefff-3.4.mlex"
 		]
 
 excludefiles = [] 
@@ -83,5 +84,4 @@ setup(
 	author="Arthur Lapraye",
 	 options={"build_exe": options},
     description = "Ce programme permet la classification de réponses à des questions ouvertes",
-    executables = [Executable("main.py")],
-)
+    executables = [Executable("main.py",icon="xtal.ico")],	)

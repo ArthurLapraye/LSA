@@ -6,6 +6,7 @@ import gensim
 import sys
 import os
 import csv
+import logging
 
 from collections import defaultdict
 
@@ -16,6 +17,7 @@ from PyQt4.QtCore import *
 
 _fromUtf8 = QtCore.QString.fromUtf8
 
+from lda import Lemmtok
 
 class Table(QtGui.QTableWidget):
 	def __init__(self,sheet=None):
@@ -141,6 +143,7 @@ class Main(QtGui.QMainWindow):
 		bardoutil.addWidget(self.textbar)
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
+		self.ltok=None
 		
 		# self.show()
 	
@@ -188,8 +191,13 @@ class Main(QtGui.QMainWindow):
 					# z=currwidg.widget(index)
 					# name=currwidg.tabtext()
 			if filename.endswith(".csv"):
-				name=self.nameindex[self.tabs.currentIndex()]
-				
+				currtable=self.tabs.currentWidget().currentWidget()
+				with open(filename,"w") as sortie:
+					delimiter,quotechar=self.csvaskbox()
+						for elem in currtable.
+		
+		else:
+			pass
 				
 		
 	
@@ -240,9 +248,33 @@ class Main(QtGui.QMainWindow):
 		raise NotImplementedError
 	
 	def classify(self):
-		raise NotImplementedError
+		if not self.ltok:
+			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
+		
+		currtable=self.tabs.currentWidget().currentWidget()
+		i=0
+		corpus=dict()
+		for item in currtable.selectedItems():
+			corpus[i]=unicode(item.text())
+		
+		texts=self.ltok.tokenize(corpus)
+		NUMTOPICS=20
+		NUMPASS=15
+		SEUILPROBA =0.3
+		SEUILMOT=0.95
+		MINIMUM=2
+		dictionary = corpora.Dictionary(texts)
+		dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
+		dictionary.compactify()
+		bow = [dictionary.doc2bow(text) for text in texts]
+		corpus_tfidf =  models.TfidfModel(bow)[bow]
+		lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+			#QMessageBox.about(self, "Info",item.text())
+
 				
 if __name__ == '__main__':
+	
+	logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 	app = QtGui.QApplication(sys.argv)
 	ex = Main()
 	sys.exit(app.exec_())

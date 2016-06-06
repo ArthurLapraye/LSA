@@ -33,7 +33,6 @@ from synonyms import synonymes
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 def loadfile(filename):
-	
 	name, ext=os.path.splitext(filename)
 	
 	corpus=dict()
@@ -65,12 +64,13 @@ def loadfile(filename):
 	
 	return corpus
 
-class ltok(object):
+class Lemmtok(object):
 	def __init__(self,LEFFFPATH):
 	
 		self.stoplist=set([u"","","",u"a","a",u"as","as",u"ai","ai",u"au","au",u"aux","aux",u"avec","avec",u"avoir","avoir",u"c","c",u"c'est","c'est",u"ça","ça",u"ca","ca",u"ces","ces",u"ce","ce",u"cela","cela",u"cet","cet",u"ci","ci",u"cette","cette",u"comme","comme",u"comment","comment",u"cln","cln",u"clr","clr",u"cla","cla",u"cld","cld",u"d","d","d",u"d'","d'",u"dans","dans",u"de","de",u"des","des",u"du","du",u"en","en",u"est","est",u"et","et",u"faire","faire",u"fait","fait",u"il","il",u"j","j",u"je","je",u"j","j",u"l","l","lui",u"la","la",u"là","là",u"le","le",u"les","les",u"lf","lf",u"m","m",u"mon","mon",u"me","me",u"ma","ma",u"mais","mais",u"moi","moi",u"n","n",u"ne","ne",u"on","on",u"ont","ont",u"ou","ou",u"où","où",u"parce","parce",u"plus","plus",u"pas","pas",u"pour","pour",u"par","par",u"qu","qu",u"que","que",u"qui","qui",u"quot","quot",u"r","r",u"sur","sur",u"s","s",u"sa","sa",u"se","se",u"sep","sep",u"si","si",u"son","son",u"suis","suis",u"très","très",u"un","un",u"une","une",u"y","y",u"à","à",u"ça","ça",u"été","été",u"être",u"vous"])
 		
 		self.lemmatiseur=defaultdict(set)
+		self.formes=defaultdict(set)
 		l2=defaultdict(set)
 
 		with open(LEFFFPATH) as lexique:
@@ -78,6 +78,7 @@ class ltok(object):
 			for x in lefff:
 				if x[0] not in self.stoplist and x[2] not in self.stoplist:
 					self.lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
+					self.formes[x[2].decode("UTF-8")].add(x[0].decode("utf-8"))
 			
 		for u in self.lemmatiseur:
 			if unidecode(u) not in self.lemmatiseur:
@@ -89,8 +90,7 @@ class ltok(object):
 	
 		
 	def tokenize(self,corpus):
-		
-		total,lemma=0.0,0.0
+	
 		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 		texts=list()
 		
@@ -101,13 +101,9 @@ class ltok(object):
 			re.sub("[0-9]+"," \1 ",corpus[x],0)
 			for word in tok.split(corpus[x].lower()):
 				if word not in self.stoplist:
-					total += 1.0
 					if word in self.lemmatiseur:
 						if self.lemmatiseur[word] not in self.stoplist:
 							elem += self.lemmatiseur[word]
-							lemma += 1
-							for x in self.lemmatiseur[word]:
-								lexicon[x] += 1
 					else:
 						elem.append(word)
 						lexicon[word] += 1
@@ -116,6 +112,8 @@ class ltok(object):
 			
 		return texts
 
+	def index(corpus):
+		pass
 
 if __name__ == "__main__":
 	NUMTOPICS=int(sys.argv[2])
@@ -127,7 +125,7 @@ if __name__ == "__main__":
 	FICHIER=sys.argv[1]
 
 	print u"Nombre de groupes :\t",NUMTOPICS,"\nPasses :\t",NUMPASS,"\nSeuil :\t",SEUILPROBA,"\nSeuil mot:\t",SEUILMOT
-	lemmtok=ltok("../lefff-3.4.mlex/lefff-3.4.mlex")
+	lemmtok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/"+"../lefff-3.4.mlex/lefff-3.4.mlex")
 		
 	corpus=loadfile(FICHIER)
 	logging.info("Corpus chargé")
@@ -136,14 +134,9 @@ if __name__ == "__main__":
 
 
 	dictionary = corpora.Dictionary(texts)
-	
-	# once_ids = [tokenid for tokenid, docfreq in dictionary.dfs.iteritems() if docfreq == 1]
-	# dictionary.filter_tokens(once_ids)
 	dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
 	dictionary.compactify()
-	
 	bow = [dictionary.doc2bow(text) for text in texts]
-	
 	corpus_tfidf =  models.TfidfModel(bow)[bow]
 	
 
@@ -188,16 +181,3 @@ if __name__ == "__main__":
 	for element in corpus:
 		print str(element)+"\t"+corpus[element].encode("utf-8")+"\t"+"\t".join([str(x) for x,y in c[element]])
 	
-
-
-"""Idées : 
-=> Peut-etre rajouter les mots proches présents dans le corpus (e,g sauvé sera rajouter à ce qui contient sauver etc... sans doute une mauvaise idée mais à tester)
- 
-Changer le système de seuil si c'est des probas pour permettre l'attribution automatique de plusieurs codes
-
-Système de re-classification : dégager les sujets dans un 1er temps puis les utiliser pour reclasser le reste. 
-
-Pré-traitement semi-manuel (?) sur les entités nommées : parfois pertinent de remplacer tout nom de localité par VILLE pour meilleurs regroupements statistiques
-"""
-
-#TODO : Utiliser différents autres corpus de taille variable + créer une interface de chargement moins merdique. Graphique ? 
