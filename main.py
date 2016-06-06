@@ -279,15 +279,15 @@ class Main(QtGui.QMainWindow):
 		currtable=self.tabs.currentWidget().currentWidget()
 		i=0
 		corpus=dict()
+		
 		for item in currtable.selectedItems():
+			i += 1
 			corpus[i]=unicode(item.text())
 		
 		texts=self.ltok.tokenize(corpus)
-		NUMTOPICS=20
-		NUMPASS=15
-		SEUILPROBA =0.3
-		SEUILMOT=0.95
-		MINIMUM=2
+		
+		NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
+		
 		dictionary = corpora.Dictionary(texts)
 		dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
 		dictionary.compactify()
@@ -296,6 +296,13 @@ class Main(QtGui.QMainWindow):
 		lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
 			#QMessageBox.about(self, "Info",item.text())
 
+	def ldaaskbox(self):
+		NUMTOPICS=20
+		NUMPASS=15
+		SEUILPROBA =0.3
+		SEUILMOT=0.95
+		MINIMUM=2
+		return NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM
 				
 if __name__ == '__main__':
 	
