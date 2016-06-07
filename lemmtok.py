@@ -17,8 +17,8 @@ class Lemmtok(object):
 		self.l2=dict()
 
 		with open(LEFFFPATH) as lexique:
-			lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
-			for x in lefff:
+			
+			for x in csv.reader(lexique,delimiter="\t",quotechar=None):
 				if x[0] not in self.stoplist and x[2] not in self.stoplist:
 					forme=x[0].decode("utf-8")
 					cat= x[1].decode("utf-8")
