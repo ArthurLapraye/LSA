@@ -29,6 +29,8 @@ class Lemmtok(object):
 						self.lemmatiseur[forme]={lemme}
 					if lemme in self.formes:
 							self.formes[lemme].add(forme)
+					else:
+						self.formes[lemme]={forme}
 			
 		for u in self.lemmatiseur:
 			sansaccent=unidecode(u)
