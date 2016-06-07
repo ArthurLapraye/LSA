@@ -14,7 +14,7 @@ class Lemmtok(object):
 		
 		self.lemmatiseur=dict()
 		self.formes=dict()
-		l2=dict()
+		self.l2=dict()
 
 		with open(LEFFFPATH) as lexique:
 			lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
@@ -33,12 +33,12 @@ class Lemmtok(object):
 		for u in self.lemmatiseur:
 			sansaccent=unidecode(u)
 			if sansaccent not in self.lemmatiseur:
-				if sansaccent not in l2:
-					l2[sansaccent]=self.lemmatiseur[u]
+				if sansaccent not in self.l2:
+					self.l2[sansaccent]=self.lemmatiseur[u]
 				else:
-					l2[sansaccent].update(self.lemmatiseur[u])
+					self.l2[sansaccent].update(self.lemmatiseur[u])
 				
-		self.lemmatiseur.update(l2)
+		self.lemmatiseur.update(self.l2)
 
 		logging.info("Lemmatiseur fini de charger !")
 	
