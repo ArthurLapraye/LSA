@@ -98,7 +98,7 @@ class Lemmtok(object):
 			
 		for x in corpus:
 			elem=[]
-			re.sub("[0-9]+"," \1 ",corpus[x],0)
+			corpus[x]=re.sub("[0-9]+"," \1 ",corpus[x],0)
 			for word in tok.split(corpus[x].lower()):
 				if word not in self.stoplist:
 					if word in self.lemmatiseur:
