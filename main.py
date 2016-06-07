@@ -95,6 +95,11 @@ class Main(QtGui.QMainWindow):
 		
 		#Actions du menu fichier
 		
+		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Extraire les éléments'),self)
+		newAction.setShortcut("Ctrl+N")
+		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille à partir de la sélection."))
+		newAction.triggered.connect(self.newpage)
+		
 		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)  
 		exitAction.setShortcut('Ctrl+Q')
 		exitAction.setStatusTip("Quitte l'application")
@@ -129,10 +134,7 @@ class Main(QtGui.QMainWindow):
 		codAction.setStatusTip( _fromUtf8(u"Attribuer un code aux éléments sélectionnés.") )
 		codAction.triggered.connect(self.codelems)
 		
-		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Extraire les éléments'),self)
-		newAction.setShortcut("Ctrl+N")
-		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille à partir de la sélection."))
-		newAction.triggered.connect(self.newpage)
+		
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
 		self.textbar = QLineEdit()
@@ -143,6 +145,7 @@ class Main(QtGui.QMainWindow):
 		
 		#Menu fichier
 		fileMenu = menubar.addMenu('&Fichier')
+		fileMenu.addAction(newAction)
 		fileMenu.addAction(loadAction)
 		fileMenu.addAction(saveAction)
 		fileMenu.addAction(exitAction)
@@ -182,7 +185,7 @@ class Main(QtGui.QMainWindow):
 				# e.message
 				logging.error(traceback.format_exc())
 				QMessageBox.warning(self, _fromUtf8("Erreur"),_fromUtf8(e.__doc__+"\n"+e.message))
-				raise e
+				op=None
 			
 			return op
 		
@@ -414,36 +417,47 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def classify(self,*args):
+			
+		ldatable=self.newpage()
 		
-		try:
-			currtable=self.tabs.currentWidget().currentWidget()
-		except AttributeError:
-			raise Exception("Erreur : vous devez ouvrir un fichier pour faire de la classification...")
+		if ldatable:
+			if not self.ltok:
+				self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
+			
+			
+			i=0
+			corpus=dict()
+			itemz=dict()
+			
+			for item in ldatable:
+				i += 1
+				corpus[i]=unicode(item.text())
+				itemz[i]=item
+				
+			texts=self.ltok.tokenize(corpus)
+			
+			NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
+			
+			dictionary = corpora.Dictionary(texts)
+			dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
+			dictionary.compactify()
+			bow = [dictionary.doc2bow(text) for text in texts]
+			corpus_tfidf =  models.TfidfModel(bow)[bow]
+			lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+			
+			t=dict()
+			c=defaultdict(list)
+			# reliquat=0
+			for i in corpus:
+				for topic,confid in lda[corpus_tfidf[i]]:
+					t[topic]=t.get(topic,[]) + [(i,confid)]
+					c[i].append( (topic,confid) )
+			
+			for element in corpus:
+				[x for x,y in c[element]]
 		
-		if not self.ltok:
-			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
-		
-		
-		i=0
-		corpus=dict()
-		
-		for item in currtable.selectedItems():
-			i += 1
-			corpus[i]=unicode(item.text())
-		
-		if i == 0:
-			raise Exception('Le corpus sélectionné est vide. Opération impossible.')
-		
-		texts=self.ltok.tokenize(corpus)
-		
-		NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
-		
-		dictionary = corpora.Dictionary(texts)
-		dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
-		dictionary.compactify()
-		bow = [dictionary.doc2bow(text) for text in texts]
-		corpus_tfidf =  models.TfidfModel(bow)[bow]
-		lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+		# for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)):
+			
 		
 			#QMessageBox.about(self, "Info",item.text())
 	
@@ -475,26 +489,34 @@ class Main(QtGui.QMainWindow):
 	def newpage(self,*args):
 		
 		currtable=self.getcurrenttab()
-		selection=currtable.selectedItems()
-		minrow=min([i.row() for i in selection])
-		maxrow=max([i.row() for i in selection])
-		mincol=min([i.column() for i in selection])
-		maxcol=max([i.column() for i in selection])
-		selectname="xtal_"+str(self.new)
-		
-		self.new += 1
-		
-		
-		self.tabtable[selectname][selectname]=Table(dimensions=(maxrow-minrow+1,1+maxcol-mincol))
-		newtable=self.tabtable[selectname][selectname]
-		self.tabs.addTab(newtable,selectname)
-		self.tabs.setTabToolTip (self.tabindex, selectname)
-		self.nameindex[self.tabindex]=selectname
-		self.tabindex += 1
-		self.tabs.setCurrentWidget(newtable)
-		for i in selection:
-			newtable[i.row()-minrow, i.column() - mincol] = i.text()
-		
+		try:
+			selection=currtable.selectedItems()
+		except AttributeError as e:
+			raise AttributeError("Aucune feuille ouverte !")
+			
+		if selection:
+			minrow=min([i.row() for i in selection])
+			maxrow=max([i.row() for i in selection])
+			mincol=min([i.column() for i in selection])
+			maxcol=max([i.column() for i in selection])
+			selectname="xtal_"+str(self.new)
+			
+			self.new += 1
+			
+			
+			self.tabtable[selectname][selectname]=Table(dimensions=(maxrow-minrow+1,1+maxcol-mincol))
+			newtable=self.tabtable[selectname][selectname]
+			self.tabs.addTab(newtable,selectname)
+			self.tabs.setTabToolTip (self.tabindex, selectname)
+			self.nameindex[self.tabindex]=selectname
+			self.tabindex += 1
+			self.tabs.setCurrentWidget(newtable)
+			for i in selection:
+				newtable[i.row()-minrow, i.column() - mincol] = i.text()
+			
+			return newtable
+		else:
+			raise AttributeError("Sélection vide !")
 				
 if __name__ == '__main__':
 	
