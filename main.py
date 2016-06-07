@@ -49,7 +49,7 @@ class Table(QtGui.QTableWidget):
 					
 				r += 1
 		else:
-			super(Table,self).__init__(500,100)
+			super(Table,self).__init__()
 		
 	def __getitem__(self,pair):
 		x,y=pair
@@ -63,7 +63,7 @@ class Table(QtGui.QTableWidget):
 		x,y=pair
 		x+=1
 		y+=1
-		item=self.itemAt(x, y)
+		item=self.item(x, y)
 		
 		if not item:
 			if value:
