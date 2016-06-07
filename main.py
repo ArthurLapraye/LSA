@@ -231,7 +231,7 @@ class Main(QtGui.QMainWindow):
 					itemlist.append(v)
 				clipboard += "\t".join(itemlist)+"\n"
 					
-			print clipboard.encode("utf-8")
+			# print clipboard.encode("utf-8")
 			self.sys_clip.setText(clipboard)
 	
 	@graphicalerrors
@@ -449,8 +449,7 @@ class Main(QtGui.QMainWindow):
 			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
 		
 		
-		raise NotImplementedError
-	
+		
 	@graphicalerrors
 	def classify(self,*args):
 			
@@ -460,16 +459,14 @@ class Main(QtGui.QMainWindow):
 			if not self.ltok:
 				self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
 			
-			
-			i=0
 			corpus=dict()
 			itemz=dict()
 			
-			for item in ldatable:
-				i += 1
-				corpus[i]=unicode(item.text())
-				itemz[i]=item
-				
+			
+			for row in xrange(ldatable.rowCount() ):
+				corpus[row]=" ".join([ldatable[row,cols] for cols in xrange(ldatable.columnCount() )])
+			
+			
 			texts=self.ltok.tokenize(corpus)
 			
 			NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
@@ -489,8 +486,14 @@ class Main(QtGui.QMainWindow):
 					t[topic]=t.get(topic,[]) + [(i,confid)]
 					c[i].append( (topic,confid) )
 			
+			oldcount = ldatable.columnCount()
+			for pos in xrange(oldcount,oldcount+NUMTOPICS):
+				ldatable.insertColumn(pos)
+			
 			for element in corpus:
-				[x for x,y in c[element]]
+				for (i,(x,y)) in enumerate(c[element]):
+					ldatable[element,oldcount+i]=str(x)
+				
 		
 		# for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)):
 			
