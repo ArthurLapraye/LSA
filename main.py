@@ -268,21 +268,44 @@ class Main(QtGui.QMainWindow):
 		"""
 		if filename:
 			if filename.endswith(".xlsx"):
+				currwidg=self.tabs.currentWidget()
+				
 				name=self.nameindex[self.tabs.currentIndex()]
 				
 				fichier=opx.Workbook(write_only=True,guess_types=True)
 				
-				for elem in self.tabtable[name]:
+				if isinstance(currwidg,QTabWidget):
+					for index in range(currwidg.count()):
+						table=currwidg.widget(index)
+						sheet=fichier.create_sheet()
+						elem = unicode(currwidg.tabText(index))
+						print elem.encode("utf-8")
+						sheet.title = elem
+						
+						print name.encode("utf-8"),elem.encode("utf-8")
+						for row in xrange(0,table.rowCount()):
+							rangee=[]
+							for col in xrange(0,table.columnCount()):
+								v= table[row,col] if table[row,col] else None
+								rangee.append(v)
+							sheet.append(rangee)
+							#for col in table.columnCount():
+							
+				elif isinstance(currwidg,QTableWidget):
 					sheet=fichier.create_sheet()
-					#print elem
+					elem = name
+					print elem.encode("utf-8")
 					sheet.title = elem
-					table = self.tabtable[name][elem]
-					#print name,elem
+						
+					print name.encode("utf-8"),elem.encode("utf-8")
 					for row in xrange(0,table.rowCount()):
-						sheet.append([ table[row,col] for col in xrange(0,table.columnCount()) ])
-						#for col in table.columnCount():
-				
-				
+						rangee=[]
+						for col in xrange(0,table.columnCount()):
+							v= table[row,col] if table[row,col] else None
+							rangee.append(v)
+						sheet.append(rangee)
+				else:
+					raise Exception("L'impossible est arrivé.")
 				fichier.save(filename)
 				
 				# 
@@ -493,9 +516,15 @@ class Main(QtGui.QMainWindow):
 			for element in corpus:
 				for (i,(x,y)) in enumerate(c[element]):
 					ldatable[element,oldcount+i]=str(x)
-				
-		
-		# for n,topic in enumerate(sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True)):
+			
+			codetable=Table(dimensions=(NUMTOPICS+1,3) )
+			self.tabs.currentWidget().addTab(codetable,"codes")
+			self.tabtable[self.nameindex[self.tabs.currentIndex()]]["codes"]=codetable
+			
+			for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True):
+				codetable[topic,0]=str(topic)
+				description=",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])
+				codetable[topic,1]= _fromUtf8(description)
 			
 		
 			#QMessageBox.about(self, "Info",item.text())
@@ -542,14 +571,16 @@ class Main(QtGui.QMainWindow):
 			selectname="xtal_"+str(self.new)
 			self.new += 1
 			
+			subtab=QTabWidget()
 			
 			self.tabtable[selectname][selectname]=Table(dimensions=(maxrow-minrow+1,1+maxcol-mincol))
 			newtable=self.tabtable[selectname][selectname]
-			self.tabs.addTab(newtable,selectname)
-			self.tabs.setTabToolTip (self.tabindex, selectname)
+			subtab.addTab(newtable,selectname)
+			self.tabs.addTab(subtab,selectname)
+			self.tabs.setTabToolTip(self.tabindex, selectname)
 			self.nameindex[self.tabindex]=selectname
 			self.tabindex += 1
-			self.tabs.setCurrentWidget(newtable)
+			self.tabs.setCurrentWidget(subtab)
 			for i in selection:
 				newtable[i.row()-minrow, i.column() - mincol] = i.text()
 			
