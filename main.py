@@ -250,7 +250,7 @@ class Main(QtGui.QMainWindow):
 				# for index in xrange(0,currwidg.count()):
 					# z=currwidg.widget(index)
 					# name=currwidg.tabtext()
-			if filename.endswith(".csv"):
+			elif filename.endswith(".csv"):
 				ok,delimiter,quotechar=self.csvaskbox()
 				if ok:
 					currtable=self.getcurrenttab()
@@ -468,12 +468,12 @@ class Main(QtGui.QMainWindow):
 		columnPosition = currtable.columnCount()
 		currtable.insertColumn(columnPosition)
 		for item in currtable.selectedItems():
-			currtable[item.row(),columnPosition] = 1
+			currtable[item.row(),columnPosition] = str(code)
 			
 	
 	@graphicalerrors
 	def newpage(self,*args):
-		print args
+		
 		currtable=self.getcurrenttab()
 		selection=currtable.selectedItems()
 		minrow=min([i.row() for i in selection])
@@ -483,7 +483,7 @@ class Main(QtGui.QMainWindow):
 		selectname="xtal_"+str(self.new)
 		
 		self.new += 1
-		print minrow,maxrow,mincol,maxcol
+		
 		
 		self.tabtable[selectname][selectname]=Table(dimensions=(maxrow-minrow+1,1+maxcol-mincol))
 		newtable=self.tabtable[selectname][selectname]
