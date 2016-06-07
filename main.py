@@ -79,6 +79,9 @@ class Table(QtGui.QTableWidget):
 class Main(QtGui.QMainWindow):
 	
 	def __init__(self):
+		"""
+		Fonction d'initialisation de la fenêtre, met en place tout les éléments interactifs du programme. 
+		"""
 		super(Main, self).__init__()
 		
 		self.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -164,8 +167,8 @@ class Main(QtGui.QMainWindow):
 	def getfilename(self,flag=None):
 		"""
 			Fonction pour obtenir le nom d'un fichier, 
-			Soit à ouvrir - flag-1 
-			Soit à enregistrer - flag-2 
+			Soit à ouvrir - flag=1 
+			Soit à enregistrer - flag=2 
 			La fonction ouvre le dialogue par défaut du système d'exploitation.
 		"""
 		files_types = "XLSX (*.xlsx);;CSV (*.csv);;Tous les fichiers (*)"
@@ -187,6 +190,10 @@ class Main(QtGui.QMainWindow):
 		return unicode(filename)
 
 	def savefile(self,filename):
+		"""
+		Fonction de sauvegarde des fichiers : sauvegarde soit au format XLSX, auquel cas tout les onglets sont sauvegardés comme des feuilles
+		Soit au format CSV auquel cas seul l'onglet courant est sauvegardé
+		"""
 		if filename:
 			if filename.endswith(".xlsx"):
 				name=self.nameindex[self.tabs.currentIndex()]
@@ -243,6 +250,12 @@ class Main(QtGui.QMainWindow):
 		
 	
 	def openfile(self, filename):
+		"""
+			Fonction d'ouverture des fichiers.
+			Ouvre les fichiers XLSX avec le module openpyxl
+			Ou les fichiers CSV avec le module csv. 
+			Crée un onglet pour chaque fichier ouvert, et un sub-onglet pour chaque feuille des fichiers XLSX.
+		"""
 			if filename:
 				if filename.endswith(".xlsx"):
 					subtab= QtGui.QTabWidget()
@@ -289,6 +302,17 @@ class Main(QtGui.QMainWindow):
 					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
 		
 	def csvaskbox(self):
+		"""
+		Fonction pour demander à l'utilisateur via un QDialog les paramètres du fichier CSV à prendre en entrée. 
+		Les séparateurs possibles sont la tabulation, la virgule, et le point-virgule. Les caractère de citation sont les guillemets doubles, simple.
+		Ces paramètres sont transmis tels quels au module csv.
+		
+		"""
+		
+		#Dictionnaire de variable
+		#Utilisé parce que les events .connect doivent être liés à des fonctions, parce qu'on ne peut pas faire d'assignation dans un lambda
+		#Et parce que les fonctions internes ne peuvent pas modifier les variables de la fonction qui les enveloppe
+		#Sauf en python 3 avec le mot-clef nonlocal.
 		dc={'delimiter':",",
 		'quotechar':"\""}
 		
