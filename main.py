@@ -22,7 +22,7 @@ from PyQt4.QtCore import *
 
 _fromUtf8 = QtCore.QString.fromUtf8
 
-from lda import Lemmtok
+from lemmtok import Lemmtok
 
 class Table(QtGui.QTableWidget):
 	def __init__(self,sheet=None,dimensions=None):
@@ -536,6 +536,10 @@ class Main(QtGui.QMainWindow):
 		'seuilmin':0.3,
 		'maxpres':0.95,
 		'minpres':2}
+		
+		
+		ldabox = QDialog()
+		
 				
 		
 		return params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']

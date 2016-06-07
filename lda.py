@@ -4,15 +4,10 @@
 #TODO : coller une licence compatible avec tout ça (à faire à la fin)
 
 import openpyxl as xl #Licence MIT / Expat
-# import Tkinter as t
 
 import numpy as np #Licence BSD
 import scipy.stats as stats #Licence BSD
-import matplotlib.pyplot as plt #Licence matplotlib basée sur la PSF http://matplotlib.org/users/license.html
-import matplotlib as mpl 
 from gensim import corpora, models, similarities,matutils #Licence LGPL (check version)
-from sklearn.manifold import MDS  #BSD license
-from sklearn.cluster import KMeans as km, AgglomerativeClustering as AC, SpectralClustering as SC
 
 #Librairie standard
 #Licence PSF - (Python Software Foundation )
@@ -25,10 +20,11 @@ import os  # for os.path.basename
 from pprint import pprint
 from collections import defaultdict #Idem
 
-from collocs import collocs,col1
 
 #module local
+from collocs import collocs,col1
 from synonyms import synonymes
+from lemmtok import Lemmtok
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -63,57 +59,6 @@ def loadfile(filename):
 		sys.exit(-1)
 	
 	return corpus
-
-class Lemmtok(object):
-	def __init__(self,LEFFFPATH):
-	
-		self.stoplist=set([u"","","",u"a","a",u"as","as",u"ai","ai",u"au","au",u"aux","aux",u"avec","avec",u"avoir","avoir",u"c","c",u"c'est","c'est",u"ça","ça",u"ca","ca",u"ces","ces",u"ce","ce",u"cela","cela",u"cet","cet",u"ci","ci",u"cette","cette",u"comme","comme",u"comment","comment",u"cln","cln",u"clr","clr",u"cla","cla",u"cld","cld",u"d","d","d",u"d'","d'",u"dans","dans",u"de","de",u"des","des",u"du","du",u"en","en",u"est","est",u"et","et",u"faire","faire",u"fait","fait",u"il","il",u"j","j",u"je","je",u"j","j",u"l","l","lui",u"la","la",u"là","là",u"le","le",u"les","les",u"lf","lf",u"m","m",u"mon","mon",u"me","me",u"ma","ma",u"mais","mais",u"moi","moi",u"n","n",u"ne","ne",u"on","on",u"ont","ont",u"ou","ou",u"où","où",u"parce","parce",u"plus","plus",u"pas","pas",u"pour","pour",u"par","par",u"qu","qu",u"que","que",u"qui","qui",u"quot","quot",u"r","r",u"sur","sur",u"s","s",u"sa","sa",u"se","se",u"sep","sep",u"si","si",u"son","son",u"suis","suis",u"très","très",u"un","un",u"une","une",u"y","y",u"à","à",u"ça","ça",u"été","été",u"être",u"vous"])
-		
-		self.lemmatiseur=defaultdict(set)
-		self.formes=defaultdict(set)
-		l2=defaultdict(set)
-
-		with open(LEFFFPATH) as lexique:
-			lefff=csv.reader(lexique,delimiter="\t",quotechar=None)
-			for x in lefff:
-				if x[0] not in self.stoplist and x[2] not in self.stoplist:
-					self.lemmatiseur[x[0].decode("utf-8")].add(x[2].decode("utf-8"))
-					self.formes[x[2].decode("UTF-8")].add(x[0].decode("utf-8"))
-			
-		for u in self.lemmatiseur:
-			if unidecode(u) not in self.lemmatiseur:
-				l2[unidecode(u)].update(self.lemmatiseur[u])
-				
-		self.lemmatiseur.update(l2)
-
-		logging.info("Lemmatiseur fini de charger !")
-	
-		
-	def tokenize(self,corpus):
-	
-		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
-		texts=list()
-		
-		lexicon=defaultdict(float)
-			
-		for x in corpus:
-			elem=[]
-			corpus[x]=re.sub("[0-9]+"," \1 ",corpus[x],0)
-			for word in tok.split(corpus[x].lower()):
-				if word not in self.stoplist:
-					if word in self.lemmatiseur:
-						if self.lemmatiseur[word] not in self.stoplist:
-							elem += self.lemmatiseur[word]
-					else:
-						elem.append(word)
-						lexicon[word] += 1
-			
-			texts.append(elem)
-			
-		return texts
-
-	def index(corpus):
-		pass
 
 if __name__ == "__main__":
 	NUMTOPICS=int(sys.argv[2])
