@@ -7,6 +7,8 @@ import sys
 import os
 import csv
 import logging
+import functools
+import traceback
 import re
 
 from collections import defaultdict
@@ -22,9 +24,8 @@ _fromUtf8 = QtCore.QString.fromUtf8
 
 from lda import Lemmtok
 
-
 class Table(QtGui.QTableWidget):
-	def __init__(self,sheet=None):
+	def __init__(self,sheet=None,dimensions=None):
 		
 		if sheet:
 			self.sheet=sheet
@@ -48,6 +49,9 @@ class Table(QtGui.QTableWidget):
 					y += 1
 					
 				r += 1
+		elif dimensions:
+			row_count,column_count=dimensions
+			super(Table,self).__init__(row_count,column_count)
 		else:
 			super(Table,self).__init__()
 		
@@ -82,6 +86,7 @@ class Main(QtGui.QMainWindow):
 		"""
 		Fonction d'initialisation de la fenêtre, met en place tout les éléments interactifs du programme. 
 		"""
+		self.new=0
 		super(Main, self).__init__()
 		
 		self.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -120,10 +125,15 @@ class Main(QtGui.QMainWindow):
 		classAction.setStatusTip(_fromUtf8(u"Classifier automatiquement les éléments sélectionnés"))
 		classAction.triggered.connect(self.classify)
 		
-		codAction = QtGui.QAction(QtGui.QIcon('defaults.png'),'&Coder la sélection',self)
+		codAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Coder la sélection'),self)
 		codAction.setShortcut('Ctrl+B')
 		codAction.setStatusTip( _fromUtf8(u"Attribuer un code aux éléments sélectionnés.") )
 		codAction.triggered.connect(self.codelems)
+		
+		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Coder la sélection'),self)
+		newAction.setShortcut("Ctrl+N")
+		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille"))
+		newAction.triggered.connect(self.newpage)
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
 		self.textbar = QLineEdit()
@@ -147,7 +157,7 @@ class Main(QtGui.QMainWindow):
 		classMenu.addAction(classAction)
 		classMenu.addAction(codAction)
 		
-		map(self.addAction, [loadAction,saveAction,exitAction,lemmaSearch,classAction,codAction])
+		map(self.addAction, [newAction,loadAction,saveAction,exitAction,lemmaSearch,classAction,codAction])
 		
 		self.tabindex=0
 		self.nameindex=dict()
@@ -163,7 +173,30 @@ class Main(QtGui.QMainWindow):
 		self.ltok=None
 		
 		# self.show()
+	def graphicalerrors(func):
+		@functools.wraps(func)
+		def wrapper(self,*args,**kwargs):
+			try:
+				op=func(self,*args,**kwargs)
+			except Exception as e:
+				# e.__doc__
+				# e.message
+				logging.error(traceback.format_exc())
+				QMessageBox.warning(self, _fromUtf8("Erreur"),_fromUtf8(e.__doc__+"\n"+e.message))
+				raise e
+			
+			return op
+		
+		return wrapper
 	
+	@graphicalerrors
+	def getcurrenttab(self):
+		currenttab=self.tabs.currentWidget()
+		currtable=currenttab.currentWidget() if isinstance(currenttab,QTabWidget) else currenttab
+		return currtable
+		
+	
+	@graphicalerrors
 	def getfilename(self,flag=None):
 		"""
 			Fonction pour obtenir le nom d'un fichier, 
@@ -188,7 +221,8 @@ class Main(QtGui.QMainWindow):
 		else:
 			QMessageBox.critical(self,"Erreur","Le drapeau :",flag," ne correspond à aucune action.")
 		return unicode(filename)
-
+	
+	@graphicalerrors
 	def savefile(self,filename):
 		"""
 		Fonction de sauvegarde des fichiers : sauvegarde soit au format XLSX, auquel cas tout les onglets sont sauvegardés comme des feuilles
@@ -202,12 +236,12 @@ class Main(QtGui.QMainWindow):
 				
 				for elem in self.tabtable[name]:
 					sheet=fichier.create_sheet()
-					print elem
+					#print elem
 					sheet.title = elem
 					table = self.tabtable[name][elem]
-					print name,elem
-					for row in xrange(1,table.rowCount()):
-						sheet.append([ table[row,col] for col in xrange(1,table.columnCount()) ])
+					#print name,elem
+					for row in xrange(0,table.rowCount()):
+						sheet.append([ table[row,col] for col in xrange(0,table.columnCount()) ])
 						#for col in table.columnCount():
 				
 				
@@ -220,8 +254,7 @@ class Main(QtGui.QMainWindow):
 			if filename.endswith(".csv"):
 				ok,delimiter,quotechar=self.csvaskbox()
 				if ok:
-					currenttab=self.tabs.currentWidget()
-					currtable=currenttab.currentWidget() if isinstance(currenttab,QTabWidget) else currenttab
+					currtable=self.getcurrenttab()
 					with open(filename,"w") as sortie:
 						
 						for row in xrange(0,currtable.rowCount()):
@@ -246,9 +279,8 @@ class Main(QtGui.QMainWindow):
 			
 		else:
 			pass
-				
-		
 	
+	@graphicalerrors
 	def openfile(self, filename):
 		"""
 			Fonction d'ouverture des fichiers.
@@ -256,51 +288,56 @@ class Main(QtGui.QMainWindow):
 			Ou les fichiers CSV avec le module csv. 
 			Crée un onglet pour chaque fichier ouvert, et un sub-onglet pour chaque feuille des fichiers XLSX.
 		"""
-			if filename:
-				if filename.endswith(".xlsx"):
-					subtab= QtGui.QTabWidget()
-					wb = opx.load_workbook(filename, guess_types=False)
-			
-					for sheet in wb:
-						self.tabtable[filename][sheet.title] = Table(sheet)
-						subtab.addTab(self.tabtable[filename][sheet.title],sheet.title)
-										
+		if filename:
+			if filename.endswith(".xlsx"):
+				subtab= QtGui.QTabWidget()
+				wb = opx.load_workbook(filename, guess_types=False)
+		
+				for sheet in wb:
+					self.tabtable[filename][sheet.title] = Table(sheet)
+					subtab.addTab(self.tabtable[filename][sheet.title],sheet.title)
+								
 					self.tabs.addTab(subtab,os.path.basename(filename))
 					self.tabs.setTabToolTip (self.tabindex, QString(filename))
 					self.nameindex[self.tabindex]=filename
 					self.tabindex += 1
 					self.tabs.setCurrentWidget(subtab)
-					# self.show()
+						# self.show()
 				
-				elif filename.endswith(".csv"):
-					ok,delim,qc=self.csvaskbox()
+			elif filename.endswith(".csv"):
+				ok,delim,qc=self.csvaskbox()
 					
-					if ok:
-						with open(filename) as openfile:
-							z=csv.reader(openfile,delimiter=delim,quotechar=qc)
-							self.tabtable[filename][os.path.basename(filename)]=Table()
-							csvtable=self.tabtable[filename][os.path.basename(filename)]
-							for i,x in enumerate(z):
-								if i >= csvtable.rowCount():
+				if ok:
+					self.tabtable[filename][os.path.basename(filename)]=Table()
+					csvtable=self.tabtable[filename][os.path.basename(filename)]
+					self.tabs.addTab(csvtable,os.path.basename(filename))
+					self.tabs.setTabToolTip (self.tabindex, QString(filename))
+					self.nameindex[self.tabindex]=filename
+					self.tabindex += 1
+					self.tabs.setCurrentWidget(csvtable)
+					
+					with open(filename) as openfile:
+						z=csv.reader(openfile,delimiter=delim,quotechar=qc)
+					
+						
+						for i,x in enumerate(z):
+							if i >= csvtable.rowCount():
 									rowPosition = csvtable.rowCount()
 									csvtable.insertRow(rowPosition)
-								for j,y in enumerate(x):
-									if j >= csvtable.columnCount():
-										columnPosition = csvtable.columnCount()
-										csvtable.insertColumn(columnPosition)
-									csvtable[i,j]=y.decode("utf-8")
-						
-						#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
-						self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
-						self.tabs.setTabToolTip (self.tabindex, QString(filename))
-						self.nameindex[self.tabindex]=filename
-						self.tabindex += 1
-						self.tabs.setCurrentWidget(self.tabtable[filename][os.path.basename(filename)])
+							for j,y in enumerate(x):
+								if j >= csvtable.columnCount():
+									columnPosition = csvtable.columnCount()
+									csvtable.insertColumn(columnPosition)
+								csvtable[i,j]=y.decode("utf-8")
 							
+					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
+					
+						
 				
-				else:
-					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
-		
+			else:
+				QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
+	
+	@graphicalerrors	
 	def csvaskbox(self):
 		"""
 		Fonction pour demander à l'utilisateur via un QDialog les paramètres du fichier CSV à prendre en entrée. 
@@ -368,24 +405,35 @@ class Main(QtGui.QMainWindow):
 		else:
 			return False, dc['delimiter'],dc['quotechar']
 	
-	def lemmasearch(self):
+	@graphicalerrors
+	def lemmasearch(self,*args):
 		if not self.ltok:
 			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
 		
 		
 		raise NotImplementedError
 	
-	def classify(self):
+	@graphicalerrors
+	def classify(self,*args):
+		
+		try:
+			currtable=self.tabs.currentWidget().currentWidget()
+		except AttributeError:
+			raise Exception("Erreur : vous devez ouvrir un fichier pour faire de la classification...")
+		
 		if not self.ltok:
 			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
 		
-		currtable=self.tabs.currentWidget().currentWidget()
+		
 		i=0
 		corpus=dict()
 		
 		for item in currtable.selectedItems():
 			i += 1
 			corpus[i]=unicode(item.text())
+		
+		if i == 0:
+			raise Exception('Le corpus sélectionné est vide. Opération impossible.')
 		
 		texts=self.ltok.tokenize(corpus)
 		
@@ -398,7 +446,8 @@ class Main(QtGui.QMainWindow):
 		corpus_tfidf =  models.TfidfModel(bow)[bow]
 		lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
 			#QMessageBox.about(self, "Info",item.text())
-
+	
+	@graphicalerrors
 	def ldaaskbox(self):
 		params={'topics':20,
 		'passes':15,
@@ -408,6 +457,35 @@ class Main(QtGui.QMainWindow):
 				
 		
 		return params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']
+	
+	@graphicalerrors
+	def codelems(self,*args):
+		pass
+	
+	@graphicalerrors
+	def newpage(self,*args):
+		print args
+		currtable=self.getcurrenttab()
+		selection=currtable.selectedItems()
+		minrow=min([i.row() for i in selection])
+		maxrow=max([i.row() for i in selection])
+		mincol=min([i.column() for i in selection])
+		maxcol=max([i.column() for i in selection])
+		selectname="xtal_"+str(self.new)
+		
+		self.new += 1
+		print minrow,maxrow,mincol,maxcol
+		
+		self.tabtable[selectname][selectname]=Table(dimensions=(maxrow-minrow+1,1+maxcol-mincol))
+		newtable=self.tabtable[selectname][selectname]
+		self.tabs.addTab(newtable,selectname)
+		self.tabs.setTabToolTip (self.tabindex, selectname)
+		self.nameindex[self.tabindex]=selectname
+		self.tabindex += 1
+		self.tabs.setCurrentWidget(newtable)
+		for i in selection:
+			newtable[i.row()-minrow, i.column() - mincol] = i.text()
+		
 				
 if __name__ == '__main__':
 	
