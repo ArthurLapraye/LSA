@@ -81,6 +81,8 @@ class Main(QtGui.QMainWindow):
 	def __init__(self):
 		super(Main, self).__init__()
 		
+		self.setContextMenuPolicy(Qt.ActionsContextMenu)
+		
 		self.setGeometry(100,100,800,600)
 		self.show()
 		
@@ -99,20 +101,20 @@ class Main(QtGui.QMainWindow):
 		
 		saveAction = QtGui.QAction(QtGui.QIcon('save.png'),'&Sauvegarder',self)
 		saveAction.setShortcut('Ctrl+S')
-		saveAction.setStatusTip("Sauvegarde le fichier courant")
+		saveAction.setStatusTip(_fromUtf8(u"Sauvegarde le fichier courant"))
 		saveAction.triggered.connect(lambda : self.savefile(self.getfilename(flag=2) ) )
 		
 		#Actions du menu recherche
 		
 		lemmaSearch = QtGui.QAction(QtGui.QIcon('searchMenu.png'),'&Recherche par lemmes',self)
 		lemmaSearch.setShortcut('Ctrl+Maj+L')
-		lemmaSearch.setStatusTip("Rechercher les différentes formes d'un mot dans le corpus")
+		lemmaSearch.setStatusTip(_fromUtf8(u"Rechercher les différentes formes d'un mot dans le corpus"))
 		lemmaSearch.triggered.connect(self.lemmasearch)
 		
 		#Actions du menu classifier
 		classAction = QtGui.QAction(QtGui.QIcon('searchMenu.png'),'&Classification LDA',self)
 		classAction.setShortcut('Ctrl+Maj+T')
-		classAction.setStatusTip("Classifier automatiquement les éléments du corpus.")
+		classAction.setStatusTip(_fromUtf8(u"Classifier automatiquement les éléments sélectionnés"))
 		classAction.triggered.connect(self.classify)
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
@@ -135,6 +137,8 @@ class Main(QtGui.QMainWindow):
 		#Menu classifier
 		classMenu = menubar.addMenu("Classifier")
 		classMenu.addAction(classAction)
+		
+		map(self.addAction, [loadAction,saveAction,exitAction,lemmaSearch,classAction])
 		
 		self.tabindex=0
 		self.nameindex=dict()
@@ -195,24 +199,26 @@ class Main(QtGui.QMainWindow):
 					# z=currwidg.widget(index)
 					# name=currwidg.tabtext()
 			if filename.endswith(".csv"):
-				currtable=self.tabs.currentWidget().currentWidget()
-				with open(filename,"w") as sortie:
-					delimiter,quotechar=self.csvaskbox()
-					for row in xrange(0,currtable.rowCount()):
-						for col in xrange(0,currtable.columnCount()):
-							rangee=""
-							element= currtable[row,col]
-							
-							if col > 0:
-									rangee += delimiter
-							if len(quotechar) == 1:
-								rangee += quotechar + element + quotechar
-							else:
-								rangee += element
-							
-							sortie.write(rangee.encode("utf-8") )
-							#delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",currtable[row,col])+quotechar if len(quotechar) > 1 else currtable[row,col]  ]).encode("utf-8") 
-						sortie.write("\n")
+				ok,delimiter,quotechar=self.csvaskbox()
+				if ok:
+					currtable=self.tabs.currentWidget().currentWidget()
+					with open(filename,"w") as sortie:
+						
+						for row in xrange(0,currtable.rowCount()):
+							for col in xrange(0,currtable.columnCount()):
+								rangee=""
+								element= currtable[row,col]
+								
+								if col > 0:
+										rangee += delimiter
+								if len(quotechar) == 1:
+									rangee += quotechar + element + quotechar
+								else:
+									rangee += element
+								
+								sortie.write(rangee.encode("utf-8") )
+								#delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",currtable[row,col])+quotechar if len(quotechar) > 1 else currtable[row,col]  ]).encode("utf-8") 
+							sortie.write("\n")
 				
 			
 			else:
@@ -230,7 +236,6 @@ class Main(QtGui.QMainWindow):
 					wb = opx.load_workbook(filename, guess_types=False)
 			
 					for sheet in wb:
-						
 						self.tabtable[filename][sheet.title] = Table(sheet)
 						subtab.addTab(self.tabtable[filename][sheet.title],sheet.title)
 										
@@ -242,21 +247,24 @@ class Main(QtGui.QMainWindow):
 					# self.show()
 				
 				elif filename.endswith(".csv"):
-					delim,qc=self.csvaskbox()
-					with open(filename) as openfile:
-						z=csv.reader(openfile,delimiter=delim,quotechar=qc)
-						self.tabtable[filename][os.path.basename(filename)]=Table()
-						for i,x in enumerate(z):
-							for j,y in enumerate(x):
-								self.tabtable[filename][os.path.basename(filename)][i,j]=y.decode("utf-8")
-					
-					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
-					self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
-					self.tabs.setTabToolTip (self.tabindex, QString(filename))
-					self.nameindex[self.tabindex]=filename
-					self.tabindex += 1
-					self.tabs.setCurrentWidget(self.tabtable[filename][os.path.basename(filename)])
+					ok,delim,qc=self.csvaskbox()
+					if len(qc) < 1:
+						qc= None
+					if ok:
+						with open(filename) as openfile:
+							z=csv.reader(openfile,delimiter=delim,quotechar=qc)
+							self.tabtable[filename][os.path.basename(filename)]=Table()
+							for i,x in enumerate(z):
+								for j,y in enumerate(x):
+									self.tabtable[filename][os.path.basename(filename)][i,j]=y.decode("utf-8")
 						
+						#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
+						self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
+						self.tabs.setTabToolTip (self.tabindex, QString(filename))
+						self.nameindex[self.tabindex]=filename
+						self.tabindex += 1
+						self.tabs.setCurrentWidget(self.tabtable[filename][os.path.basename(filename)])
+							
 				
 				else:
 					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
@@ -270,6 +278,9 @@ class Main(QtGui.QMainWindow):
 		def chosen():
 			box.accept()
 		
+		def die():
+			box.reject()
+		
 		def quotecharchanged(index):
 			dc['quotechar'] = ['"',"'",""][index]
 		
@@ -279,6 +290,7 @@ class Main(QtGui.QMainWindow):
 		
 		layout = QVBoxLayout()
 		lt = QHBoxLayout()
+		ht = QHBoxLayout()
 		
 		delimiterchoice = QtGui.QComboBox(box)
 		delimiterchoice.addItems(["Tabulation","Virgule ,","Point-Virgule ;"])
@@ -292,10 +304,16 @@ class Main(QtGui.QMainWindow):
 		okbutton = QPushButton("ok",box)
 		okbutton.clicked.connect(chosen)
 		
+		cancelbutton = QPushButton("Annuler",box)
+		cancelbutton.clicked.connect(die)
+		
+		ht.addWidget(okbutton)
+		ht.addWidget(cancelbutton)
+		
 		lt.addWidget(delimiterchoice)
 		lt.addWidget(quotecharchoice)
 		layout.addLayout(lt)
-		layout.addWidget(okbutton)
+		layout.addLayout(ht)
 		# b1.move(50,50)
 		
 		box.setLayout(layout)
@@ -303,8 +321,9 @@ class Main(QtGui.QMainWindow):
 		box.setGeometry(150,150,300,200)
 		box.setWindowModality(Qt.ApplicationModal)
 		if box.exec_():
-			return dc['delimiter'],dc['quotechar']
-	
+			return True,dc['delimiter'],dc['quotechar']
+		else:
+			return False, dc['delimiter'],dc['quotechar']
 	
 	def lemmasearch(self):
 		if not self.ltok:
@@ -338,12 +357,14 @@ class Main(QtGui.QMainWindow):
 			#QMessageBox.about(self, "Info",item.text())
 
 	def ldaaskbox(self):
-		NUMTOPICS=20
-		NUMPASS=15
-		SEUILPROBA =0.3
-		SEUILMOT=0.95
-		MINIMUM=2
-		return NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM
+		params={'topics':20,
+		'passes':15,
+		'seuilmin':0.3,
+		'maxpres':0.95,
+		'minpres':2}
+				
+		
+		return params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']
 				
 if __name__ == '__main__':
 	
