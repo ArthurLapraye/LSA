@@ -61,8 +61,8 @@ class Table(QtGui.QTableWidget):
 	
 	def __setitem__(self,pair,value):
 		x,y=pair
-		x+=1
-		y+=1
+		# x+=1
+		# y+=1
 		item=self.item(x, y)
 		
 		if not item:
@@ -112,10 +112,15 @@ class Main(QtGui.QMainWindow):
 		lemmaSearch.triggered.connect(self.lemmasearch)
 		
 		#Actions du menu classifier
-		classAction = QtGui.QAction(QtGui.QIcon('searchMenu.png'),'&Classification LDA',self)
+		classAction = QtGui.QAction(QtGui.QIcon('defaults.png'),'&Classification LDA',self)
 		classAction.setShortcut('Ctrl+Maj+T')
 		classAction.setStatusTip(_fromUtf8(u"Classifier automatiquement les éléments sélectionnés"))
 		classAction.triggered.connect(self.classify)
+		
+		codAction = QtGui.QAction(QtGui.QIcon('defaults.png'),'&Coder la sélection',self)
+		codAction.setShortcut('Ctrl+B')
+		codAction.setStatusTip( _fromUtf8(u"Attribuer un code aux éléments sélectionnés.") )
+		codAction.triggered.connect(self.codelems)
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
 		self.textbar = QLineEdit()
@@ -137,8 +142,9 @@ class Main(QtGui.QMainWindow):
 		#Menu classifier
 		classMenu = menubar.addMenu("Classifier")
 		classMenu.addAction(classAction)
+		classMenu.addAction(codAction)
 		
-		map(self.addAction, [loadAction,saveAction,exitAction,lemmaSearch,classAction])
+		map(self.addAction, [loadAction,saveAction,exitAction,lemmaSearch,classAction,codAction])
 		
 		self.tabindex=0
 		self.nameindex=dict()
@@ -156,7 +162,13 @@ class Main(QtGui.QMainWindow):
 		# self.show()
 	
 	def getfilename(self,flag=None):
-		files_types = "XLSX (*.xlsx);;CSV (*.csv);;txt (*.txt);; Tous les fichiers (*)"
+		"""
+			Fonction pour obtenir le nom d'un fichier, 
+			Soit à ouvrir - flag-1 
+			Soit à enregistrer - flag-2 
+			La fonction ouvre le dialogue par défaut du système d'exploitation.
+		"""
+		files_types = "XLSX (*.xlsx);;CSV (*.csv);;Tous les fichiers (*)"
 		filename=""
 		if flag == 1:
 			filename = QFileDialog.getOpenFileName(None,
@@ -201,7 +213,8 @@ class Main(QtGui.QMainWindow):
 			if filename.endswith(".csv"):
 				ok,delimiter,quotechar=self.csvaskbox()
 				if ok:
-					currtable=self.tabs.currentWidget().currentWidget()
+					currenttab=self.tabs.currentWidget()
+					currtable=currenttab.currentWidget() if isinstance(currenttab,QTabWidget) else currenttab
 					with open(filename,"w") as sortie:
 						
 						for row in xrange(0,currtable.rowCount()):
@@ -211,8 +224,8 @@ class Main(QtGui.QMainWindow):
 								
 								if col > 0:
 										rangee += delimiter
-								if len(quotechar) == 1:
-									rangee += quotechar + element + quotechar
+								if quotechar:
+									rangee += quotechar + re.sub(r"("+quotechar+")","\\\1",element) + quotechar
 								else:
 									rangee += element
 								
@@ -248,15 +261,21 @@ class Main(QtGui.QMainWindow):
 				
 				elif filename.endswith(".csv"):
 					ok,delim,qc=self.csvaskbox()
-					if len(qc) < 1:
-						qc= None
+					
 					if ok:
 						with open(filename) as openfile:
 							z=csv.reader(openfile,delimiter=delim,quotechar=qc)
 							self.tabtable[filename][os.path.basename(filename)]=Table()
+							csvtable=self.tabtable[filename][os.path.basename(filename)]
 							for i,x in enumerate(z):
+								if i >= csvtable.rowCount():
+									rowPosition = csvtable.rowCount()
+									csvtable.insertRow(rowPosition)
 								for j,y in enumerate(x):
-									self.tabtable[filename][os.path.basename(filename)][i,j]=y.decode("utf-8")
+									if j >= csvtable.columnCount():
+										columnPosition = csvtable.columnCount()
+										csvtable.insertColumn(columnPosition)
+									csvtable[i,j]=y.decode("utf-8")
 						
 						#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
 						self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
@@ -282,7 +301,7 @@ class Main(QtGui.QMainWindow):
 			box.reject()
 		
 		def quotecharchanged(index):
-			dc['quotechar'] = ['"',"'",""][index]
+			dc['quotechar'] = ['"',"'",None][index]
 		
 		def delimiterchanged(index):
 			dc['delimiter'] = ["\t", ",", ";"][index]
