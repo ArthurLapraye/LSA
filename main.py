@@ -87,18 +87,13 @@ class Main(QtGui.QMainWindow):
 		"""
 		self.new=0
 		super(Main, self).__init__()
-		
+		self.sys_clip = QtGui.QApplication.clipboard()
 		self.setContextMenuPolicy(Qt.ActionsContextMenu)
 		
 		self.setGeometry(100,100,800,600)
 		self.show()
 		
 		#Actions du menu fichier
-		
-		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Extraire les éléments'),self)
-		newAction.setShortcut("Ctrl+N")
-		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille à partir de la sélection."))
-		newAction.triggered.connect(self.newpage)
 		
 		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)  
 		exitAction.setShortcut('Ctrl+Q')
@@ -115,6 +110,19 @@ class Main(QtGui.QMainWindow):
 		saveAction.setShortcut('Ctrl+S')
 		saveAction.setStatusTip(_fromUtf8(u"Sauvegarde le fichier courant"))
 		saveAction.triggered.connect(lambda : self.savefile(self.getfilename(flag=2) ) )
+		
+		#Action du menu editer
+		
+		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Extraire les éléments'),self)
+		newAction.setShortcut("Ctrl+N")
+		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille à partir de la sélection."))
+		newAction.triggered.connect(self.newpage)
+		
+		copyAction= QtGui.QAction(QtGui.QIcon('copy.png'),'Copier',self)
+		copyAction.setShortcut('Ctrl+C')
+		copyAction.setStatusTip( _fromUtf8(u"Copier les données sélectionnées dans le presse-papier") )
+		copyAction.triggered.connect(self.copycells)
+
 		
 		#Actions du menu recherche
 		
@@ -145,10 +153,14 @@ class Main(QtGui.QMainWindow):
 		
 		#Menu fichier
 		fileMenu = menubar.addMenu('&Fichier')
-		fileMenu.addAction(newAction)
 		fileMenu.addAction(loadAction)
 		fileMenu.addAction(saveAction)
 		fileMenu.addAction(exitAction)
+		
+		#Menu éditer
+		editMenu = menubar.addMenu(_fromUtf8("&Editer"))
+		editMenu.addAction(copyAction)
+		editMenu.addAction(newAction)
 		
 		#Menu recherche
 		searchMenu = menubar.addMenu('&Recherche')
@@ -197,6 +209,30 @@ class Main(QtGui.QMainWindow):
 		currtable=currenttab.currentWidget() if isinstance(currenttab,QTabWidget) else currenttab
 		return currtable
 		
+	
+	@graphicalerrors
+	def copycells(self,*args):
+		clipboard=""
+		currtable=self.getcurrenttab()
+		try:
+			selection=currtable.selectedItems()
+		except AttributeError as e:
+			raise AttributeError("Aucune feuille ouverte !")
+		
+		if selection:
+			minrow=min([i.row() for i in selection])
+			maxrow=max([i.row() for i in selection])
+			mincol=min([i.column() for i in selection])
+			maxcol=max([i.column() for i in selection])
+			for row in xrange(minrow,maxrow):
+				itemlist=[]
+				for col in xrange(mincol,maxcol):
+					v = currtable[row,col] if currtable.item(row,col) in selection else ""
+					itemlist.append(v)
+				clipboard += "\t".join(itemlist)+"\n"
+					
+			print clipboard.encode("utf-8")
+			self.sys_clip.setText(clipboard)
 	
 	@graphicalerrors
 	def getfilename(self,flag=None):
@@ -499,8 +535,8 @@ class Main(QtGui.QMainWindow):
 			maxrow=max([i.row() for i in selection])
 			mincol=min([i.column() for i in selection])
 			maxcol=max([i.column() for i in selection])
-			selectname="xtal_"+str(self.new)
 			
+			selectname="xtal_"+str(self.new)
 			self.new += 1
 			
 			
