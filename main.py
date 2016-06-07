@@ -22,6 +22,7 @@ _fromUtf8 = QtCore.QString.fromUtf8
 
 from lda import Lemmtok
 
+
 class Table(QtGui.QTableWidget):
 	def __init__(self,sheet=None):
 		
@@ -85,7 +86,7 @@ class Main(QtGui.QMainWindow):
 		
 		#Actions du menu fichier
 		
-		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)        
+		exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Quitter', self)  
 		exitAction.setShortcut('Ctrl+Q')
 		exitAction.setStatusTip("Quitte l'application")
 		exitAction.triggered.connect(QtGui.qApp.quit)
@@ -202,12 +203,12 @@ class Main(QtGui.QMainWindow):
 							rangee=""
 							element= currtable[row,col]
 							
-							if col > 1:
+							if col > 0:
 									rangee += delimiter
 							if len(quotechar) == 1:
-								rangee += quotechar + re.sub(r"("+quotechar+")","\\\1",element) + quotechar
+								rangee += quotechar + element + quotechar
 							else:
-								rangee += currtable[row,col]
+								rangee += element
 							
 							sortie.write(rangee.encode("utf-8") )
 							#delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",currtable[row,col])+quotechar if len(quotechar) > 1 else currtable[row,col]  ]).encode("utf-8") 
@@ -247,7 +248,7 @@ class Main(QtGui.QMainWindow):
 						self.tabtable[filename][os.path.basename(filename)]=Table()
 						for i,x in enumerate(z):
 							for j,y in enumerate(x):
-								self.tabtable[filename][os.path.basename(filename)][i,j]=y
+								self.tabtable[filename][os.path.basename(filename)][i,j]=y.decode("utf-8")
 					
 					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
 					self.tabs.addTab(self.tabtable[filename][os.path.basename(filename)],os.path.basename(filename))
@@ -261,9 +262,48 @@ class Main(QtGui.QMainWindow):
 					QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
 		
 	def csvaskbox(self):
-		choice1 = QtGui.QComboBox()
-		delimiter,quotechar="\t","\""
-		return delimiter,quotechar
+		dc={'delimiter':",",
+		'quotechar':"\""}
+		
+		box = QDialog()
+		
+		def chosen():
+			box.accept()
+		
+		def quotecharchanged(index):
+			dc['quotechar'] = ['"',"'",""][index]
+		
+		def delimiterchanged(index):
+			dc['delimiter'] = ["\t", ",", ";"][index]
+		
+		
+		layout = QVBoxLayout()
+		lt = QHBoxLayout()
+		
+		delimiterchoice = QtGui.QComboBox(box)
+		delimiterchoice.addItems(["Tabulation","Virgule ,","Point-Virgule ;"])
+		delimiterchoice.currentIndexChanged.connect(delimiterchanged)
+		
+		quotecharchoice = QtGui.QComboBox(box)
+		quotecharchoice.addItems(["Guillemets doubles \" ","Guillemets simples ' ","Aucun"])
+		quotecharchoice.currentIndexChanged.connect(quotecharchanged)
+		
+		
+		okbutton = QPushButton("ok",box)
+		okbutton.clicked.connect(chosen)
+		
+		lt.addWidget(delimiterchoice)
+		lt.addWidget(quotecharchoice)
+		layout.addLayout(lt)
+		layout.addWidget(okbutton)
+		# b1.move(50,50)
+		
+		box.setLayout(layout)
+		box.setWindowTitle(_fromUtf8(u"Paramètres du fichier CSV"))
+		box.setGeometry(150,150,300,200)
+		box.setWindowModality(Qt.ApplicationModal)
+		if box.exec_():
+			return dc['delimiter'],dc['quotechar']
 	
 	
 	def lemmasearch(self):
