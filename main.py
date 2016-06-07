@@ -65,8 +65,7 @@ class Table(QtGui.QTableWidget):
 	
 	def __setitem__(self,pair,value):
 		x,y=pair
-		# x+=1
-		# y+=1
+		
 		item=self.item(x, y)
 		
 		if not item:
@@ -130,9 +129,9 @@ class Main(QtGui.QMainWindow):
 		codAction.setStatusTip( _fromUtf8(u"Attribuer un code aux éléments sélectionnés.") )
 		codAction.triggered.connect(self.codelems)
 		
-		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Coder la sélection'),self)
+		newAction = QtGui.QAction(QtGui.QIcon('defaults.png'),_fromUtf8('&Extraire les éléments'),self)
 		newAction.setShortcut("Ctrl+N")
-		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille"))
+		newAction.setStatusTip(_fromUtf8("Créer une nouvelle feuille à partir de la sélection."))
 		newAction.triggered.connect(self.newpage)
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
@@ -445,6 +444,7 @@ class Main(QtGui.QMainWindow):
 		bow = [dictionary.doc2bow(text) for text in texts]
 		corpus_tfidf =  models.TfidfModel(bow)[bow]
 		lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+		
 			#QMessageBox.about(self, "Info",item.text())
 	
 	@graphicalerrors
@@ -460,7 +460,16 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def codelems(self,*args):
-		pass
+		
+		code=1
+		
+		currtable=self.getcurrenttab()
+		
+		columnPosition = currtable.columnCount()
+		currtable.insertColumn(columnPosition)
+		for item in currtable.selectedItems():
+			currtable[item.row(),columnPosition] = 1
+			
 	
 	@graphicalerrors
 	def newpage(self,*args):
