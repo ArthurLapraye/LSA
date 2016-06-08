@@ -147,7 +147,6 @@ class Main(QtGui.QMainWindow):
 		
 		
 		#Mise en place de la barre d'outil et de la barre d'état.
-		self.textbar = QLineEdit()
 		self.statusBar()
 		
 		#Barre d'outil
@@ -183,7 +182,6 @@ class Main(QtGui.QMainWindow):
 		
 		
 		bardoutil= QToolBar()
-		bardoutil.addWidget(self.textbar)
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
 		self.ltok=None
@@ -224,7 +222,7 @@ class Main(QtGui.QMainWindow):
 		try:
 			selection=currtable.selectedItems()
 		except AttributeError as e:
-			raise AttributeError("Aucune feuille ouverte !")
+			raise AttributeError(u"Aucune feuille ouverte !")
 		
 		if selection:
 			minrow=min([i.row() for i in selection])
@@ -495,10 +493,21 @@ class Main(QtGui.QMainWindow):
 		searchbox = QDialog()
 		searchbox.setWindowModality()
 		searchbox.setGeometry(posx+90,posy+80,300,200)
+		searchbox.statusBar()
 		
+		tokinput = QLineEdit()
 		
+		toklayout=QHBoxLayout()
+		toktexte=QLabel("Entrer un mot :")
+		toklayout.addWidget(tokinput)
 		
-		raise NotImplementedError
+		layout = QVBoxLayout()
+		layout.addLayout(toklayout)
+		
+		searchbox.setLayout(layout)
+		
+		return box.exec()
+		
 		
 		
 	@graphicalerrors
@@ -598,7 +607,7 @@ class Main(QtGui.QMainWindow):
 		seuil.setRange(0,1)
 		seuil.setValue(params["seuilmin"])
 		seuil.valueChanged.connect(lambda x : changevalue("seuilmin",x) )
-		seuillabel=QLabel(_fromUtf8("Seuil de probabilité :"))
+		seuillabel=QLabel(_fromUtf8(u"Seuil de probabilité :"))
 		seuillayer= QHBoxLayout()
 		seuillayer.addWidget(seuillabel)
 		seuillayer.addWidget(seuil)
@@ -660,9 +669,12 @@ class Main(QtGui.QMainWindow):
 		
 		columnPosition = currtable.columnCount()
 		currtable.insertColumn(columnPosition)
-		for item in currtable.selectedItems():
-			currtable[item.row(),columnPosition] = str(code)
-			
+		selection=currtable.selectedItems()
+		if selection:
+			for item in selection:
+				currtable[item.row(),columnPosition] = str(code)
+		else:
+			raise AttributeError(u"Sélection vide !")
 	
 	@graphicalerrors
 	def newpage(self,*args):
@@ -671,7 +683,7 @@ class Main(QtGui.QMainWindow):
 		try:
 			selection=currtable.selectedItems()
 		except AttributeError as e:
-			raise AttributeError("Aucune feuille ouverte !")
+			raise AttributeError(u"Aucune feuille ouverte !")
 			
 		if selection:
 			minrow=min([i.row() for i in selection])
@@ -697,7 +709,7 @@ class Main(QtGui.QMainWindow):
 			
 			return newtable
 		else:
-			raise AttributeError("Sélection vide !")
+			raise AttributeError(u"Sélection vide !")
 				
 if __name__ == '__main__':
 	LEFFFPATH=os.path.dirname(os.path.realpath(sys.argv[0]))+"/lefff-3.4.mlex/lefff-3.4.mlex"
