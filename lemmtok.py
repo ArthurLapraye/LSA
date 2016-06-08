@@ -45,7 +45,7 @@ class Lemmtok(object):
 				
 		self.lemmatiseur.update(self.l2)
 
-		logging.info("Lemmatiseur fini de charger !")
+		logging.info("Le lemmatiseur fini de charger !")
 	
 		
 	def toklemize(self,corpus):

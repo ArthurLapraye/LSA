@@ -30,7 +30,7 @@ class Table(QtGui.QTableWidget):
 	def __init__(self,sheet=None,dimensions=None):
 		
 		if sheet:
-			self.sheet=sheet
+			sheet=sheet
 				
 			row_count = sheet.max_row + 1
 			column_count = sheet.max_column + 1
@@ -188,6 +188,10 @@ class Main(QtGui.QMainWindow):
 		
 		# self.show()
 	def graphicalerrors(func):
+		"""
+			Décorateur pour faire remonter les exceptions et les afficher dans une messagebox.
+			
+		"""
 		@functools.wraps(func)
 		def wrapper(self,*args,**kwargs):
 			try:
@@ -486,14 +490,24 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def lemmasearch(self,*args):
-			
+		
 		if not self.ltok:
 			self.ltok=Lemmtok(LEFFFPATH)
 			
 		searchbox = QDialog()
-		searchbox.setWindowModality()
+		#searchbox.setWindowModality()
+		searchbox.setModal(False)
+		posx,posy=self.geometry().x(),self.geometry().y()
 		searchbox.setGeometry(posx+90,posy+80,300,200)
-		searchbox.statusBar()
+		# searchbox.statusBar()
+		
+		def exitsearch(*args):
+				searchbox.accept()
+		
+		
+		# @selfgraphicalerrors
+		def searchlemmas():
+			raise NotImplementedError
 		
 		tokinput = QLineEdit()
 		
@@ -501,12 +515,23 @@ class Main(QtGui.QMainWindow):
 		toktexte=QLabel("Entrer un mot :")
 		toklayout.addWidget(tokinput)
 		
+		okbutton = QPushButton("ok",searchbox)
+		okbutton.clicked.connect(searchlemmas)
+		
+		fermer = QPushButton(_fromUtf8("Fermer"),searchbox)
+		fermer.clicked.connect(exitsearch)
+		
+		buttonlayout = QHBoxLayout()
+		buttonlayout.addWidget(okbutton)
+		buttonlayout.addWidget(fermer)
+		
 		layout = QVBoxLayout()
 		layout.addLayout(toklayout)
+		layout.addLayout(buttonlayout)
 		
 		searchbox.setLayout(layout)
 		
-		return box.exec_()
+		return searchbox.exec_()
 		
 		
 		
