@@ -616,7 +616,13 @@ class Main(QtGui.QMainWindow):
 				"sbound":"sbound",
 				"suffAdj":"suffixe adjectival"
 				}
-		
+			deb,fin=x.split(".")
+			
+			if fin in z:
+				return deb+" ("+z[fin]+")"
+			else:
+				return deb
+			
 		def lemmafinder():
 			if c['choix']:
 				searchlemmas(c['choix'])
@@ -625,7 +631,7 @@ class Main(QtGui.QMainWindow):
 				if searchterm:
 					if len(searchterm) > 1:
 						tokinput.hide()
-						choice.addItems([ expl(x) for x in searchterm])
+						choice.addItems([ expl(x).encode("utf-8") for x in searchterm])
 						choice.currentIndexChanged.connect(lambda x : handler(searchterm,x) )
 						choice.show()
 					else:
