@@ -32,9 +32,9 @@ class Table(QtGui.QTableWidget):
 		if sheet:
 			sheet=sheet
 				
-			row_count = sheet.max_row + 1
-			column_count = sheet.max_column + 1
-			super(Table,self).__init__(row_count,column_count)
+			self.row_count = sheet.max_row + 1
+			self.column_count = sheet.max_column + 1
+			super(Table,self).__init__(self.row_count,self.column_count)
 			
 			
 			r,y=0,0
@@ -52,33 +52,40 @@ class Table(QtGui.QTableWidget):
 					
 				r += 1
 		elif dimensions:
-			row_count,column_count=dimensions
-			super(Table,self).__init__(row_count,column_count)
+			self.row_count,self.column_count=dimensions
+			super(Table,self).__init__(self.row_count,self.column_count)
 		else:
 			super(Table,self).__init__()
 		
 	def __getitem__(self,pair):
-		x,y=pair
-		item=self.item(x, y)
+		row,col=pair
+		item=self.item(row, col)
 		#print item
 		z = unicode(item.text()) if item else ""
 		
 		return z
 	
 	def __setitem__(self,pair,value):
-		x,y=pair
+		row,col=pair
 		
-		item=self.item(x, y)
+		item=self.item(row, col)
 		
 		if not item:
 			if value:
 				item=QtGui.QTableWidgetItem(value)
 			else:
 				item=QtGui.QTableWidgetItem("")
-			self.setItem(x,y, item)
+			self.setItem(row,col, item)
 		else:
 			item.setText(value)
-		
+	
+	def itemiter(self):
+		"""Générateur qui renvoie tout les items de haut en bas et de gauche à droite"""
+		for row in xrange(self.row_count):
+			for col in xrange(self.column_count):
+				yield self.item(row,col)
+	
+	
 		#QMessageBox.about(self, "Info",value)
 		
 class Main(QtGui.QMainWindow):
@@ -513,7 +520,12 @@ class Main(QtGui.QMainWindow):
 		
 		# @selfgraphicalerrors
 		def searchlemmas():
-			raise NotImplementedError
+			corpus=None
+			currtable = getcurrenttab()
+			if currtable.selectedItems():
+				corpus=currtable.selectedItems()
+			else:
+				corpus=
 		
 		tokinput = QLineEdit()
 		
@@ -637,6 +649,7 @@ class Main(QtGui.QMainWindow):
 		
 		seuil=QDoubleSpinBox()
 		seuil.setRange(0,1)
+		seuil.setSingleStep(0.01)
 		seuil.setValue(params["seuilmin"])
 		seuil.valueChanged.connect(lambda x : changevalue("seuilmin",x) )
 		seuillabel=QLabel(_fromUtf8(u"Seuil de probabilité :"))
@@ -647,12 +660,14 @@ class Main(QtGui.QMainWindow):
 		
 		
 		minmot=QSpinBox()
+		minmot.setMinimum(1)
 		minmot.valueChanged.connect(lambda x: changevalue("minpres",x) )
 		minmot.setValue(params["minpres"])
 		minlabel=QLabel( _fromUtf8("Hapax") )
 		
 		maxpres=QDoubleSpinBox()
 		maxpres.setRange(0,1)
+		maxpres.setSingleStep(0.01)
 		maxpres.setValue(params["maxpres"])
 		maxpres.valueChanged.connect(lambda x: changevalue('maxpres',x))
 		maxlabel = QLabel(_fromUtf8("Tf max:") )
