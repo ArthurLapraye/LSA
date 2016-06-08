@@ -79,10 +79,10 @@ class Table(QtGui.QTableWidget):
 		else:
 			item.setText(value)
 	
-	def itemiter(self):
+	def iteritems(self):
 		"""Générateur qui renvoie tout les items de haut en bas et de gauche à droite"""
-		for row in xrange(self.row_count):
-			for col in xrange(self.column_count):
+		for row in xrange(0,self.row_count):
+			for col in xrange(0,self.column_count):
 				yield self.item(row,col)
 	
 	
@@ -191,7 +191,7 @@ class Main(QtGui.QMainWindow):
 		bardoutil= QToolBar()
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
-		self.ltok=None
+		self.ltok = Lemmtok(LEFFFPATH)
 		
 		# self.show()
 	def graphicalerrors(func):
@@ -240,9 +240,9 @@ class Main(QtGui.QMainWindow):
 			maxrow=max([i.row() for i in selection])
 			mincol=min([i.column() for i in selection])
 			maxcol=max([i.column() for i in selection])
-			for row in xrange(minrow,maxrow):
+			for row in xrange(minrow,maxrow+1):
 				itemlist=[]
-				for col in xrange(mincol,maxcol):
+				for col in xrange(mincol,maxcol+1):
 					v = currtable[row,col] if currtable.item(row,col) in selection else ""
 					itemlist.append(v)
 				clipboard += "\t".join(itemlist)+"\n"
@@ -504,14 +504,11 @@ class Main(QtGui.QMainWindow):
 	@graphicalerrors
 	def lemmasearch(self,*args):
 		
-		if not self.ltok:
-			self.ltok=Lemmtok(LEFFFPATH)
-			
 		searchbox = QDialog()
 		#searchbox.setWindowModality()
 		searchbox.setModal(False)
 		posx,posy=self.geometry().x(),self.geometry().y()
-		searchbox.setGeometry(posx+90,posy+80,300,200)
+		searchbox.setGeometry(posx+90,posy+80,300,60)
 		# searchbox.statusBar()
 		
 		def exitsearch(*args):
@@ -519,21 +516,28 @@ class Main(QtGui.QMainWindow):
 		
 		# def changesearchterm():
 		
-		# @selfgraphicalerrors
-		def searchlemmas():
-			corpus=None
-			searchterm=self.ltok.tokenize(tokinput.text())
-			currtable = getcurrenttab()
-			if currtable.selectedItems():
-				corpus=currtable.selectedItems()
-			else:
-				corpus=currtable.iteritems()
-			
-			for item in corpus:
-				if searchterm in item.text():
-					currtable.setItemSelected(item) 
 		
 		tokinput = QLineEdit()
+		
+		def searchlemmas():
+			corpus=None
+			searchterm=self.ltok.toklemize(unicode(tokinput.text()))
+			currtable = self.getcurrenttab()
+			if currtable.selectedItems():
+				corpus=currtable.selectedItems
+			else:
+				corpus=currtable.iteritems
+			
+			for item in corpus():
+				if item:
+					words=self.ltok.toklemize(unicode(item.text()))
+					#print searchterm,words
+
+					if searchterm[0] in words:
+						print searchterm, words
+						currtable.setItemSelected(item,True)
+					else:
+						currtable.setItemSelected(item,False)
 		
 		toklayout=QHBoxLayout()
 		toktexte=QLabel("Entrer un mot :")
@@ -567,10 +571,7 @@ class Main(QtGui.QMainWindow):
 		if ok:
 			ldatable=self.newpage()
 			if ldatable:
-				
-				if not self.ltok:
-					self.ltok=Lemmtok(LEFFFPATH)
-				
+							
 				corpus=dict()
 				itemz=dict()
 				
@@ -578,7 +579,7 @@ class Main(QtGui.QMainWindow):
 				for row in xrange(ldatable.rowCount() ):
 					corpus[row]=" ".join([ldatable[row,cols] for cols in xrange(ldatable.columnCount() )])
 							
-				texts=self.ltok.toklemize(corpus)
+				texts=self.ltok.toklemize_corpus(corpus)
 				
 				dictionary = corpora.Dictionary(texts)
 				dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
@@ -618,14 +619,14 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def ldaaskbox(self):
-		params={'topics':20,
+		self.params={'topics':20,
 		'passes':15,
 		'seuilmin':0.3,
 		'maxpres':0.95,
 		'minpres':2}
 		
 		def changevalue(name,v):
-			params[name]=v
+			self.params[name]=v
 		
 		def chosen():
 			ldabox.accept()
@@ -637,7 +638,7 @@ class Main(QtGui.QMainWindow):
 		
 		topic=QSpinBox()
 		topic.setRange(1,1000)
-		topic.setValue(params['topics'])
+		topic.setValue(self.params['topics'])
 		topic.valueChanged.connect(lambda x : changevalue("topics",int(x)))
 		topiclabel=QLabel(_fromUtf8("Nombre de codes :"))
 		topiclayer=QHBoxLayout()
@@ -646,7 +647,7 @@ class Main(QtGui.QMainWindow):
 		
 		passes=QSpinBox()
 		passes.setRange(1,200)
-		passes.setValue(params['passes'])
+		passes.setValue(self.params['passes'])
 		passes.valueChanged.connect(lambda x : changevalue("passes",x) )
 		passlabel=QLabel( _fromUtf8("Nombre de passes :") )
 		passlayer=QHBoxLayout()
@@ -656,7 +657,7 @@ class Main(QtGui.QMainWindow):
 		seuil=QDoubleSpinBox()
 		seuil.setRange(0,1)
 		seuil.setSingleStep(0.01)
-		seuil.setValue(params["seuilmin"])
+		seuil.setValue(self.params["seuilmin"])
 		seuil.valueChanged.connect(lambda x : changevalue("seuilmin",x) )
 		seuillabel=QLabel(_fromUtf8(u"Seuil de probabilité :"))
 		seuillayer= QHBoxLayout()
@@ -668,13 +669,13 @@ class Main(QtGui.QMainWindow):
 		minmot=QSpinBox()
 		minmot.setMinimum(1)
 		minmot.valueChanged.connect(lambda x: changevalue("minpres",x) )
-		minmot.setValue(params["minpres"])
+		minmot.setValue(self.params["minpres"])
 		minlabel=QLabel( _fromUtf8("Hapax") )
 		
 		maxpres=QDoubleSpinBox()
 		maxpres.setRange(0,1)
 		maxpres.setSingleStep(0.01)
-		maxpres.setValue(params["maxpres"])
+		maxpres.setValue(self.params["maxpres"])
 		maxpres.valueChanged.connect(lambda x: changevalue('maxpres',x))
 		maxlabel = QLabel(_fromUtf8("Tf max:") )
 		
@@ -709,23 +710,53 @@ class Main(QtGui.QMainWindow):
 		ldabox.setWindowModality(Qt.ApplicationModal)
 		
 		if ldabox.exec_():
-			return True,params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']
+			return True,self.params['topics'],self.params['passes'],self.params['seuilmin'],self.params['maxpres'],self.params['minpres']
 		else:
 			return False,0,0,0,0,0
 	
 	@graphicalerrors
 	def codelems(self,*args):
 		
-		code=1
-		
 		currtable=self.getcurrenttab()
-		
 		columnPosition = currtable.columnCount()
 		currtable.insertColumn(columnPosition)
 		selection=currtable.selectedItems()
 		if selection:
-			for item in selection:
-				currtable[item.row(),columnPosition] = str(code)
+			
+			cbox=QDialog()
+			
+			c={'code':1}
+			
+			def codef(x):
+				c['code']=x
+			
+			def codeit(x):
+				cbox.accept()
+			
+			def die():
+				cbox.reject()
+			
+			codeur=QSpinBox()
+			codeur.setValue(c['code'])
+			codeur.valueChanged.connect(codef)
+			codlabel=QLabel( _fromUtf8(u"Code à attribuer") )
+			
+			okbutton =QPushButton( _fromUtf8(u"Ok"),cbox)
+			okbutton.clicked.connect(codeit)
+			
+			layout=QVBoxLayout()
+			layout.addWidget(codlabel)
+			layout.addWidget(codeur)
+			layout.addWidget(okbutton)
+			
+			cbox.setLayout(layout)
+			
+			if cbox.exec_():
+				
+				code=c['code']
+				for item in selection:
+					currtable[item.row(),columnPosition] = str(code)
+			
 		else:
 			raise AttributeError(u"Sélection vide !")
 	

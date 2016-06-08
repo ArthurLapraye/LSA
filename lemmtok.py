@@ -21,7 +21,7 @@ class Lemmtok(object):
 		with open(LEFFFPATH) as lexique:
 			
 			for x in csv.reader(lexique,delimiter="\t",quotechar=None):
-				if x[0] not in self.stoplist and x[2] not in self.stoplist:
+				if True:
 					forme=x[0].decode("utf-8")
 					cat= x[1].decode("utf-8")
 					lemme=x[2].decode("utf-8").upper()+"."+cat
@@ -48,35 +48,43 @@ class Lemmtok(object):
 		logging.info("Le lemmatiseur fini de charger !")
 	
 		
-	def toklemize(self,corpus):
-	
-		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
+	def toklemize_corpus(self,corpus,case_sensitive=False):
 		texts=list()
 		
-		#lexicon=dict()
-			
 		for x in corpus:
-			elem=[]
-			corpus[x]=re.sub("[0-9]+"," \1 ",corpus[x],0)
-			for word in tok.split(corpus[x].lower()):
-				if word not in self.stoplist:
+			elem=self.toklemize(corpus[x],case_sensitive)
+			texts.append(elem)
+			
+		return texts
+	
+	def toklemize(self,chaine,case_sensitive=False,prune_stopwords=True):
+		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
+		elem=[]
+		chaine=re.sub("[0-9]+"," \1 ",chaine,0)
+		if not case_sensitive:
+			chaine=chaine.lower()
+		
+		if prune_stopwords:
+			stoplist=self.stoplist
+		else:
+			stoplist=[]
+		
+		for word in tok.split(chaine):
+				if word not in stoplist:
 					if word in self.lemmatiseur:
-						if self.lemmatiseur[word] not in self.stoplist:
+						if self.lemmatiseur[word] not in stoplist:
 							elem += self.lemmatiseur[word]
 					else:
 						elem.append(word)
 						#lexicon[word] += 1
-			
-			texts.append(elem)
-			
-		return texts
-		
+		return elem
+	
 	def tokenize(self,string):
 		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 		return tok.split(string.lower() )
 
 	def index(corpus):
-		pass
+		raise NotImplementedError
 
 if __name__=="__main__":
 	import sys
