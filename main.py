@@ -529,10 +529,16 @@ class Main(QtGui.QMainWindow):
 		
 		
 		tokinput = QLineEdit()
+		choice=QComboBox()
+		c=dict()
 		
-		def searchlemmas():
+		def handler(xs,index):
+			c['choix']=xs[index]
+		
+		
+		def searchlemmas(requete):
 			corpus=None
-			searchterm=self.ltok.toklemize(unicode(tokinput.text()))
+			
 			currtable = self.getcurrenttab()
 			if currtable.selectedItems():
 				corpus=currtable.selectedItems
@@ -542,20 +548,34 @@ class Main(QtGui.QMainWindow):
 			for item in corpus():
 				if item:
 					words=self.ltok.toklemize(unicode(item.text()))
-					#print searchterm,words
-
-					if searchterm[0] in words:
-						print searchterm, words
+					
+					if requete in words:
+						
 						currtable.setItemSelected(item,True)
 					else:
 						currtable.setItemSelected(item,False)
 		
+		def lemmafinder():
+			searchterm=self.ltok.toklemize(unicode(tokinput.text()))
+			if len(searchterm) > 1:
+				tokinput.hide()
+				choice.show()
+				choice.setItems(searchterm)
+				choice.currentIndexChanged(lambda x : handler(searchterm,x) )
+				requete=c['choix']
+			else:
+				requete=searchterm[0]
+			
+			searchlemmas(requete)
+			
+		
 		toklayout=QHBoxLayout()
 		toktexte=QLabel("Entrer un mot :")
 		toklayout.addWidget(tokinput)
+		toklayout.addWidget(choice)
 		
 		okbutton = QPushButton("ok",searchbox)
-		okbutton.clicked.connect(searchlemmas)
+		okbutton.clicked.connect(lemmafinder)
 		
 		fermer = QPushButton(_fromUtf8("Fermer"),searchbox)
 		fermer.clicked.connect(exitsearch)
@@ -569,11 +589,9 @@ class Main(QtGui.QMainWindow):
 		layout.addLayout(buttonlayout)
 		
 		searchbox.setLayout(layout)
-		
-		return searchbox.show()
-		
-		
-		
+		searchbox.show()
+		choice.hide()
+	
 	@graphicalerrors
 	def classify(self,*args):
 			
