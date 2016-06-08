@@ -317,10 +317,8 @@ class Main(QtGui.QMainWindow):
 					raise Exception("L'impossible est arrivé.")
 				fichier.save(filename)
 				
-				# 
-				# for index in xrange(0,currwidg.count()):
-					# z=currwidg.widget(index)
-					# name=currwidg.tabtext()
+				logging.info("Fichier enregistré :"+filename)
+				
 			elif filename.endswith(".csv"):
 				ok,delimiter,quotechar=self.csvaskbox()
 				if ok:
@@ -343,6 +341,7 @@ class Main(QtGui.QMainWindow):
 								#delimiter.join([ quotechar+re.sub(r"("+quotechar+")","\\\1",currtable[row,col])+quotechar if len(quotechar) > 1 else currtable[row,col]  ]).encode("utf-8") 
 							sortie.write("\n")
 				
+				logging.info("Fichier enregistré :"+filename)
 			
 			else:
 				QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
@@ -374,6 +373,8 @@ class Main(QtGui.QMainWindow):
 					self.tabs.setCurrentWidget(subtab)
 						# self.show()
 				
+				logging.info("Ouverture du fichier "+filename)
+				
 			elif filename.endswith(".csv"):
 				ok,delim,qc=self.csvaskbox()
 					
@@ -402,10 +403,11 @@ class Main(QtGui.QMainWindow):
 							
 					#subtab.addTab(self.tabtable[filename],os.path.basename(filename))
 					
-						
+					logging.info("Ouverture du fichier "+filename)		
 				
 			else:
 				QMessageBox.warning(self, "Erreur","Format de fichier non pris en charge.")
+				logging.warning("Echec de l'ouverture du fichier "+filename)
 	
 	@graphicalerrors	
 	def csvaskbox(self):
@@ -590,6 +592,7 @@ class Main(QtGui.QMainWindow):
 				
 		
 				QMessageBox.about(self, "Info",_fromUtf8("Classification automatique terminée !"))
+				logging.info("Classification terminée")
 	
 	@graphicalerrors
 	def ldaaskbox(self):
