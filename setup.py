@@ -1,6 +1,7 @@
 #!/usr/bin/python 
 #-*- encoding: utf-8 -*-
 
+
 import sys,os
 
 from cx_Freeze import setup, Executable
@@ -39,7 +40,7 @@ Icone sous Windows: il faut:
 # chemins de recherche des modules
 # ajouter d'autres chemins (absolus) si necessaire: sys.path + ["chemin1", "chemin2"]
 path = sys.path
-win32=Executable("main.py",icon="xtal.ico", base="Win32GUI") 
+xtalwin32=Executable("main.py",icon="xtal.ico", base="Win32GUI") 
 if sys.platform == "win32":
     #pass
     includefiles += [r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"] 
@@ -86,4 +87,4 @@ setup(
 	author="Arthur Lapraye",
 	 options={"build_exe": options},
     description = "Ce programme permet la classification de réponses à des questions ouvertes",
-    executables = [Win32],	)
+    executables = [xtalwin32],	)
