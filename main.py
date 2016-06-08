@@ -517,15 +517,21 @@ class Main(QtGui.QMainWindow):
 		def exitsearch(*args):
 				searchbox.accept()
 		
+		# def changesearchterm():
 		
 		# @selfgraphicalerrors
 		def searchlemmas():
 			corpus=None
+			searchterm=self.ltok.tokenize(tokinput.text())
 			currtable = getcurrenttab()
 			if currtable.selectedItems():
 				corpus=currtable.selectedItems()
 			else:
-				corpus=
+				corpus=currtable.iteritems()
+			
+			for item in corpus:
+				if searchterm in item.text():
+					currtable.setItemSelected(item) 
 		
 		tokinput = QLineEdit()
 		
