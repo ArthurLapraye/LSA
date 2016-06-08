@@ -488,9 +488,15 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def lemmasearch(self,*args):
-		
+			
 		if not self.ltok:
 			self.ltok=Lemmtok(LEFFFPATH)
+			
+		searchbox = QDialog()
+		searchbox.setWindowModality()
+		searchbox.setGeometry(posx+90,posy+80,300,200)
+		
+		
 		
 		raise NotImplementedError
 		
@@ -602,15 +608,16 @@ class Main(QtGui.QMainWindow):
 		minmot=QSpinBox()
 		minmot.valueChanged.connect(lambda x: changevalue("minpres",x) )
 		minmot.setValue(params["minpres"])
-		minmot.setStatusTip( _fromUtf8("Nombre de documents minmal où doit apparaître un mot pour être pris en compte.") )
 		minlabel=QLabel( _fromUtf8("Hapax") )
 		
 		maxpres=QDoubleSpinBox()
 		maxpres.setRange(0,1)
 		maxpres.setValue(params["maxpres"])
 		maxpres.valueChanged.connect(lambda x: changevalue('maxpres',x))
+		maxlabel = QLabel(_fromUtf8("Tf max:") )
 		
 		motlayer=QHBoxLayout()
+		motlayer.addWidget(maxlabel)
 		motlayer.addWidget(maxpres)
 		motlayer.addWidget(minlabel)
 		motlayer.addWidget(minmot)
