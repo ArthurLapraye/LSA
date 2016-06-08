@@ -91,7 +91,7 @@ class Main(QtGui.QMainWindow):
 		super(Main, self).__init__()
 		self.sys_clip = QtGui.QApplication.clipboard()
 		self.setContextMenuPolicy(Qt.ActionsContextMenu)
-		
+		self.setWindowTitle(_fromUtf8("X-TAL"))
 		self.setGeometry(100,100,800,600)
 		self.show()
 		
@@ -439,15 +439,19 @@ class Main(QtGui.QMainWindow):
 		layout = QVBoxLayout()
 		lt = QHBoxLayout()
 		ht = QHBoxLayout()
+		tt = QHBoxLayout()
 		
 		delimiterchoice = QtGui.QComboBox(box)
 		delimiterchoice.addItems(["Tabulation","Virgule ,","Point-Virgule ;"])
 		delimiterchoice.currentIndexChanged.connect(delimiterchanged)
+		# delimiterchoice.setStatusTip( _fromUtf8("Choix du caractère de séparation des valeurs dans le fichier CSV") )
+		delimiterlabel = QLabel(_fromUtf8("Caractère séparateur"),box)
 		
 		quotecharchoice = QtGui.QComboBox(box)
 		quotecharchoice.addItems(["Guillemets doubles \" ","Guillemets simples ' ","Aucun"])
 		quotecharchoice.currentIndexChanged.connect(quotecharchanged)
-		
+		# quotechar
+		quotecharlabel = QLabel(_fromUtf8("Caractère de citation"),box)
 		
 		okbutton = QPushButton("ok",box)
 		okbutton.clicked.connect(chosen)
@@ -455,18 +459,27 @@ class Main(QtGui.QMainWindow):
 		cancelbutton = QPushButton("Annuler",box)
 		cancelbutton.clicked.connect(die)
 		
+		
+		lt.addWidget(delimiterlabel)
+		lt.addWidget(delimiterchoice)
+		lt.addWidget(quotecharlabel)
+		lt.addWidget(quotecharchoice)
+		
+		
 		ht.addWidget(okbutton)
 		ht.addWidget(cancelbutton)
 		
-		lt.addWidget(delimiterchoice)
-		lt.addWidget(quotecharchoice)
+		
+		
+		layout.addLayout(tt)
 		layout.addLayout(lt)
 		layout.addLayout(ht)
 		# b1.move(50,50)
 		
 		box.setLayout(layout)
 		box.setWindowTitle(_fromUtf8(u"Paramètres du fichier CSV"))
-		box.setGeometry(150,150,300,200)
+		posx,posy=self.geometry().x(),self.geometry().y()
+		box.setGeometry(posx+70,posy+80,300,200)
 		box.setWindowModality(Qt.ApplicationModal)
 		if box.exec_():
 			return True,dc['delimiter'],dc['quotechar']
@@ -485,58 +498,58 @@ class Main(QtGui.QMainWindow):
 	@graphicalerrors
 	def classify(self,*args):
 			
-		ldatable=self.newpage()
 		
-		if ldatable:
-			if not self.ltok:
-				self.ltok=Lemmtok(LEFFFPATH)
-			
-			corpus=dict()
-			itemz=dict()
-			
-			
-			for row in xrange(ldatable.rowCount() ):
-				corpus[row]=" ".join([ldatable[row,cols] for cols in xrange(ldatable.columnCount() )])
-			
-			
-			texts=self.ltok.toklemize(corpus)
-			
-			NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
-			
-			dictionary = corpora.Dictionary(texts)
-			dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
-			dictionary.compactify()
-			bow = [dictionary.doc2bow(text) for text in texts]
-			corpus_tfidf =  models.TfidfModel(bow)[bow]
-			lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
-			
-			t=dict()
-			c=defaultdict(list)
-			# reliquat=0
-			for i in corpus:
-				for topic,confid in lda[corpus_tfidf[i]]:
-					t[topic]=t.get(topic,[]) + [(i,confid)]
-					c[i].append( (topic,confid) )
-			
-			oldcount = ldatable.columnCount()
-			for pos in xrange(oldcount,oldcount+NUMTOPICS):
-				ldatable.insertColumn(pos)
-			
-			for element in corpus:
-				for (i,(x,y)) in enumerate(c[element]):
-					ldatable[element,oldcount+i]=str(x)
-			
-			codetable=Table(dimensions=(NUMTOPICS+1,3) )
-			self.tabs.currentWidget().addTab(codetable,"codes")
-			self.tabtable[self.nameindex[self.tabs.currentIndex()]]["codes"]=codetable
-			
-			for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True):
-				codetable[topic,0]=str(topic)
-				description=",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])
-				codetable[topic,1]= _fromUtf8(description)
-			
+		ok,NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
+		if ok:
+			ldatable=self.newpage()
+			if ldatable:
+				
+				if not self.ltok:
+					self.ltok=Lemmtok(LEFFFPATH)
+				
+				corpus=dict()
+				itemz=dict()
+				
+				
+				for row in xrange(ldatable.rowCount() ):
+					corpus[row]=" ".join([ldatable[row,cols] for cols in xrange(ldatable.columnCount() )])
+							
+				texts=self.ltok.toklemize(corpus)
+				
+				dictionary = corpora.Dictionary(texts)
+				dictionary.filter_extremes(no_below=MINIMUM,no_above=SEUILMOT)
+				dictionary.compactify()
+				bow = [dictionary.doc2bow(text) for text in texts]
+				corpus_tfidf =  models.TfidfModel(bow)[bow]
+				lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+				
+				t=dict()
+				c=defaultdict(list)
+				# reliquat=0
+				for i in corpus:
+					for topic,confid in lda[corpus_tfidf[i]]:
+						t[topic]=t.get(topic,[]) + [(i,confid)]
+						c[i].append( (topic,confid) )
+				
+				oldcount = ldatable.columnCount()
+				for pos in xrange(oldcount,oldcount+NUMTOPICS):
+					ldatable.insertColumn(pos)
+				
+				for element in corpus:
+					for (i,(x,y)) in enumerate(c[element]):
+						ldatable[element,oldcount+i]=str(x)
+				
+				codetable=Table(dimensions=(NUMTOPICS+1,3) )
+				self.tabs.currentWidget().addTab(codetable,"codes")
+				self.tabtable[self.nameindex[self.tabs.currentIndex()]]["codes"]=codetable
+				
+				for topic in sorted(t,key=lambda topic : len([x for x,y in t[topic] ]), reverse=True):
+					codetable[topic,0]=str(topic)
+					description=",".join([ dictionary[x].encode("utf-8") for x,y in lda.get_topic_terms(topic) ])
+					codetable[topic,1]= _fromUtf8(description)
+				
 		
-			#QMessageBox.about(self, "Info",item.text())
+				QMessageBox.about(self, "Info",_fromUtf8("Classification automatique terminée !"))
 	
 	@graphicalerrors
 	def ldaaskbox(self):
@@ -546,12 +559,90 @@ class Main(QtGui.QMainWindow):
 		'maxpres':0.95,
 		'minpres':2}
 		
+		def changevalue(name,v):
+			params[name]=v
+		
+		def chosen():
+			ldabox.accept()
+		
+		def die():
+			ldabox.reject()
 		
 		ldabox = QDialog()
 		
-				
+		topic=QSpinBox()
+		topic.setRange(1,1000)
+		topic.setValue(params['topics'])
+		topic.valueChanged.connect(lambda x : changevalue("topics",int(x)))
+		topiclabel=QLabel(_fromUtf8("Nombre de codes :"))
+		topiclayer=QHBoxLayout()
+		topiclayer.addWidget(topiclabel)
+		topiclayer.addWidget(topic)
 		
-		return params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']
+		passes=QSpinBox()
+		passes.setRange(1,200)
+		passes.setValue(params['passes'])
+		passes.valueChanged.connect(lambda x : changevalue("passes",x) )
+		passlabel=QLabel( _fromUtf8("Nombre de passes :") )
+		passlayer=QHBoxLayout()
+		passlayer.addWidget(passlabel)
+		passlayer.addWidget(passes)
+		
+		seuil=QDoubleSpinBox()
+		seuil.setRange(0,1)
+		seuil.setValue(params["seuilmin"])
+		seuil.valueChanged.connect(lambda x : changevalue("seuilmin",x) )
+		seuillabel=QLabel(_fromUtf8("Seuil de probabilité :"))
+		seuillayer= QHBoxLayout()
+		seuillayer.addWidget(seuillabel)
+		seuillayer.addWidget(seuil)
+		
+		
+		
+		minmot=QSpinBox()
+		minmot.valueChanged.connect(lambda x: changevalue("minpres",x) )
+		minmot.setValue(params["minpres"])
+		minmot.setStatusTip( _fromUtf8("Nombre de documents minmal où doit apparaître un mot pour être pris en compte.") )
+		minlabel=QLabel( _fromUtf8("Hapax") )
+		
+		maxpres=QDoubleSpinBox()
+		maxpres.setRange(0,1)
+		maxpres.setValue(params["maxpres"])
+		maxpres.valueChanged.connect(lambda x: changevalue('maxpres',x))
+		
+		motlayer=QHBoxLayout()
+		motlayer.addWidget(maxpres)
+		motlayer.addWidget(minlabel)
+		motlayer.addWidget(minmot)
+		
+		okbutton = QPushButton("ok",ldabox)
+		okbutton.clicked.connect(chosen)
+		
+		cancelbutton = QPushButton("Annuler",ldabox)
+		cancelbutton.clicked.connect(die)
+		
+		buttonlayer=QHBoxLayout()
+		buttonlayer.addWidget(okbutton)
+		buttonlayer.addWidget(cancelbutton)
+		
+		layout=QVBoxLayout()
+		
+		layout.addLayout(topiclayer)
+		layout.addLayout(passlayer)
+		layout.addLayout(seuillayer)
+		layout.addLayout(motlayer)
+		layout.addLayout(buttonlayer)
+		
+		ldabox.setLayout(layout)
+		
+		posx,posy=self.geometry().x(),self.geometry().y()
+		ldabox.setGeometry(posx+90,posy+80,300,200)
+		ldabox.setWindowModality(Qt.ApplicationModal)
+		
+		if ldabox.exec_():
+			return True,params['topics'],params['passes'],params['seuilmin'],params['maxpres'],params['minpres']
+		else:
+			return False,0,0,0,0,0
 	
 	@graphicalerrors
 	def codelems(self,*args):
@@ -605,5 +696,6 @@ if __name__ == '__main__':
 	LEFFFPATH=os.path.dirname(os.path.realpath(sys.argv[0]))+"/lefff-3.4.mlex/lefff-3.4.mlex"
 	logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 	app = QtGui.QApplication(sys.argv)
+	app.setWindowIcon(QtGui.QIcon('xtal.png'))
 	ex = Main()
 	sys.exit(app.exec_())

@@ -20,9 +20,10 @@ import scipy,numpy, scipy.special._ufuncs
 
 includefiles = [os.path.dirname(scipy.__file__),
       #  os.path.dirname(scipy.__file__),
-		#os.path.dirname(scipy.special._ufuncs.__file__),
+		os.path.dirname(scipy.special._ufuncs.__file__),
 		
-		"lefff-3.4.mlex"
+		"lefff-3.4.mlex",
+		"xtal.png"
 		]
 
 excludefiles = [] 
@@ -38,7 +39,7 @@ Icone sous Windows: il faut:
 # chemins de recherche des modules
 # ajouter d'autres chemins (absolus) si necessaire: sys.path + ["chemin1", "chemin2"]
 path = sys.path
- 
+win32=Executable("main.py",icon="xtal.ico", base="Win32GUI") 
 if sys.platform == "win32":
     #pass
     includefiles += [r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"] 
@@ -85,4 +86,4 @@ setup(
 	author="Arthur Lapraye",
 	 options={"build_exe": options},
     description = "Ce programme permet la classification de réponses à des questions ouvertes",
-    executables = [Executable("main.py",icon="xtal.ico")],	)
+    executables = [Win32],	)

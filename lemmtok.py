@@ -16,6 +16,7 @@ class Lemmtok(object):
 		self.lemmatiseur=dict()
 		self.formes=dict()
 		self.l2=dict()
+		self.cats=set()
 
 		with open(LEFFFPATH) as lexique:
 			
@@ -23,7 +24,8 @@ class Lemmtok(object):
 				if x[0] not in self.stoplist and x[2] not in self.stoplist:
 					forme=x[0].decode("utf-8")
 					cat= x[1].decode("utf-8")
-					lemme=x[2].decode("utf-8")+"\t"+cat
+					lemme=x[2].decode("utf-8").upper()+"."+cat
+					self.cats.add(cat)
 					if forme in self.lemmatiseur:
 						self.lemmatiseur[forme].add(lemme)
 					else:
@@ -80,9 +82,12 @@ if __name__=="__main__":
 	import sys
 	LEFFFPATH=sys.argv[1]
 	lt=Lemmtok(LEFFFPATH)
+	print lt.cats
 	while 1:
 		try:
-			print lt.lemmatiseur[raw_input(">>>").decode("utf-8")]
+			entr=raw_input(">>>").decode("utf-8")
+			out=lt.lemmatiseur[entr]
+			print out
 		except KeyError:
 			print "Erreur : mot inconnu"
 		except EOFError:
