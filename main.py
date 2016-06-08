@@ -191,7 +191,18 @@ class Main(QtGui.QMainWindow):
 		bardoutil= QToolBar()
 		self.addToolBar(Qt.TopToolBarArea, bardoutil)
 		
+		#Paramètres du classifieur LDA
+		self.params={'topics':20,
+		'passes':15,
+		'seuilmin':0.3,
+		'maxpres':0.95,
+		'minpres':2,
+		'alpha':'auto',
+		'eta':'auto'}
+		
+		
 		self.ltok = Lemmtok(LEFFFPATH)
+		
 		
 		# self.show()
 	def graphicalerrors(func):
@@ -295,10 +306,10 @@ class Main(QtGui.QMainWindow):
 						table=currwidg.widget(index)
 						sheet=fichier.create_sheet()
 						elem = unicode(currwidg.tabText(index))
-						print elem.encode("utf-8")
+						# print elem.encode("utf-8")
 						sheet.title = elem
 						
-						print name.encode("utf-8"),elem.encode("utf-8")
+						# print name.encode("utf-8"),elem.encode("utf-8")
 						for row in xrange(0,table.rowCount()):
 							rangee=[]
 							for col in xrange(0,table.columnCount()):
@@ -310,10 +321,10 @@ class Main(QtGui.QMainWindow):
 				elif isinstance(currwidg,QTableWidget):
 					sheet=fichier.create_sheet()
 					elem = name
-					print elem.encode("utf-8")
+					# print elem.encode("utf-8")
 					sheet.title = elem
 						
-					print name.encode("utf-8"),elem.encode("utf-8")
+					# print name.encode("utf-8"),elem.encode("utf-8")
 					for row in xrange(0,table.rowCount()):
 						rangee=[]
 						for col in xrange(0,table.columnCount()):
@@ -494,7 +505,7 @@ class Main(QtGui.QMainWindow):
 		box.setLayout(layout)
 		box.setWindowTitle(_fromUtf8(u"Paramètres du fichier CSV"))
 		posx,posy=self.geometry().x(),self.geometry().y()
-		box.setGeometry(posx+70,posy+80,300,200)
+		box.setGeometry(posx+70,posy+80,300,50)
 		box.setWindowModality(Qt.ApplicationModal)
 		if box.exec_():
 			return True,dc['delimiter'],dc['quotechar']
@@ -567,7 +578,7 @@ class Main(QtGui.QMainWindow):
 	def classify(self,*args):
 			
 		
-		ok,NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
+		ok,NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM,ALPHA,ETA=self.ldaaskbox()
 		if ok:
 			ldatable=self.newpage()
 			if ldatable:
@@ -586,7 +597,7 @@ class Main(QtGui.QMainWindow):
 				dictionary.compactify()
 				bow = [dictionary.doc2bow(text) for text in texts]
 				corpus_tfidf =  models.TfidfModel(bow)[bow]
-				lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha='auto', eta='auto', minimum_probability=SEUILPROBA)
+				lda=models.ldamodel.LdaModel(corpus=corpus_tfidf, id2word=dictionary, num_topics=NUMTOPICS,update_every=0, chunksize=4000, passes=NUMPASS, alpha=ALPHA, eta=ETA, minimum_probability=SEUILPROBA)
 				
 				t=dict()
 				c=defaultdict(list)
@@ -619,14 +630,18 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def ldaaskbox(self):
-		self.params={'topics':20,
-		'passes':15,
-		'seuilmin':0.3,
-		'maxpres':0.95,
-		'minpres':2}
+		
+		alphachoix=["auto","symmetric","asymmetric"]
+		etachoix=["auto",None]
 		
 		def changevalue(name,v):
 			self.params[name]=v
+		
+		def changealpha(index):
+			self.params['alpha']=alphachoix[index]
+		
+		def changeeta(index):
+			self.params['eta']=etachoix[index]
 		
 		def chosen():
 			ldabox.accept()
@@ -635,6 +650,28 @@ class Main(QtGui.QMainWindow):
 			ldabox.reject()
 		
 		ldabox = QDialog()
+		
+		alpha = QtGui.QComboBox(ldabox)
+		alpha.addItems(alphachoix)
+		alpha.setCurrentIndex(alphachoix.index(self.params['alpha']))
+		alpha.currentIndexChanged.connect(changealpha)
+		
+		
+		eta = QtGui.QComboBox(ldabox)
+		eta.addItems(["auto","aucun"])
+		eta.setCurrentIndex(etachoix.index(self.params['eta']))
+		eta.currentIndexChanged.connect(changeeta)
+		
+		alphalabel=QLabel( _fromUtf8(u"Alpha") )
+		etalabel=QLabel( _fromUtf8(u"Eta") )
+		
+		ldaoptions=QHBoxLayout()
+		ldaoptions.addWidget(alphalabel)
+		ldaoptions.addWidget(alpha)
+		ldaoptions.addWidget(etalabel)
+		ldaoptions.addWidget(eta)
+		
+		
 		
 		topic=QSpinBox()
 		topic.setRange(1,1000)
@@ -663,8 +700,6 @@ class Main(QtGui.QMainWindow):
 		seuillayer= QHBoxLayout()
 		seuillayer.addWidget(seuillabel)
 		seuillayer.addWidget(seuil)
-		
-		
 		
 		minmot=QSpinBox()
 		minmot.setMinimum(1)
@@ -701,7 +736,9 @@ class Main(QtGui.QMainWindow):
 		layout.addLayout(passlayer)
 		layout.addLayout(seuillayer)
 		layout.addLayout(motlayer)
+		layout.addLayout(ldaoptions)
 		layout.addLayout(buttonlayer)
+		
 		
 		ldabox.setLayout(layout)
 		
@@ -710,7 +747,7 @@ class Main(QtGui.QMainWindow):
 		ldabox.setWindowModality(Qt.ApplicationModal)
 		
 		if ldabox.exec_():
-			return True,self.params['topics'],self.params['passes'],self.params['seuilmin'],self.params['maxpres'],self.params['minpres']
+			return True,self.params['topics'],self.params['passes'],self.params['seuilmin'],self.params['maxpres'],self.params['minpres'],self.params['alpha'],self.params["eta"]
 		else:
 			return False,0,0,0,0,0
 	
