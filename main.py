@@ -531,11 +531,12 @@ class Main(QtGui.QMainWindow):
 		tokinput = QLineEdit()
 		choice=QComboBox()
 		c=dict()
+		c['casse']=False
+		c['choix']=None
 		
 		def handler(xs,index):
 			c['choix']=xs[index]
-		
-		
+			
 		def searchlemmas(requete):
 			corpus=None
 			
@@ -547,26 +548,91 @@ class Main(QtGui.QMainWindow):
 			
 			for item in corpus():
 				if item:
-					words=self.ltok.toklemize(unicode(item.text()))
+					words=self.ltok.toklemize(unicode(item.text()),prune_stopwords=False,case_sensitive=c['casse'])
 					
 					if requete in words:
 						
 						currtable.setItemSelected(item,True)
 					else:
 						currtable.setItemSelected(item,False)
+			
+			choice.hide()
+			tokinput.show()
+			c['choix']=None
+		
+		def expl(x):
+			z={"v":"verbe" ,
+				"np":"nom propre",
+				"nc":"nom commun",
+				"adj":"adjectif",
+				":GA":":GA",
+				":GN":":GN",
+				":GP":":GP",
+				":GR":":GR",
+				":NV":":NV",
+				":PV":":PV",
+				"adj":"adjectif",
+				"adjPref":"prefixe adjectival",
+				"adv":"adverbe",
+				"advneg":"adverbe de negation",
+				"advPref":"prefixe adverbial",
+				"auxAvoir":"auxiliaire avoir",
+				"auxEtre":"auxiliaire etre",
+				"caimp":"demonstratif ça",
+				"ce":"ce",
+				"cla":"clitique accusatif",
+				"clar":"clitique accusatif reflexif",
+				"cld":"clitique direct",
+				"cldr":"clitique direct reflexif",
+				"clg":"clitique circonstant",
+				"cll":"clitique LLL",
+				"cln":"clitique nominatif",
+				"clneg":"clitique",
+				"clr":"clitique reflexif",
+				"coo":"conjonction de coordination",
+				"csu":"complementeur",
+				"det":"determinant",
+				"epsilon":"epsilon",
+				"etr":"etre",
+				"GA:":"GA:",
+				"GN:":"GN:",
+				"GP:":"GP:",
+				"GR:":"GR:",
+				"ilimp":"ilimp",
+				"meta":"meta",
+				"NV:":"NV:",
+				"parentf":"",
+				"parento":"",
+				"poncts":"ponctuation",
+				"ponctw":"ponctuation",
+				"prel":"pronom relatif",
+				"prep":"préposition",
+				"pres":"interjection",
+				"pri":"pronom relatif/interrogatif",
+				"pro":"pronom",
+				"PV:":"PV:",
+				"que":"que",
+				"que_restr":"que",
+				"sbound":"sbound",
+				"suffAdj":"suffixe adjectival"
+				}
 		
 		def lemmafinder():
-			searchterm=self.ltok.toklemize(unicode(tokinput.text()))
-			if len(searchterm) > 1:
-				tokinput.hide()
-				choice.show()
-				choice.setItems(searchterm)
-				choice.currentIndexChanged(lambda x : handler(searchterm,x) )
-				requete=c['choix']
+			if c['choix']:
+				searchlemmas(c['choix'])
 			else:
-				requete=searchterm[0]
-			
-			searchlemmas(requete)
+				searchterm=self.ltok.toklemize(unicode(tokinput.text()),prune_stopwords=False,case_sensitive=c['casse'])
+				if searchterm:
+					if len(searchterm) > 1:
+						tokinput.hide()
+						choice.addItems([ expl(x) for x in searchterm])
+						choice.currentIndexChanged.connect(lambda x : handler(searchterm,x) )
+						choice.show()
+					else:
+						searchlemmas(searchterm[0])
+					
+				else:
+					QMessageBox.warning(self,"Erreur lors de la recherche", _fromUtf8("Erreur : cette forme n'est associée à aucun lemme") )
 			
 		
 		toklayout=QHBoxLayout()
@@ -767,7 +833,7 @@ class Main(QtGui.QMainWindow):
 		if ldabox.exec_():
 			return True,self.params['topics'],self.params['passes'],self.params['seuilmin'],self.params['maxpres'],self.params['minpres'],self.params['alpha'],self.params["eta"]
 		else:
-			return False,0,0,0,0,0
+			return False,0,0,0,0,0,None,None
 	
 	@graphicalerrors
 	def codelems(self,*args):
