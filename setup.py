@@ -22,7 +22,7 @@ includefiles = [os.path.dirname(scipy.__file__),
       #  os.path.dirname(scipy.__file__),
 		#os.path.dirname(scipy.special._ufuncs.__file__),
 		
-		"lefff-3.4.mlex/lefff-3.4.mlex"
+		"lefff-3.4.mlex"
 		]
 
 excludefiles = [] 
