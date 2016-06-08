@@ -4,6 +4,7 @@
 
 import csv
 import logging
+import re
 from unidecode import unidecode
 
 
@@ -50,7 +51,7 @@ class Lemmtok(object):
 		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 		texts=list()
 		
-		lexicon=defaultdict(float)
+		#lexicon=dict()
 			
 		for x in corpus:
 			elem=[]
@@ -62,7 +63,7 @@ class Lemmtok(object):
 							elem += self.lemmatiseur[word]
 					else:
 						elem.append(word)
-						lexicon[word] += 1
+						#lexicon[word] += 1
 			
 			texts.append(elem)
 			

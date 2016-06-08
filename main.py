@@ -24,6 +24,8 @@ _fromUtf8 = QtCore.QString.fromUtf8
 
 from lemmtok import Lemmtok
 
+LEFFFPATH=""
+
 class Table(QtGui.QTableWidget):
 	def __init__(self,sheet=None,dimensions=None):
 		
@@ -196,7 +198,12 @@ class Main(QtGui.QMainWindow):
 				# e.__doc__
 				# e.message
 				logging.error(traceback.format_exc())
-				QMessageBox.warning(self, _fromUtf8("Erreur"),_fromUtf8(e.__doc__+"\n"+e.message))
+				errorstring=u""
+				if e.__doc__:
+					errorstring+=e.__doc__+"\n"
+				if e.message:
+					errorstring+=e.message
+				QMessageBox.warning(self, _fromUtf8("Erreur"),_fromUtf8(errorstring))
 				op=None
 			
 			return op
@@ -468,9 +475,11 @@ class Main(QtGui.QMainWindow):
 	
 	@graphicalerrors
 	def lemmasearch(self,*args):
-		if not self.ltok:
-			self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
 		
+		if not self.ltok:
+			self.ltok=Lemmtok(LEFFFPATH)
+		
+		raise NotImplementedError
 		
 		
 	@graphicalerrors
@@ -480,7 +489,7 @@ class Main(QtGui.QMainWindow):
 		
 		if ldatable:
 			if not self.ltok:
-				self.ltok=Lemmtok(os.path.dirname(os.path.realpath(__file__))+"/lefff-3.4.mlex/lefff-3.4.mlex")
+				self.ltok=Lemmtok(LEFFFPATH)
 			
 			corpus=dict()
 			itemz=dict()
@@ -593,7 +602,7 @@ class Main(QtGui.QMainWindow):
 			raise AttributeError("Sélection vide !")
 				
 if __name__ == '__main__':
-	
+	LEFFFPATH=os.path.dirname(os.path.realpath(sys.argv[0]))+"/lefff-3.4.mlex/lefff-3.4.mlex"
 	logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 	app = QtGui.QApplication(sys.argv)
 	ex = Main()

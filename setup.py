@@ -1,4 +1,4 @@
-#!/user/bin/python 
+#!/usr/bin/python 
 #-*- encoding: utf-8 -*-
 
 import sys,os
@@ -21,7 +21,7 @@ import scipy,numpy, scipy.special._ufuncs
 includefiles = [os.path.dirname(scipy.__file__),
       #  os.path.dirname(scipy.__file__),
 		#os.path.dirname(scipy.special._ufuncs.__file__),
-		r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd",
+		
 		"lefff-3.4.mlex/lefff-3.4.mlex"
 		]
 
@@ -40,8 +40,9 @@ Icone sous Windows: il faut:
 path = sys.path
  
 if sys.platform == "win32":
-    pass
-    # includefiles += [...] : ajouter les recopies specifiques à Windows
+    #pass
+    includefiles += [r"C:\Python27\Lib\site-packages\scipy\special\_ufuncs.pyd"] 
+    #: ajouter les recopies specifiques à Windows
 elif sys.platform == "linux2":
     pass
     # includefiles += [...] : ajouter les recopies specifiques à Linux
