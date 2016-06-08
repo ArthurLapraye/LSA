@@ -506,7 +506,7 @@ class Main(QtGui.QMainWindow):
 		
 		searchbox.setLayout(layout)
 		
-		return box.exec()
+		return box.exec_()
 		
 		
 		
