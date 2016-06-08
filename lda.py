@@ -74,7 +74,7 @@ if __name__ == "__main__":
 		
 	corpus=loadfile(FICHIER)
 	logging.info("Corpus chargé")
-	texts= lemmtok.tokenize(corpus)	
+	texts= lemmtok.toklemize(corpus)	
 	logging.info("Tokenisation effectuée")
 
 

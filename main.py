@@ -499,7 +499,7 @@ class Main(QtGui.QMainWindow):
 				corpus[row]=" ".join([ldatable[row,cols] for cols in xrange(ldatable.columnCount() )])
 			
 			
-			texts=self.ltok.tokenize(corpus)
+			texts=self.ltok.toklemize(corpus)
 			
 			NUMTOPICS,NUMPASS,SEUILPROBA,SEUILMOT,MINIMUM=self.ldaaskbox()
 			

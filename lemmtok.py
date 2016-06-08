@@ -46,7 +46,7 @@ class Lemmtok(object):
 		logging.info("Lemmatiseur fini de charger !")
 	
 		
-	def tokenize(self,corpus):
+	def toklemize(self,corpus):
 	
 		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
 		texts=list()
@@ -68,6 +68,10 @@ class Lemmtok(object):
 			texts.append(elem)
 			
 		return texts
+		
+	def tokenize(self,string):
+		tok=re.compile(u"[#*+\[\]_\" &*,;:.'^?!\/)(><-]+",flags=re.UNICODE)
+		return tok.split(string.lower() )
 
 	def index(corpus):
 		pass
