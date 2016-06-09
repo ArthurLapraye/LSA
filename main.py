@@ -96,8 +96,8 @@ class Table(QtGui.QTableWidget):
 	
 	def iteritems(self):
 		"""Générateur qui renvoie tout les items de haut en bas et de gauche à droite"""
-		for row in xrange(0,self.row_count):
-			for col in xrange(0,self.column_count):
+		for row in xrange(0,self.rowCount()):
+			for col in xrange(0,self.columnCount() ):
 				yield self.item(row,col)
 	
 	
